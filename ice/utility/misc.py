@@ -29,6 +29,7 @@ Synthego ICE will not infringe any patent, trademark or other rights.
 import numpy as np
 import os
 import subprocess
+from ice.__version__ import __version__
 
 
 def round_list(in_list, num_digits):
@@ -44,14 +45,8 @@ def running_mean(x, n):
     return (cumsum[n:] - cumsum[:-n]) / n
 
 
-def version_hash():
-    try:
-        script_directory = os.path.dirname(os.path.abspath(__file__))
-        label = subprocess.check_output(["git", "describe", "--always"], cwd=script_directory).strip().decode()
-        print("You are using version: {}".format(label))
-    except Exception as e:
-        label = "version_check_failed"
-    return label
+def version():
+    return __version__
 
 
 def contiguous_regions(condition):

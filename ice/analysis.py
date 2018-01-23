@@ -36,7 +36,7 @@ import json
 
 from ice.classes.ice_result import ICEResult
 from ice.classes.sanger_analysis import SangerAnalysis
-from ice.utility.misc import version_hash
+from ice.utility.misc import version
 from ice.utility.sequence import is_nuc_acid
 
 from .__version__ import __version__
@@ -118,8 +118,8 @@ def single_sanger_analysis_cli():
     if not os.path.exists(base_dir):
         os.makedirs(base_dir, exist_ok=True)
 
-    print('Synthego ICE (https://synthego.com')
-    version_hash()
+    print('Synthego ICE (https://synthego.com)')
+    print('Version: {}'.format(__version__))
 
     single_sanger_analysis(control_path=args.control,
                            sample_path=args.edited,
@@ -228,7 +228,7 @@ def multiple_sanger_analysis(definition_file, output_dir,
         with pd.ExcelWriter(out_file) as writer:
             input_df.to_excel(writer, sheet_name="Results")
 
-            md = {'version': version_hash()}
+            md = {'version': __version__}
             metadata = pd.DataFrame.from_dict([md])
             metadata.to_excel(writer, sheet_name='Metadata')
 
@@ -279,8 +279,8 @@ def multiple_sanger_analysis_cli():
     else:
         data_dir = os.path.abspath(args.data)
 
-    print('Synthego ICE (https://synthego.com')
-    version_hash()
+    print('Synthego ICE (https://synthego.com)')
+    print('Version: {}'.format(__version__))
 
     multiple_sanger_analysis(args.input,
                              output_dir=out_dir,
