@@ -1,6 +1,6 @@
 import pytest
 
-from ice.utility.misc import version_hash
+from ice.utility.misc import version
 from ice.utility.sequence import reverse_transcribe, transcribe, is_nuc_acid, reverse_complement, DNA2RNA, RNA2DNA
 
 
@@ -37,8 +37,8 @@ def test_dna_bad_input():
         DNA2RNA('L')
 
 
-def test_version_hash():
+def test_version():
 
-    version = version_hash()
+    v = version()
 
-    assert version is not None
+    assert v is not None
