@@ -211,7 +211,8 @@ When complete, you'll find the ICE analysis outputs in the `./results` folder.
 
 <a name="ref1">[1] </a>Eva K. Brinkman, Tao Chen, Mario Amendola, and Bas van Steensel. <b>Easy quantitative assessment of genome editing by sequence trace decomposition.</b>Nucleic Acids Res. 2014 Dec 16; 42(22): e168. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4267669/
 
-<a name="ref2">[2] </a>Hsiau et. al, <b>Inference of CRISPR Edits from Sanger Trace Data</b>. BioArxiv. 2018
+<a name="ref2">[2] </a>Hsiau et. al, <b>Inference of CRISPR Edits from Sanger Trace Data</b>. BioArxiv. 2018 https://www.biorxiv.org/content/early/2018/01/20/251082
+
 TODO: LINK HERE
 
 ### License

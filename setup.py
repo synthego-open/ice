@@ -48,6 +48,8 @@ ICE tool is a CRISPR editing analysis tool that infers presence of indels and ot
 
 For more information, visit https://github.com/synthego-open/ice .
 
+Algorithm described in https://www.biorxiv.org/content/early/2018/01/20/251082
+
 '''
 
 with open('requirements.txt') as fp:
@@ -56,7 +58,7 @@ with open('requirements.txt') as fp:
 setup(
 
     name='synthego_ice',
-    version='1.0.0',
+    version='1.1.0',
     description='Synthego - Inference of CRISPR Edits (ICE)',  # Required
     long_description=long_description,  # Optional
     url='https://github.com/synthego-open/ice',

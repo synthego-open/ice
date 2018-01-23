@@ -1,4 +1,9 @@
 
+# Release Notes
+
+v1.1.0 - First PIP release, updated readme docs
+v1.0.0 - Initial release of open source code base
+
 # Instructions for developers
 
 <hr>
