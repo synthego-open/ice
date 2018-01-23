@@ -39,6 +39,8 @@ from ice.classes.sanger_analysis import SangerAnalysis
 from ice.utility.misc import version_hash
 from ice.utility.sequence import is_nuc_acid
 
+from .__version__ import __version__
+
 
 def single_sanger_analysis(control_path, sample_path, base_outputname, guide, donor=None, verbose=False,
                            allprops=False):
@@ -100,6 +102,7 @@ def single_sanger_analysis_cli():
     parser.add_argument('--donor', dest='donor', help='Donor DNA sequence for HDR (Optional)', required=False,
                         default=None)
     parser.add_argument('--verbose', dest='verbose', action='store_true')
+    parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
 
     args = parser.parse_args()
 
@@ -250,6 +253,7 @@ def multiple_sanger_analysis_cli():
     parser.add_argument('--line', dest='line', default=None, type=int,
                         help="Only run specified line in the Excel xlsx definition file")
     parser.add_argument('--allprops', dest='allprops', action='store_true', default=False)
+    parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
 
     # parse args
     args = parser.parse_args()

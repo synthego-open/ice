@@ -13,7 +13,7 @@ This document is intended for technical users who have prior experience with CRI
 
 A preprint **Inference of CRISPR Edits from Sanger Trace Data**<sup>[2](#ref2)</sup> provides an overview and empirical test of ICE on over 1,800 real world edits. We ask that you cite our paper if you use ICE in work that leads to publication.
 
-We will continue to improve ICE, so please refer to the version number in your publication. The version number can be found by running ICE without any commands or with the --help option.
+We will continue to improve ICE, so please refer to the version number in your publication. The version number can be found by running ICE with the --version option.
 
 ### Inputs
 

@@ -55,10 +55,15 @@ Algorithm described in https://www.biorxiv.org/content/early/2018/01/20/251082
 with open('requirements.txt') as fp:
     install_requires = fp.read()
 
+
+about = {}
+with open(path.join(here, 'ice', '__version__.py'), 'r', 'utf-8') as f:
+    exec(f.read(), about)
+
 setup(
 
     name='synthego_ice',
-    version='1.1.0',
+    version=about['__version__'],
     description='Synthego - Inference of CRISPR Edits (ICE)',  # Required
     long_description=long_description,  # Optional
     url='https://github.com/synthego-open/ice',
