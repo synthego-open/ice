@@ -213,8 +213,6 @@ When complete, you'll find the ICE analysis outputs in the `./results` folder.
 
 <a name="ref2">[2] </a>Hsiau et. al, <b>Inference of CRISPR Edits from Sanger Trace Data</b>. BioArxiv. 2018 https://www.biorxiv.org/content/early/2018/01/20/251082
 
-TODO: LINK HERE
-
 ### License
 
 Copyright 2018 [Synthego Corporation](http://synthego.com) All Rights Reserved
