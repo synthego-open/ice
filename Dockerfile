@@ -32,7 +32,7 @@ FROM continuumio/miniconda3
 MAINTAINER support@synthego.com
 
 RUN echo 'Building SYNTHEGO ICE docker environment'
-RUN echo 'For more information, visit synthego-opensource.github.io/ice'
+RUN echo 'For more information, visit https://github.com/synthego-open/ice'
 
 ENV PYTHONPATH $PYTHONPATH:/ice
 
