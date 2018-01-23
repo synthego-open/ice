@@ -4,9 +4,6 @@
 # https://circleci.com/docs/2.0/language-python/
 #
 version: 2
-general:
-  branches:
-    only:
 jobs:
   build:
     working_directory: ~/ice
