@@ -95,7 +95,7 @@ def single_sanger_analysis_cli():
     parser = argparse.ArgumentParser(description='Analyze Sanger reads to Infer Crispr Edit outcomes')
     parser.add_argument('--control', dest='control', help='The wildtype / unedited ab1 file (REQUIRED)', required=True)
     parser.add_argument('--edited', dest='edited', help='The edited ab1 file (REQUIRED)', required=True, default=None)
-    parser.add_argument('--target', dest='target', help='Target sequence (17-23 bases, RNA or DNA), (REQUIRED)',
+    parser.add_argument('--target', dest='target', help='Target sequence(s) (17-23 bases, RNA or DNA, comma separated), (REQUIRED)',
                         required=True)
     parser.add_argument('--out', dest='out', help='Output base path (Defaults to ./results/single)', required=False,
                         default=None)
@@ -252,7 +252,7 @@ def multiple_sanger_analysis_cli():
     parser.add_argument('--verbose', dest='verbose', action='store_true', help='Display verbose output')
     parser.add_argument('--line', dest='line', default=None, type=int,
                         help="Only run specified line in the Excel xlsx definition file")
-    parser.add_argument('--allprops', dest='allprops', action='store_true', default=False)
+    parser.add_argument('--allprops', dest='allprops', action='store_true', default=False, help="Output all Edit Proposals, even if they have zero contribution")
     parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
 
     # parse args

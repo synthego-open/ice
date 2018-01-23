@@ -68,7 +68,7 @@ The source code behind the core ICE analysis is open source and free to use for 
 
 ## Installation
 
-Synthego ICE can be installed as a docker container or directly via pip. Additional developer instructions are located in [DEVELOP.md](./DEVELOP.md). All examples below use test data found in [ice/tests/test_data](./ice/tests/test_data).
+Synthego ICE can be installed as a docker container or directly via pip. Additional developer instructions are located in [DEVELOP.md](./DEVELOP.md). All examples below use test data found in [ice/tests/test_data](./ice/tests/test_data).  The test file (./ice/tests/test_data/batch_example.xlsx) is an example of how to specify batch inputs.
 
 ### Method 1. Pip install
 
@@ -88,35 +88,38 @@ After installation, you can use Synthego ICE as a module (see  [python_example.p
 
 `synthego_ice`
 
-	usage: synthego_ice [-h] --control CONTROL --edited EDITED --target
-	                              TARGET [--out OUT] [--donor DONOR] [--verbose]
+    usage: synthego_ice [-h] --control CONTROL --edited EDITED --target TARGET
+                        [--out OUT] [--donor DONOR] [--verbose] [--version]
 
-	Analyze Sanger reads to Infer Crispr Edit outcomes
+    Analyze Sanger reads to Infer Crispr Edit outcomes
 
-	optional arguments:
-	  -h, --help         show this help message and exit
-	  --control CONTROL  The wildtype / unedited ab1 file (REQUIRED)
-	  --edited EDITED    The edited ab1 file (REQUIRED)
-	  --target TARGET    Target sequence (17-23 bases, RNA or DNA), (REQUIRED)
-	  --out OUT          Output base path (Defaults to ./results/single)
-	  --donor DONOR      Donor DNA sequence for HDR (Optional)
-	  --verbose
+    optional arguments:
+      -h, --help         show this help message and exit
+      --control CONTROL  The wildtype / unedited ab1 file (REQUIRED)
+      --edited EDITED    The edited ab1 file (REQUIRED)
+      --target TARGET    Target sequence(s) (17-23 bases, RNA or DNA, comma
+                         separated), (REQUIRED)
+      --out OUT          Output base path (Defaults to ./results/single)
+      --donor DONOR      Donor DNA sequence for HDR (Optional)
+      --verbose
+      --version          show program's version number and exit
 
 `synthego_ice_batch`
 
-	usage: synthego_ice_batch [-h] --in INPUT [--out OUT] --data DATA
-	                             [--verbose] [--line LINE] [--allprops]
+    usage: synthego_ice_batch [-h] --in INPUT [--out OUT] --data DATA [--verbose]
+                              [--line LINE] [--allprops] [--version]
 
-	Batch Analyze Sanger reads to infer crispr edit outcomes
+    Analyze Sanger reads to infer crispr edit outcomes
 
-	optional arguments:
-	  -h, --help   show this help message and exit
-	  --in INPUT   Input definition file in Excel xlsx format (required)
-	  --out OUT    Output directory path (defaults to .)
-	  --data DATA  Data path, where .ab1 files are located (required)
-	  --verbose    Display verbose output
-	  --line LINE  Only run specified line in the Excel xlsx definition file
-	  --allprops
+    optional arguments:
+      -h, --help   show this help message and exit
+      --in INPUT   Input definition file in Excel xlsx format (required)
+      --out OUT    Output directory path (defaults to .)
+      --data DATA  Data path, where .ab1 files are located (required)
+      --verbose    Display verbose output
+      --line LINE  Only run specified line in the Excel xlsx definition file
+      --allprops   Output all Edit Proposals, even if they have zero contribution
+      --version    show program's version number and exit
 
 
 #### Analyzing example data via command line tools
