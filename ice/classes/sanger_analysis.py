@@ -274,7 +274,7 @@ class SangerAnalysis:
             ctrl_base = self.control_sample.primary_base_calls[ctrl_idx]
             # sample_base = self.edited_sample.primary_base_calls[sample_idx]
 
-            if ctrl_base == 'N':
+            if ctrl_base not in bases:
 
                 control_discord_abundances.append(1.0)
                 edited_discord_abundances.append(1.0)
