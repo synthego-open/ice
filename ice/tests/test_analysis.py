@@ -32,6 +32,29 @@ def test_high_quality_sample(temp_dir):
     assert os.path.exists(allproposals)
 
 
+def test_lowercase_guide(temp_dir):
+    """ Running a good sample"""
+
+    control = os.path.join(data_dir(), "good_example_control.ab1")
+    sample = os.path.join(data_dir(), "good_example_edited.ab1")
+
+    output_path = os.path.join(temp_dir, 'high_quality_lowercase')
+    guide = "aaccagttgcaggcgcccca"
+
+    job_args = (control, sample, output_path, guide)
+    job_kwargs = {'verbose': True, 'allprops':True}
+
+
+    results = single_sanger_analysis(*job_args, **job_kwargs)
+
+    pp(results)
+
+    assert results['status'] == 'succeeded'
+    assert results['ice'] == 78
+    allproposals = os.path.join(temp_dir, 'high_quality_lowercase.allproposals.json')
+    assert os.path.exists(allproposals)
+
+
 def test_low_quality_control(temp_dir):
     #Low quality control but analysis still possible
     control = os.path.join(data_dir(), "low_quality_control2.ab1")
