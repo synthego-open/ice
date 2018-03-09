@@ -2,8 +2,8 @@
 # Synthego Inference of CRISPR Edits (ICE)
 
 [![CircleCI Status](https://circleci.com/gh/synthego-open/ice.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/synthego-open/ice)
+[![PyPI version](https://badge.fury.io/py/synthego-ice.svg)](https://badge.fury.io/py/synthego-ice)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
-
 
 ![Synthego ICE](./doc/ice_logo.png)
 
