@@ -2,6 +2,8 @@
 # Synthego Inference of CRISPR Edits (ICE)
 
 [![CircleCI Status](https://circleci.com/gh/synthego-open/ice.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/synthego-open/ice)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
+
 
 ![Synthego ICE](./doc/ice_logo.png)
 
@@ -211,6 +213,25 @@ docker run -it -v ${PWD}:/data -w /ice -i ice:latest \
 ```
 
 When complete, you'll find the ICE analysis outputs in the `./results` folder.
+
+## Contributing
+Pull requests are welcome. Please follow the below steps to ensure your work is merged as efficiently as possible.
+1. Make a Github issue outlining the bug you aim to fix or the feature you want to add. This prevents redundant work and lets us reach an agreement on your proposal before you put significant effort into it.
+2. Fork the repository and create your branch from master.
+3. Code your feature or bug fix.
+4. Add [tests](#testing) for you new code and make sure all other tests still pass.
+5. Submit a pull request referencing the issue from step 1.
+
+## Testing
+Tests are written using [pytest](https://docs.pytest.org/en/latest/). Test files can be found in [ice/tests](ice/tests).
+
+* Run all tests (can take a few minutes):
+    - `$ pytest`
+* Run a specific test:
+    - `$ pytest ice/tests/{{filename}}.py::{{test_function_name}}`
+    - `$ pytest ice/tests/test_utility.py::test_sequence_util`
+* Run all tests with coverage report:
+    - `$ py.test --cov-report term-missing --cov=ice ice/tests`
 
 #### References
 
