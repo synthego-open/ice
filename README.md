@@ -1,6 +1,7 @@
 
 # Synthego Inference of CRISPR Edits (ICE)
 
+[![Coverage Status](https://coveralls.io/repos/github/synthego-open/ice/badge.svg?branch=master)](https://coveralls.io/github/synthego-open/ice?branch=master)
 [![CircleCI Status](https://circleci.com/gh/synthego-open/ice.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/synthego-open/ice)
 [![PyPI version](https://badge.fury.io/py/synthego-ice.svg)](https://badge.fury.io/py/synthego-ice)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
