@@ -222,7 +222,7 @@ Pull requests are welcome. Please follow the below steps to ensure your work is 
 4. Add [tests](#testing) for you new code and make sure all other tests still pass.
 5. Submit a pull request referencing the issue from step 1.
 
-## Testing
+### Testing
 Tests are written using [pytest](https://docs.pytest.org/en/latest/). Test files can be found in [ice/tests](ice/tests).
 
 * Run all tests (can take a few minutes):
