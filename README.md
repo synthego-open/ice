@@ -1,6 +1,8 @@
 
 # Synthego Inference of CRISPR Edits (ICE)
 
+[![CircleCI Status](https://circleci.com/gh/synthego-open/ice.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/synthego-open/ice)
+
 ![Synthego ICE](./doc/ice_logo.png)
 
 ICE tool is a CRISPR editing analysis tool that infers presence of indels and other mutation.  ICE uses non-negative least squares regression to detect the presence or evidence of edits.  In contrast to TIDE<sup>[1](#ref1)</sup>, ICE can analyze insertions, deletions, HDR, multiplex edits, and base editing and is available under a open-source license for non-commercial use.  ICE can also be used for analysis of other genome engineering methods, such as TALEN and homing endonucleases.
