@@ -139,6 +139,7 @@ class SangerAnalysis:
             gRNA_sequences = gRNA_sequences.split(",")
             gRNA_sequences = list(map(str.strip, gRNA_sequences))
             gRNA_sequences = list(map(RNA2DNA, gRNA_sequences))
+            gRNA_sequences = list(map(lambda x:x.upper(), gRNA_sequences))
             self.gRNA_sequences = gRNA_sequences
 
         else:
