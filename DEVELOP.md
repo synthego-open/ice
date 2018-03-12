@@ -29,7 +29,7 @@ Tests are automatically run via CircleCI. Results are located at [https://circle
 From a command line
 
 ```bash
-git clone git:// # clone the repo
+git clone git@github.com/synthego-open/ice.git ice # clone the repo
 cd ice
 docker build . -t ice # build the image from the Dockerfile
 ```
@@ -75,7 +75,7 @@ Install your favorite python3 virtual environment (virtualenv, conda). We'll use
 conda create --name ice_env python=3 # create a python3 virtual environment
 source activate ice_env
 
-git clone git:// # clone the repo
+git clone git@github.com/synthego-open/ice.git ice # clone the repo
 cd ice
 
 pip install -r requirements.txt # install the python dependencies
