@@ -129,6 +129,13 @@ def single_sanger_analysis_cli():
                            verbose=args.verbose)
 
 
+def XLSDictReader(f, sheet_index=0):
+    book    = xlrd.open_workbook(file_contents=mmap.mmap(f.fileno(), 0, access=mmap.ACCESS_READ))
+    sheet   = book.sheet_by_index(sheet_index)
+    headers = dict( (i, sheet.cell_value(0, i) ) for i in range(sheet.ncols) )
+
+    return ( dict( (headers[j], sheet.cell_value(i, j)) for j in headers ) for i in range(1, sheet.nrows) )
+
 def multiple_sanger_analysis(definition_file, output_dir,
                              data_dir=None,
                              verbose=False,
@@ -140,9 +147,12 @@ def multiple_sanger_analysis(definition_file, output_dir,
     :return:
     '''
 
-    # TODO pandas does weird things when you parse csvs with empty rows, eg force casting to float
+
+
 
     input_df = pd.read_excel(definition_file)
+
+
 
     results = []
 
@@ -168,18 +178,23 @@ def multiple_sanger_analysis(definition_file, output_dir,
             donor = None
 
         print(donor)
-
-        control_sequence_path = os.path.join(data_dir, control_sequence_file)
-        edit_sequence_path = os.path.join(data_dir, edit_sequence_file)
-
-        if single_line is not None:
-            if n != single_line:
-                continue
-
-        msg = "analyzing"
-        print("-" * 50, msg, n, experiment['Label'], guide)
-
         try:
+            if pd.isnull(control_sequence_file):
+                raise IOError("Control filepath not specified at line {} in definition file".format(n+1))
+            if pd.isnull(edit_sequence_file):
+                raise IOError("Edit filepath not specified at line {} in definition file".format(n+1))
+
+            control_sequence_path = os.path.join(data_dir, control_sequence_file)
+            edit_sequence_path = os.path.join(data_dir, edit_sequence_file)
+
+            if single_line is not None:
+                if n != single_line:
+                    continue
+
+            msg = "analyzing"
+            print("-" * 50, msg, n, experiment['Label'], guide)
+
+
             job_args = (control_sequence_path, edit_sequence_path, base_outputname, guide)
             job_kwargs = {
                 'verbose': verbose,
