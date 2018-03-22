@@ -54,7 +54,14 @@ class SangerObject:
         self.basename = None
 
     def estimate_quality_scores(self):
-        #totally hacky way to estimate quality scores
+        '''
+        hacky way to estimate quality scores
+        As ICE uses the quality scores for determining windows for alignment, we just need a rough estimate
+        of base quality.  If the primary color is 90% of the signal, the phred score is 50% of the maximum.
+        If the primary color is 80% of the total signal at that position, the phred score is 0% of the maximum.
+        :return: list of phred scores
+        '''
+
         MAX_PHRED = 60
         peak_values = self.get_peak_values()
         phred_scores = []
