@@ -53,6 +53,29 @@ class SangerObject:
         self.path = None
         self.basename = None
 
+    def estimate_quality_scores(self):
+        #totally hacky way to estimate quality scores
+        MAX_PHRED = 60
+        peak_values = self.get_peak_values()
+        phred_scores = []
+        for idx, base in enumerate(peak_values['C']):
+            sum_values = 0
+            max_value = 0
+            for color in 'ACGT':
+                sum_values += peak_values[color][idx]
+                if peak_values[color][idx] > max_value:
+                    max_value = peak_values[color][idx]
+
+            if sum_values < 100 or sum_values > 5000:
+                phred_score = 0
+            else:
+                other_values = sum_values - max_value
+                phred_score = max(MAX_PHRED-MAX_PHRED*other_values/max_value*10 , 0)
+            #check if absolute intensities are reasonable
+
+            phred_scores.append(phred_score)
+        return phred_scores
+
     def initialize_from_path(self, ab1_file_path, *args, **kwargs):
         '''
 
@@ -79,6 +102,8 @@ class SangerObject:
         for c in traces['PCON2']:
             phred_scores.append(ord(c))
         self.phred_scores = phred_scores
+        if np.count_nonzero(phred_scores) == 0:
+            self.phred_scores = self.estimate_quality_scores()
 
     def find_alignable_window(self, window_size=30, QUAL_CUTOFF=50):
         '''
