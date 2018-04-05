@@ -53,12 +53,14 @@ def test_multiplex_cut():
 
     dropout_proposal = epc.multiplex_proposal(10, 35, "test1", "test2", dropout=True)
     assert dropout_proposal.sequence == "GCACCTGTCCTTGGGTTATTTGCG"
+    assert dropout_proposal.summary.startswith('-25:md')
 
     dropout_ins_proposal = epc.multiplex_proposal(10, 35, "test1", "test2", dropout=True, cut1_ins=2, cut2_ins=3)
     assert dropout_ins_proposal.sequence == "GCACCTGTCCnnTTGGGTTATTTGCG"
 
     indep_cut = epc.multiplex_proposal(10, 35, "test1", "test2", cut1_del=(4, 0), cut2_del=(0, 3))
     assert indep_cut.sequence == "GCACCTCCATAGAAATGGCTATGGAAAGCCTGGTTATTTGCG"
+    assert indep_cut.summary.startswith('-7:m-4[test1]')
 
     indep_cut2 = epc.multiplex_proposal(10, 35, "test1", "test2", cut1_del=(-4, 0), cut2_del=(3, 0))
     assert indep_cut2.sequence == "GCACCTGTCCCCATAGAAATGGCTATGGAAAGTTGGGTTATTTGCG"

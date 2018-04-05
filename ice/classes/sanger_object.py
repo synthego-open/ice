@@ -55,7 +55,7 @@ class SangerObject:
 
     def estimate_quality_scores(self):
         '''
-        hacky way to estimate quality scores
+        a good enough way to estimate quality scores
         As ICE uses the quality scores for determining windows for alignment, we just need a rough estimate
         of base quality.  If the primary color is 90% of the signal, the phred score is 50% of the maximum.
         If the primary color is 80% of the total signal at that position, the phred score is 0% of the maximum.
@@ -109,7 +109,9 @@ class SangerObject:
         for c in traces['PCON2']:
             phred_scores.append(ord(c))
         self.phred_scores = phred_scores
-        if np.count_nonzero(phred_scores) == 0:
+
+        override_quality_score = kwargs.get('override_quality_score', False)
+        if np.count_nonzero(phred_scores) == 0 or override_quality_score:
             self.phred_scores = self.estimate_quality_scores()
 
     def find_alignable_window(self, window_size=30, QUAL_CUTOFF=50):
