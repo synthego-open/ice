@@ -76,8 +76,10 @@ class SangerObject:
             if sum_values < 100 or sum_values > 5000:
                 phred_score = 0
             else:
-                other_values = sum_values - max_value
-                phred_score = max(MAX_PHRED-MAX_PHRED*other_values/max_value*10 , 0)
+                max_value_percent = max_value / sum_values * 100
+                
+                # linear relationship of PHRED score 0 to 60 and max_value_percent 80 to 100
+                phred_score = max(3 * max_value_percent - 240, 0)
             #check if absolute intensities are reasonable
 
             phred_scores.append(phred_score)
