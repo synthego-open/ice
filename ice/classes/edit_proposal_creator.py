@@ -188,8 +188,9 @@ class EditProposalCreator:
             ep.sequence_data = proposal_bases
             ep.cutsite = cutsite1
             ep.cutsite2 = cutsite2
-            total_deleted = cut1_del[0] + cut1_del_after + cut2_del_before + cut2_del[1]
-            total_deleted += -(cutsite2 - cutsite1)
+            total_deleted = -cut1_del[0] - cut1_del_after - cut2_del_before  - cut2_del[1]
+            if dropout:
+                total_deleted += -(cutsite2 - cutsite1)
             ep.bases_changed = total_deleted
             ep.summary = "{}:{}-{}[{}],-{}[{}]".format(total_deleted, summary_code,
                                                        cut1_del[0] + cut1_del_after,
