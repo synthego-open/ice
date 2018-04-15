@@ -47,11 +47,11 @@ def write_contribs_json(sanger_analysis, to_file):
         if entry.x_rel > 0.0:
             abundance = round(entry.x_rel, 3)
             wt = False
-            if entry.summary == 0:
+            if entry.bases_changed == 0:
                 wt = True
             out_list.append({'rel_abundance': abundance,
                              'human_readable': entry.human_readable_sequence(),
-                             'indel': entry.summary, 'wt': wt})
+                             'indel': {'summary': entry.summary, 'total': entry.bases_changed}, 'wt': wt})
 
     editing_outcomes = {}
 
