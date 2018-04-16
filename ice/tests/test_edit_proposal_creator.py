@@ -1,6 +1,7 @@
-from ice.classes.edit_proposal_creator import  EditProposalCreator
+from ice.classes.edit_proposal_creator import EditProposalCreator
 
 import pytest
+
 
 def test_single_cut():
     wt_basecalls = "GCACCTGTCCCCATAGAAAT"
@@ -83,6 +84,7 @@ def test_wt_proposal():
 def test_req_ctrl_trace():
     with pytest.raises(Exception):
         epc = EditProposalCreator("ATCG", use_ctrl_trace=True)
+
 
 def test_generated_trace():
     seq = "ATNCG"

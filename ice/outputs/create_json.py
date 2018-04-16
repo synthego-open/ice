@@ -46,19 +46,15 @@ def write_contribs_json(sanger_analysis, to_file):
     for entry in sanger_analysis.results.contribs:
         if entry.x_rel > 0.0:
             abundance = round(entry.x_rel, 3)
-            wt = False
-            if entry.bases_changed == 0:
-                wt = True
             out_list.append({'rel_abundance': abundance,
                              'human_readable': entry.human_readable_sequence(),
-                             'indel': {'summary': entry.summary, 'total': entry.bases_changed}, 'wt': wt})
+                             'indel': entry.summary_json, 'wt': entry.wildtype})
 
     editing_outcomes = {}
-
     for i in sanger_analysis.results.aggregate:
         editing_outcomes[i] = round(sanger_analysis.results.aggregate[i] * 100, 2)
 
-    output = {'contribs_list': out_list, 'editing_outcomes': editing_outcomes}
+    output = {'contribs_list': out_list, 'editing_outcomes': editing_outcomes, 'multiplex': sanger_analysis.multiplex}
 
     with open(to_file, 'w') as out_file:
         json.dump(output, out_file)

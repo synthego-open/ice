@@ -30,9 +30,13 @@ from ice.classes.proposal_base import ProposalBase
 
 
 class EditProposal:
-    """This class is to store the data for one edit proposal"""
+    """
+    Stores the edit information for a single proposal.
+    """
+    def __init__(self, wildtype=False):
+        # if proposal is wildtype
+        self.wildtype = wildtype
 
-    def __init__(self):
         # list of ProposalBases
         self.sequence_data = None
 
@@ -49,6 +53,9 @@ class EditProposal:
 
         # more comprehensive code for bases_changed
         self.summary = None
+
+        # details of bases changed in json format
+        self.summary_json = None
 
         # absolute and relative coefficients from the regression
         self.x_rel = None
