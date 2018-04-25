@@ -85,7 +85,9 @@ class EditProposalCreator:
             ep.sequence_data = proposal_bases
             ep.cutsite = cutsite
             ep.bases_changed = -(del_before + del_after)
-            ep.summary = "{}[{}]".format(-(del_before + del_after), label)
+            ep.summary = '{}[{}]'.format(-(del_before + del_after), label)
+            ep.summary_json = {'total': ep.bases_changed,
+                               'details': [{'label': label, 'value': ep.bases_changed}]}
             ep.trace_data = proposal_trace
         # insertion case
         elif insertion > 0:
@@ -108,7 +110,9 @@ class EditProposalCreator:
             ep.sequence_data = proposal_bases
             ep.cutsite = cutsite
             ep.bases_changed = insertion
-            ep.summary = "{}[{}]".format(insertion, label)
+            ep.summary = '{}[{}]'.format(insertion, label)
+            ep.summary_json = {'total': ep.bases_changed,
+                               'details': [{'label': label, 'value': ep.bases_changed}]}
             ep.trace_data = proposal_trace
         # wildtype case
         else:
@@ -117,60 +121,65 @@ class EditProposalCreator:
                 proposal_bases.append(proposal_base)
                 for base_index, base_color in enumerate(self.base_order):
                     proposal_trace.append(self.wt_trace[base_color][idx])
-            ep = EditProposal()
+            ep = EditProposal(wildtype=True)
             ep.sequence_data = proposal_bases
             ep.cutsite = cutsite
             ep.bases_changed = 0
-            ep.summary = "0[{}]".format(label)
+            ep.summary = '0[{}]'.format(label)
+            ep.summary_json = {'total': ep.bases_changed,
+                               'details': []}
             ep.trace_data = proposal_trace
         return ep
 
-    def multiplex_proposal(self, cutsite1, cutsite2, label1, label2,
-                           cut1_del=(0, 0), cut1_ins=0, cut2_del=(0, 0), cut2_ins=0,
-                           dropout=False
-                           ):
-        '''
-        this method will be used for two guides cutting at the same time
-        Note that both sites MUST be edited with either a deletion or an insertion.
-        Cases where one guide did not result in an edit should be handled by the single edit method
-        :param cutsite1: must come before cutsite2
-        :param cutsite2:
-        :param cut1_del:
-        :param cut1_ins:
-        :param cut2_del:
-        :param cut2_ins:
-        :return:
-        '''
-        cutsite1 = cutsite1 - 1
-        cutsite2 = cutsite2 - 1
+    def multiplex_proposal(self, cutsite1, cutsite2, label1, label2, cut1_del=(0, 0), cut1_ins=0, cut2_del=(0, 0),
+                           cut2_ins=0, dropout=False):
+        """
+        Makes proposals for two guides cutting at the same time. This method handles both two separate indel proposals
+        or a dropout proposals. Both sites must be part of the edit and cutsite1 must come before cutsite2.
+        :param cutsite1: position of first cutsite
+        :param cutsite2: position of second cutsite
+        :param label1: label of guide target that creates first cutsite
+        :param label2: label of guide target that creates second cutsite
+        :param cut1_del: deletion size before and after first cutsite
+        :param cut1_ins: insertion size at first cutsite
+        :param cut2_del: deletion size before and after second cutsite
+        :param cut2_ins: insertion size at first cutsite
+        :param dropout: if the proposal is a dropout (removal of all bases between cutsites)
+        :return: EditProposal instance
+        """
+        if cutsite2 <= cutsite1:
+            raise Exception('cutsite1 must come before cutsite2 values are ({}, {})'.format(cutsite1, cutsite2))
+
+        cutsite1 -= 1
+        cutsite2 -= 1
         proposal_bases = []
         proposal_trace = []
-        if cutsite2 <= cutsite1:
-            raise Exception("cutsite1 must come before cutsite2 values are ({}, {})".format(cutsite1, cutsite2))
-        summary_code = "m"
+        summary_code = 'm'  # multiplex
         deleted_bases = []
 
         if dropout:
-            summary_code = "md"
+            summary_code = 'md'  # multiplex dropout
             for i in range(cutsite1 + 1, cutsite2 + 1):
                 deleted_bases.append(i)
-        #            deleted_bases = [cutsite-i for i in range(del_before)] + [cutsite+i+1 for i in range(del_after)]
 
         # both cutsites results in deletions
-        # todo, there are no safeguards for if the deletions for one cutsite exceed the boundaries of the other cutsite
+        # TODO, there are no safeguards for if the deletions for one cutsite exceed the boundaries of the other cutsite
         # that info matters a lot for the summary
         # for cut1 allow all deletions before
         # for cut2 allow all deletions after
         # for cut1 deletions after, stop if cut2 reached
         # for cut2 deletions before, stop if cut1 reached
         if cut1_del != (0, 0) and cut2_del != (0, 0):
-            # todo, this should also handle the straight dropout case w/ no extra deletions
+            # TODO, this should also handle the straight dropout case w/ no extra deletions
             if dropout:
+                # zero out deletions between cutsites because dropout logic will take these deleted bases into account
+                # without double counting deletions
                 cut1_del_after = 0
                 cut2_del_before = 0
             else:
                 cut1_del_after = cut1_del[1]
                 cut2_del_before = cut2_del[0]
+
             cut1 = (cutsite1, cut1_del[0], cut1_del_after)
             cut2 = (cutsite2, cut2_del_before, cut2_del[1])
             for cutsite, del_before, del_after in [cut1, cut2]:
@@ -188,16 +197,28 @@ class EditProposalCreator:
             ep.sequence_data = proposal_bases
             ep.cutsite = cutsite1
             ep.cutsite2 = cutsite2
-            total_deleted = -cut1_del[0] - cut1_del_after - cut2_del_before  - cut2_del[1]
+            total_deleted = -cut1_del[0] - cut1_del_after - cut2_del_before - cut2_del[1]
             if dropout:
                 total_deleted += -(cutsite2 - cutsite1)
             ep.bases_changed = total_deleted
-            ep.summary = "{}:{}-{}[{}],-{}[{}]".format(total_deleted, summary_code,
-                                                       cut1_del[0] + cut1_del_after,
+            cut1_del_size = cut1_del[0] + cut1_del_after
+            cut2_del_size = cut2_del_before + cut2_del[1]
+            ep.summary = '{}:{}-{}[{}],-{}[{}]'.format(total_deleted, summary_code,
+                                                       cut1_del_size,
                                                        label1,
-                                                       cut2_del_before + cut2_del[1],
+                                                       cut2_del_size,
                                                        label2
                                                        )
+            summary_json = {}
+            summary_json['total'] = ep.bases_changed
+            summary_json['details'] = []
+            if cut1_del_size > 0:
+                summary_json['details'].append({'label': label1, 'value': -cut1_del_size})
+            if cut2_del_size > 0:
+                summary_json['details'].append({'label': label2, 'value': -cut2_del_size})
+            if dropout:
+                summary_json['details'].append({'label': 'dropout', 'value': cutsite1 - cutsite2})
+            ep.summary_json = summary_json
             ep.trace_data = proposal_trace
 
         # insertion case
@@ -209,19 +230,15 @@ class EditProposalCreator:
             cut2 = (cutsite2, cut2_ins)
 
             for idx, base in enumerate(self.wt_basecalls):
-
                 if idx in deleted_bases:
                     proposal_bases.append(ProposalBase('-', ProposalBase.DELETION, idx))
                 # if base is in range where we need to do insertion
                 elif idx in [cutsite1, cutsite2]:
                     for cutsite, insertion_length in [cut1, cut2]:
                         if cutsite == idx:
-                            # if cutsite != cutsite2:
                             proposal_bases.append(ProposalBase(base, ProposalBase.WILD_TYPE, idx))
                             for base_index, base_color in enumerate(self.base_order):
                                 proposal_trace.append(self.wt_trace[base_color][idx])
-                            # elif dropout:
-                            # proposal_bases.append(ProposalBase('-', ProposalBase.DELETION, idx))
                             for i in range(insertion_length):
                                 proposal_bases.append(ProposalBase('n', ProposalBase.INSERTION, idx))
                                 for base_index, base in enumerate(self.base_order):
@@ -237,7 +254,7 @@ class EditProposalCreator:
             ep.bases_changed = cut1_ins + cut2_ins
             if dropout:
                 ep.bases_changed -= (cutsite2 - cutsite1)
-            ep.summary = "{}:{}+{}[{}],+{}[{}]".format(
+            ep.summary = '{}:{}+{}[{}],+{}[{}]'.format(
                 ep.bases_changed,
                 summary_code,
                 cut1_ins,
@@ -245,6 +262,17 @@ class EditProposalCreator:
                 cut2_ins,
                 label2
             )
+            summary_json = {}
+            summary_json['total'] = ep.bases_changed
+            summary_json['details'] = []
+            if cut1_ins > 0:
+                summary_json['details'].append({'label': label1, 'value': cut1_ins})
+            if cut2_ins > 0:
+                summary_json['details'].append({'label': label2, 'value': cut2_ins})
+            if dropout:
+                summary_json['details'].append({'label': 'dropout', 'value': cutsite1 - cutsite2})
+            ep.summary_json = summary_json
+            ep.trace_data = proposal_trace
             ep.trace_data = proposal_trace
         # the intervening sequence is dropped out and no bases inserted or deleted
         else:
@@ -264,7 +292,10 @@ class EditProposalCreator:
 
                 total_deleted = -(cutsite2 - cutsite1)
                 ep.bases_changed = total_deleted
-                ep.summary = "{}:{}-0[{}],-0[{}]".format(total_deleted, summary_code, label1, label2)
+                ep.summary = '{}:{}-0[{}],-0[{}]'.format(total_deleted, summary_code, label1, label2)
+                ep.bases_changed = total_deleted
+                ep.summary_json = {'total': ep.bases_changed,
+                                   'details': [{'label': 'dropout', 'value': total_deleted}]}
                 ep.trace_data = proposal_trace
             else:
                 # wild type case, use the single edit to model this case
@@ -331,8 +362,10 @@ class EditProposalCreator:
             ep.sequence_data = proposal_bases
             ep.trace_data = proposal_trace
             ep.cutsite = cutsite
-            ep.summary = ProposalBase.HDR
             ep.bases_changed = ProposalBase.HDR
+            ep.summary = ProposalBase.HDR
+            ep.summary_json = {'total': ep.bases_changed,
+                               'details': [{'label': ProposalBase.HDR, 'value': ep.bases_changed}]}
             return ep, changed_bases, odn_start_pos, donor_alignment
         else:
             raise Exception(

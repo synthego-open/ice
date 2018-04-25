@@ -1,6 +1,7 @@
-from ice.classes.edit_proposal_creator import  EditProposalCreator
+from ice.classes.edit_proposal_creator import EditProposalCreator
 
 import pytest
+
 
 def test_single_cut():
     wt_basecalls = "GCACCTGTCCCCATAGAAAT"
@@ -19,31 +20,49 @@ def test_single_cut():
     assert bad_config.sequence == "ACCTGTCCCCATAGAAAT"
 
 
-def test_pretty_print():
-    wt_basecalls = "GCACCTGTCCCCATAGAAAT"
+def test_human_readable_sequence_single_edit_proposal():
+    wt_basecalls = 'ACTGCCTGCACCTGTCCCCATAGAAATCCGCTTTACGGAGAGTCACTAGACTAGGACCCCCATAAATTTCACGACAGGGACTAGACCTTGACTGGATA'
+    epc = EditProposalCreator(wt_basecalls, use_ctrl_trace=False)
+    proposal = epc.single_cut_edit_proposal(27, 'g1', del_before=4)
+
+    # test default padding
+    seq = proposal.human_readable_sequence()
+    assert seq == 'TGCCTGCACCTGTCCCCATAG----|CCGCTTTACGGAGAGTCACTAGACTAGGACCCCCATAAATTTCACGACAG'
+
+    # test custom padding
+    seq = proposal.human_readable_sequence(bp_before_cutsite=10, bp_after_cutsite=15)
+    assert seq == 'CCATAG----|CCGCTTTACGGAGAG'
+
+    # test passing in out of bounds padding values (should default to returning the entire proposed sequence)
+    seq = proposal.human_readable_sequence(bp_before_cutsite=500, bp_after_cutsite=500)
+    assert seq == 'ACTGCCTGCACCTGTCCCCATAG----|CCGCTTTACGGAGAGTCACTAGACTAGGACCCCCATAAATTTCACGACAGGGACTAGACCTTGACTGGAT'
+
+    # test passing in inf values (should return the the entire proposed sequence)
+    seq = proposal.human_readable_sequence(bp_before_cutsite=float('inf'), bp_after_cutsite=float('inf'))
+    assert seq == 'ACTGCCTGCACCTGTCCCCATAG----|CCGCTTTACGGAGAGTCACTAGACTAGGACCCCCATAAATTTCACGACAGGGACTAGACCTTGACTGGAT'
+
+
+def test_human_readable_sequence_multiplex_proposal():
+    wt_basecalls = ('CCCATAAATCCGCTTTACAGTCACTAGACTAGGACCAATTTCACGACAGGGACTAGACCTTGCTGGATAGCACCTGTCCCCATAGAAATGGCTATGGA'
+                    'AAGCCTTTGGGTTATTTGCGGCACCTGTCCCCATAGAAATGGCTATGGAAAGCCTTTGGGTTATTTGCG')
     epc = EditProposalCreator(wt_basecalls, use_ctrl_trace=False)
 
-    with pytest.raises(Exception) as e:
-        proposal = epc.single_cut_edit_proposal(10, "test", del_before=4)
-        proposal.human_readable_sequence()
+    # test close together dropout default padding
+    close_together_dropout_proposal = epc.multiplex_proposal(30, 50, 'g1', 'g2', dropout=True)
+    seq = close_together_dropout_proposal.human_readable_sequence()
+    assert seq == 'AAATCCGCTTTACAGTCACTAGACT|--------------------|GACTAGACCTTGCTGGATAGCACCTGTCCC'
 
-    proposal = epc.single_cut_edit_proposal(10, "test", del_before=4)
-    seq = proposal.human_readable_sequence(bp_before_cutsite=9, bp_after_cutsite=3)
+    # test far apart dropout default padding
+    far_apart_dropout_proposal = epc.multiplex_proposal(30, 90, 'g1', 'g2', dropout=True)
+    seq = far_apart_dropout_proposal.human_readable_sequence()
+    assert seq == ('AAATCCGCTTTACAGTCACTAGACT|------------------------------------------------------------|GCTATGGAAAGC'
+                    'CTTTGGGTTATTT')
 
-    assert seq == "CACCT----|CCA"
-
-def test_pretty_print2():
-    wt_basecalls = "GCACCTGTCCCCATAGAAAT"
-    epc = EditProposalCreator(wt_basecalls, use_ctrl_trace=False)
-
-    with pytest.raises(Exception) as e:
-        proposal = epc.single_cut_edit_proposal(10, "test", del_before=4)
-        proposal.human_readable_sequence()
-
-    proposal = epc.single_cut_edit_proposal(10, "test", del_before=4)
-    seq = proposal.human_readable_sequence(bp_before_cutsite=None, bp_after_cutsite=10)
-
-    assert seq == "GCACCT----|CCATAGAAAT"
+    # test far apart insertion default padding
+    far_apart_dropout_proposal = epc.multiplex_proposal(30, 90, 'g1', 'g2', dropout=False, cut1_ins=2, cut2_ins=4)
+    seq = far_apart_dropout_proposal.human_readable_sequence()
+    assert seq == ('ATCCGCTTTACAGTCACTAGACTnn|AGGACCAATTTCACGACAGGGACTAGACCTTGCTGGATAGCACCTGTCCCCATAGAAATGnnnn|GCTATGGA'
+                    'AAGCCTTTGGGTTATTT')
 
 
 def test_multiplex_cut():
@@ -65,6 +84,7 @@ def test_multiplex_cut():
     indep_cut2 = epc.multiplex_proposal(10, 35, "test1", "test2", cut1_del=(-4, 0), cut2_del=(3, 0))
     assert indep_cut2.sequence == "GCACCTGTCCCCATAGAAATGGCTATGGAAAGTTGGGTTATTTGCG"
 
+
 def test_bad_multiplex():
     wt_basecalls = "GCACCTGTCCCCATAGAAATGGCTATGGAAAGCCTTTGGGTTATTTGCG"
     epc = EditProposalCreator(wt_basecalls, use_ctrl_trace=False)
@@ -83,6 +103,7 @@ def test_wt_proposal():
 def test_req_ctrl_trace():
     with pytest.raises(Exception):
         epc = EditProposalCreator("ATCG", use_ctrl_trace=True)
+
 
 def test_generated_trace():
     seq = "ATNCG"

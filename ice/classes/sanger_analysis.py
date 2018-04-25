@@ -152,6 +152,13 @@ class SangerAnalysis:
         self.donor_odn = donor
         return True
 
+    @property
+    def multiplex(self):
+        """
+        :return: bool indicating if sanger analysis is multiplex
+        """
+        return len(self.guide_targets) > 1
+
     def quality_check(self):
         aw = self.edited_sample.find_alignable_window()
         if aw['max_window'] is None:
