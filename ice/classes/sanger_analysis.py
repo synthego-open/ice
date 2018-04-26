@@ -40,6 +40,7 @@ from ice.classes.ice_result import ICEResult
 from ice.classes.pair_alignment import PairAlignment
 from ice.classes.proposal_base import ProposalBase
 from ice.classes.sanger_object import SangerObject
+from ice.classes.errors import InputError
 from ice.outputs.create_discordance_indel_files import generate_discordance_indel_files
 from ice.outputs.create_json import write_individual_contribs, write_contribs_json, write_all_proposals_json
 from ice.outputs.create_trace_files import generate_trace_files
@@ -350,6 +351,7 @@ class SangerAnalysis:
         # we should not be doing any calculations with data from low quality regions
         # we can cutoff the inference window on the right based on quality
         iw_right_boundary = None
+
         if 'max_window' in ctrl_quality_windows:
             ctrl_aw = ctrl_quality_windows['max_window']
             if ctrl_aw[1] > cutsite:
@@ -371,6 +373,10 @@ class SangerAnalysis:
         last_aligned_ctrl_base = self.alignment.alignment_pairs[self.alignment.last_aligned_pair_idx][0]
 
         iw_right_boundary = min(iw_right_boundary, last_aligned_ctrl_base - 10)
+
+        if iw_right_boundary < cutsite:
+            raise InputError("Input ab1 files have an error: the last aligned base \
+                              between the edited and control file is upstream of the cutsite")
 
         inf_len_after_cutsite = iw_right_boundary - cutsite
         if inf_len_after_cutsite < self.indel_max_size * 3:
@@ -474,6 +480,7 @@ class SangerAnalysis:
 
     def _generate_coefficient_matrix(self):
         num_proposals = len(self.proposals)
+
         iw_length = self.inference_window[1] - self.inference_window[0]
         output_matrix = np.zeros((num_proposals, 4 * iw_length))
 
