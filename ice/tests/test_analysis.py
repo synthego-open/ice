@@ -326,3 +326,28 @@ def test_multiplex_three_guides(temp_dir):
     assert results['status'] == 'succeeded'
     assert results['ice'] == 69
     assert len(results['guides']) == 3
+
+def test_multiplex_three_guides_no_editing(temp_dir):
+    """
+    Running a zero editing multiplex sample, with guides that are far apart
+    """
+
+    control = os.path.join(data_dir(), "multiplex1_control.ab1")
+    sample = os.path.join(data_dir(), "multiplex1_control.ab1")
+
+    output_path = os.path.join(temp_dir, 'multiplex_no_editing_far_guides')
+
+
+    guide = "UUCCCCUUAUUUAGAUAACU,UCCCCUUAUUUAGAUAACUC,TGAGTTTTTTTGTAAGTAGC"
+
+    job_args = (control, sample, output_path, guide)
+    job_kwargs = {'verbose': True}
+
+
+    results = single_sanger_analysis(*job_args, **job_kwargs)
+
+    pp(results)
+
+    assert results['status'] == 'succeeded'
+    assert results['ice'] == 0
+    assert len(results['guides']) == 3
