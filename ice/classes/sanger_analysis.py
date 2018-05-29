@@ -342,7 +342,8 @@ class SangerAnalysis:
 
     def _calculate_inference_window(self):
         left_offset = self.alignment_window[1]
-        cutsite = self.guide_targets[0].cutsite
+        last_guide = max(self.guide_targets, key=lambda x: x.cutsite)
+        cutsite = last_guide.cutsite
         min_indel_sequence_length = 10000
 
         MAX_BASES_AFTER_CUTSITE = 100
