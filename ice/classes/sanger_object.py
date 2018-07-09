@@ -116,7 +116,7 @@ class SangerObject:
         if np.count_nonzero(phred_scores) == 0 or override_quality_score:
             self.phred_scores = self.estimate_quality_scores()
 
-    def find_alignable_window(self, window_size=30, QUAL_CUTOFF=50):
+    def find_alignable_window(self, window_size=30, QUAL_CUTOFF=40):
         '''
         This code finds the optimal window for aligning the edited trace to the reference sequence
         1) It looks at the phred scores and calculates a moving average
