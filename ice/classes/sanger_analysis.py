@@ -28,7 +28,6 @@ Synthego ICE will not infringe any patent, trademark or other rights.
 
 import os
 from itertools import combinations
-from collections import defaultdict
 
 import numpy as np
 from scipy.optimize import nnls
@@ -110,8 +109,7 @@ class SangerAnalysis:
                         inference_window=None,
                         indel_max_size=5,
                         base_outputname=None,
-                        donor=None,
-                        allprops=False):
+                        donor=None):
         """
            indel_size_range=(1,10)
 
@@ -152,7 +150,6 @@ class SangerAnalysis:
         self.inference_window = inference_window
         self.indel_max_size = indel_max_size
         self.donor_odn = donor
-        self.allprops = allprops
         return True
 
     @property
@@ -406,8 +403,6 @@ class SangerAnalysis:
                 cutsite=cutsite, donor_sequence=self.donor_odn)
             proposals.append(hr_proposal)
 
-
-
         # single cut cases
         for guide_target in self.guide_targets:
             cutsite = guide_target.cutsite
@@ -420,12 +415,8 @@ class SangerAnalysis:
                     ep = epc.single_cut_edit_proposal(cutsite, guide_target.label,
                                                       del_before=deletion_before, del_after=deletion_after)
                     proposals.append(ep)
-            insertions = list(range(self.indel_max_size))
-            # if there is a donor, we ignore longer insertions as they may interfere with the inference
-            # this doesn't take into account donors that delete, but is a good start
-            if self.donor_odn is not None:
-                insertions = list(range(4))
 
+            insertions = list(range(self.indel_max_size))
             for insertion in insertions:
                 ep = epc.single_cut_edit_proposal(cutsite, guide_target.label, insertion=insertion)
                 proposals.append(ep)
@@ -639,12 +630,12 @@ class SangerAnalysis:
             predicted = np.dot(A, xvals)
 
             '''
-            optional L1
-            lasso_model = linear_model.Lasso(alpha=0.5, positive=True)
-            lasso_model.fit(A, b)
+            if method == "L1":
+                lasso_model = linear_model.Lasso(alpha=0.5, positive=True)
+                lasso_model.fit(A, b)
 
-            xvals = lasso_model.coef_
-            predicted = np.dot(A, xvals)
+                xvals = lasso_model.coef_
+                predicted = np.dot(A, xvals)
             '''
 
 
@@ -679,7 +670,7 @@ class SangerAnalysis:
 
         # create totals:
 
-        aggregated_indel = defaultdict(float)
+        aggregated_indel = {}
         hdr_percentage = 0
 
         for entry in sorted_by_contribution:
@@ -761,7 +752,5 @@ class SangerAnalysis:
 
         write_individual_contribs(self, to_file=self.base_outputname + "contribs.txt")
         write_contribs_json(self, self.base_outputname + "contribs.json")
-
-
         if self.allprops:
             write_all_proposals_json(self, self.base_outputname + "allproposals.json")

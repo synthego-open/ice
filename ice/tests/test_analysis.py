@@ -189,7 +189,6 @@ def test_donor_example(temp_dir):
     sample = os.path.join(data_dir(), "donor_example_knockin.ab1")
 
     output_path = os.path.join(temp_dir, 'donor_example')
-    #this should result in a +14 insertion
     guide = "AAGTGCAGCTCGTCCGGCGT"
     donor = 'ATCCTCCCGGGAACGTCTCCACCAGCTTCCCTTCCAGCCGACGAGATTGATCTCCGACCCGACGAGCTGCACTTCCTGTCCAAGCACTTCCGCAGCTCAGAGAA'
 

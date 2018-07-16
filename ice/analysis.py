@@ -74,10 +74,9 @@ def single_sanger_analysis(control_path, sample_path, base_outputname, guide, do
     sa.initialize_with(control_path=control_path,
                        edited_path=sample_path,
                        gRNA_sequences=guide,
-                       indel_max_size=20,
+                       indel_max_size=15,
                        base_outputname=base_outputname,
-                       donor=donor,
-                       allprops=allprops)
+                       donor=donor)
     try:
         sa.analyze_sample()
         return sa.results.to_json(sa.guide_targets, sa.warnings)
@@ -104,7 +103,6 @@ def single_sanger_analysis_cli():
                         default=None)
     parser.add_argument('--verbose', dest='verbose', action='store_true')
     parser.add_argument('--version', action='version', version='%(prog)s {version}'.format(version=__version__))
-    parser.add_argument('--allprops', dest='allprops', action='store_true', default=False, help="Output all Edit Proposals, even if they have zero contribution")
 
     args = parser.parse_args()
 
@@ -128,8 +126,7 @@ def single_sanger_analysis_cli():
                            base_outputname=out_dir,
                            guide=args.target,
                            donor=args.donor,
-                           verbose=args.verbose,
-                           allprops=args.allprops)
+                           verbose=args.verbose)
 
 
 def XLSDictReader(f, sheet_index=0):

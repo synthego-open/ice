@@ -85,7 +85,6 @@ class PairAlignment:
         seq2 = self.seq2
 
         match_bonus = 2
-        #(aseq, bseq, match, mismatch, gap_open, gap_extend)
         alignments = pairwise2.align.localms(seq1,
                                              seq2,
                                              match_bonus, -1, -6, -1)
@@ -98,7 +97,6 @@ class PairAlignment:
         seq2 = self.seq2
 
         match_bonus = 2
-        #(aseq, bseq, match, mismatch, gap_open, gap_extend)
         alignments = pairwise2.align.localms(seq1,
                                              seq2,
                                              match_bonus, -1, -3, -1)
