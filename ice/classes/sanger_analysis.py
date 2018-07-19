@@ -406,25 +406,32 @@ class SangerAnalysis:
                 cutsite=cutsite, donor_sequence=self.donor_odn)
             proposals.append(hr_proposal)
 
-
-
         # single cut cases
         for guide_target in self.guide_targets:
             cutsite = guide_target.cutsite
+
             # deletion case
             deletion_befores = list(range(self.indel_max_size + 1))
             deletion_afters = list(range(self.indel_max_size + 1))
+
+            # if there is a donor, remove deletions that are the same size as hdr deletion as they may
+            # interfere with the inference
+            if self.donor_odn and self.donor_alignment.hdr_indel_size in deletion_befores:
+                deletion_befores.remove(self.donor_alignment.hdr_indel_size)
+                deletion_afters.remove(self.donor_alignment.hdr_indel_size)
 
             for deletion_before in deletion_befores:
                 for deletion_after in deletion_afters:
                     ep = epc.single_cut_edit_proposal(cutsite, guide_target.label,
                                                       del_before=deletion_before, del_after=deletion_after)
                     proposals.append(ep)
+
             insertions = list(range(self.indel_max_size))
-            # if there is a donor, we ignore longer insertions as they may interfere with the inference
-            # this doesn't take into account donors that delete, but is a good start
-            if self.donor_odn is not None:
-                insertions = list(range(4))
+
+            # if there is a donor, remove insertions that are the same size as hdr insert as they may
+            # interfere with the inference
+            if self.donor_odn is not None and self.donor_alignment.hdr_indel_size in insertions:
+                insertions.remove(self.donor_alignment.hdr_indel_size)
 
             for insertion in insertions:
                 ep = epc.single_cut_edit_proposal(cutsite, guide_target.label, insertion=insertion)
