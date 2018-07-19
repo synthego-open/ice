@@ -27,7 +27,7 @@ Synthego ICE will not infringe any patent, trademark or other rights.
 """
 
 from ice.classes.edit_proposal import EditProposal
-from ice.classes.pair_alignment import PairAlignment
+from ice.classes.pair_alignment import DonorAlignment, PairAlignment
 from ice.classes.proposal_base import ProposalBase
 from ice.utility.sequence import reverse_complement
 
@@ -352,7 +352,7 @@ class EditProposalCreator:
                 donor_sequence[-self.__class__.MIN_HOMOLOGY_ARM:] in self.wt_basecalls:
 
             # todo confirm that cutsite is inside the HDR region
-            donor_alignment = PairAlignment(self.wt_basecalls, donor_sequence)
+            donor_alignment = DonorAlignment(self.wt_basecalls, donor_sequence)
             donor_alignment.align_ssodn()
 
             proposal_bases, proposal_trace, changed_bases, odn_start_pos = self.recombined_outcome_sequence(

@@ -1,7 +1,8 @@
 import pytest
 
 from ice.classes.pair_alignment import PairAlignment
-from ice.tests.fixtures import example_alignment, shorter_alignment, no_alignment
+from ice.tests.fixtures import example_alignment, shorter_alignment, no_alignment, donor_alignment_contiguous_insert,\
+    donor_alignment_noncontiguous_insert, donor_alignment_insert_and_deletion
 
 
 def test_windowed_alignment():
@@ -30,6 +31,7 @@ def test_coord_conversion():
     with pytest.raises(Exception):
         pa.ctrl2sample_coords(None)
 
+
 def test_no_aln_possible():
     seq1 = 'TTTTTTTTTT'
     seq2 = 'AAAAAAAAAAGGG'
@@ -37,6 +39,7 @@ def test_no_aln_possible():
     flag, msg = pa.align_with_window([0, 14])
     assert not flag
     assert 'No alignment found' in msg
+
 
 def test_no_aln_done():
     pa = example_alignment()
@@ -63,6 +66,7 @@ def test_aln_str():
     assert (str(pa) == 'AATGTAATGATAG\nAATGT-ATGATAG') or \
              (str(pa) == 'AATGTAATGATAG\nAATGTA-TGATAG')
 
+
 def test_aln_data():
     '''
     The alignment after windowing should ignore the last base of the ref seq
@@ -75,6 +79,7 @@ def test_aln_data():
     pa.align_with_window([0, 3])
     for idx, pair in enumerate(pa.alignment_pairs):
         assert pair[0] == pair[1]
+
 
 def test_aln_shorter_sample():
     '''
@@ -94,6 +99,7 @@ def test_aln_shorter_sample():
         else:
             assert pair[0] == None
 
+
 def test_no_aln():
     '''
     This alignment should be None
@@ -102,3 +108,9 @@ def test_no_aln():
     pa = no_alignment()
     pa.align_all()
     assert pa.alignment_pairs is None
+
+
+def test_donor_alignment_hdr_indel_size():
+    assert donor_alignment_contiguous_insert().hdr_indel_size == 5
+    assert donor_alignment_noncontiguous_insert().hdr_indel_size == 7
+    assert donor_alignment_insert_and_deletion().hdr_indel_size == 3

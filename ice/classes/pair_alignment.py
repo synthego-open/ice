@@ -80,19 +80,6 @@ class PairAlignment:
         alignment_txt = aln_objs[0].format("clustal").split('\n', 2)[2]
         return alignment_txt
 
-    def align_ssodn(self):
-        seq1 = self.seq1
-        seq2 = self.seq2
-
-        match_bonus = 2
-        #(aseq, bseq, match, mismatch, gap_open, gap_extend)
-        alignments = pairwise2.align.localms(seq1,
-                                             seq2,
-                                             match_bonus, -1, -6, -1)
-        aln = alignments[0]
-        self.all_aligned_seqs = (aln[0], aln[1])
-        self.all_aligned_clustal = self.align_list_to_clustal(aln, "control", "donor")
-
     def align_all(self):
         seq1 = self.seq1
         seq2 = self.seq2
@@ -252,3 +239,42 @@ class PairAlignment:
                 break
 
         return True, "Aln succeeded"
+
+
+class DonorAlignment(PairAlignment):
+    """
+    Adds functionality that is useful in the specific case of pair alignment between control sequence and donor sequence
+    """
+    MATCH_BONUS = 2
+
+    def __init__(self, control_seq, donor_seq):
+        super(DonorAlignment, self).__init__(control_seq, donor_seq)
+        self.align_ssodn()
+        self.hdr_indel_size = self._calc_hdr_indel_size()  # how much the donor HDR would change control seq length
+
+    @property
+    def aligned_control_seq(self):
+        return self.all_aligned_seqs[0]
+
+    @property
+    def aligned_donor_seq(self):
+        return self.all_aligned_seqs[1]
+
+    def _calc_hdr_indel_size(self):
+        insert_total_len = self.aligned_control_seq.strip('-').count('-')
+        deletion_total_len = self.aligned_donor_seq.strip('-').count('-')
+        return insert_total_len - deletion_total_len
+
+    @property
+    def control_seq(self):
+        return self.seq1
+
+    @property
+    def donor_seq(self):
+        return self.seq2
+
+    def align_ssodn(self):
+        alignments = pairwise2.align.localms(self.control_seq, self.donor_seq, self.MATCH_BONUS, -1, -6, -1)
+        alignment = alignments[0]
+        self.all_aligned_seqs = (alignment[0], alignment[1])
+        self.all_aligned_clustal = self.align_list_to_clustal(alignment, 'control', 'donor')

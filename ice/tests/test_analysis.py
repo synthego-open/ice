@@ -68,6 +68,7 @@ def test_low_quality_control(temp_dir):
     results = single_sanger_analysis(*job_args, **job_kwargs)
     assert 'Low quality control trace' in results['notes']
 
+
 def test_low_quality_control_fail(temp_dir):
     #Low quality control trace --> no analysis possible
     bad_quality = os.path.join(data_dir(), "low_quality_control.ab1")
@@ -99,6 +100,7 @@ def test_sanger_analysis_bad_path(temp_dir):
     with pytest.raises(Exception):
         sa.initialize_with(control, sample, "1234")
 
+
 def test_low_quality_sample(temp_dir):
     """ Running a low quality sample"""
 
@@ -120,7 +122,6 @@ def test_low_quality_sample(temp_dir):
     assert 'Sample ab1 low_quality_edited.ab1 quality scores too low' in results['notes']
 
 
-
 def test_bad_paths(temp_dir):
     control = os.path.join(data_dir(), "does_not_exist.abcxyz")
     sample = os.path.join(data_dir(), "alignment_fail_edited.ab1")
@@ -139,6 +140,7 @@ def test_bad_paths(temp_dir):
     job_kwargs = {'verbose': True}
     with pytest.raises(Exception):
         results = single_sanger_analysis(*job_args, **job_kwargs)
+
 
 def test_alignment_fail(temp_dir):
 
@@ -183,14 +185,15 @@ def test_sequence_not_found(temp_dir):
 
 
 def test_donor_example(temp_dir):
-    """Running a good sample with HDR"""
+    """ Running a good sample with HDR """
 
-    control = os.path.join(data_dir(), "donor_example_control.ab1")
-    sample = os.path.join(data_dir(), "donor_example_knockin.ab1")
+    control = os.path.join(data_dir(), 'donor_example_control.ab1')
+    sample = os.path.join(data_dir(), 'donor_example_knockin.ab1')
 
     output_path = os.path.join(temp_dir, 'donor_example')
-    #this should result in a +14 insertion
-    guide = "AAGTGCAGCTCGTCCGGCGT"
+
+    # this should result in a +14 insertion
+    guide = 'AAGTGCAGCTCGTCCGGCGT'
     donor = 'ATCCTCCCGGGAACGTCTCCACCAGCTTCCCTTCCAGCCGACGAGATTGATCTCCGACCCGACGAGCTGCACTTCCTGTCCAAGCACTTCCGCAGCTCAGAGAA'
 
     job_args = (control, sample, output_path, guide, donor)
@@ -201,8 +204,7 @@ def test_donor_example(temp_dir):
     pp(results)
 
     assert results['status'] == 'succeeded'
-    assert results['hdr_pct'] > 20
-
+    assert pytest.approx(results['hdr_pct']) == 29.70283309122449
 
 
 def test_multiplex_0_0(temp_dir):
@@ -225,7 +227,6 @@ def test_multiplex_0_0(temp_dir):
     assert results['ice_d'] == 66
 
 
-
 def test_multiplex_0_1(temp_dir):
     """ Running a good multiplex sample"""
 
@@ -244,6 +245,7 @@ def test_multiplex_0_1(temp_dir):
 
     assert results['status'] == 'succeeded'
     assert results['ice_d'] == 66
+
 
 def test_multiplex_0_2(temp_dir):
     """ Running a good multiplex sample"""
@@ -327,6 +329,7 @@ def test_multiplex_three_guides(temp_dir):
     assert results['status'] == 'succeeded'
     assert results['ice'] == 69
     assert len(results['guides']) == 3
+
 
 def test_multiplex_three_guides_no_editing(temp_dir):
     """
