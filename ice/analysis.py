@@ -74,7 +74,7 @@ def single_sanger_analysis(control_path, sample_path, base_outputname, guide, do
     sa.initialize_with(control_path=control_path,
                        edited_path=sample_path,
                        gRNA_sequences=guide,
-                       indel_max_size=20,
+                       indel_max_size=15,
                        base_outputname=base_outputname,
                        donor=donor,
                        allprops=allprops)
