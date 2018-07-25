@@ -415,8 +415,9 @@ class SangerAnalysis:
             deletion_afters = list(range(self.indel_max_size + 1))
 
             # if there is a donor, remove deletions that are the same size as hdr deletion as they may
-            # interfere with the inference
-            if self.donor_odn and self.donor_alignment.hdr_indel_size in deletion_befores:
+            # interfere with the inference. Ignore 0 case to not throw out wildtype
+            if self.donor_odn and self.donor_alignment.hdr_indel_size != 0\
+                    and self.donor_alignment.hdr_indel_size in deletion_befores:
                 deletion_befores.remove(self.donor_alignment.hdr_indel_size)
                 deletion_afters.remove(self.donor_alignment.hdr_indel_size)
 
@@ -429,8 +430,9 @@ class SangerAnalysis:
             insertions = list(range(self.indel_max_size))
 
             # if there is a donor, remove insertions that are the same size as hdr insert as they may
-            # interfere with the inference
-            if self.donor_odn is not None and self.donor_alignment.hdr_indel_size in insertions:
+            # interfere with the inference. Ignore 0 case to not throw out wildtype
+            if self.donor_odn is not None and self.donor_alignment.hdr_indel_size != 0\
+                    and self.donor_alignment.hdr_indel_size in insertions:
                 insertions.remove(self.donor_alignment.hdr_indel_size)
 
             for insertion in insertions:
