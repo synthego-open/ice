@@ -427,7 +427,7 @@ class SangerAnalysis:
                                                       del_before=deletion_before, del_after=deletion_after)
                     proposals.append(ep)
 
-            insertions = list(range(self.indel_max_size))
+            insertions = list(range(self.indel_max_size + 1))
 
             # if there is a donor, remove insertions that are the same size as hdr insert as they may
             # interfere with the inference. Ignore 0 case to not throw out wildtype

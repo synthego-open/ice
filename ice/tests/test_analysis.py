@@ -226,7 +226,7 @@ def test_donor_substitution_example(temp_dir):
     pp(results)
 
     assert results['status'] == 'succeeded'
-    assert pytest.approx(results['hdr_pct']) == 49.7428211026931
+    assert pytest.approx(results['hdr_pct']) == 49.42660823273503
 
 
 def test_multiplex_0_0(temp_dir):
