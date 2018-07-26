@@ -2,7 +2,7 @@ import pytest
 
 from ice.classes.pair_alignment import PairAlignment
 from ice.tests.fixtures import example_alignment, shorter_alignment, no_alignment, donor_alignment_contiguous_insert,\
-    donor_alignment_noncontiguous_insert, donor_alignment_insert_and_deletion
+    donor_alignment_noncontiguous_insert, donor_alignment_insert_and_deletion, donor_alignment_deletion
 
 
 def test_windowed_alignment():
@@ -114,3 +114,4 @@ def test_donor_alignment_hdr_indel_size():
     assert donor_alignment_contiguous_insert().hdr_indel_size == 5
     assert donor_alignment_noncontiguous_insert().hdr_indel_size == 7
     assert donor_alignment_insert_and_deletion().hdr_indel_size == 3
+    assert donor_alignment_deletion().hdr_indel_size == -4

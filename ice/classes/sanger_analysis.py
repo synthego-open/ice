@@ -57,6 +57,7 @@ class SangerAnalysis:
     """
 
     iced_correction_factor = 1.41  # ICE-D regression coefficient
+    HDR_OVERLAP_FILTER_CUTOFF = 3  # abs val cutoff to not skip proposals even if they overlap in size w/ HDR proposal
 
     def __init__(self, verbose=False):
 
@@ -391,14 +392,27 @@ class SangerAnalysis:
         # set inference_window
         self.inference_window = (left_offset, iw_right_boundary)
 
+    def _should_skip_proposal(self, indel_size):
+        """
+        Indels larger than min cutoff that overlap in size with donor are not considered as an edit proposal
+        """
+        # Only consider skipping proposals if there is a donor
+        if not self.donor_odn:
+            return False
+
+        # Don't filter out small indels because they are still likely to occur with HDR
+        if abs(indel_size) <= self.HDR_OVERLAP_FILTER_CUTOFF:
+            return False
+
+        # Skip proposal if same size as donor
+        return indel_size == self.donor_alignment.hdr_indel_size
+
     def _generate_edit_proposals(self):
         epc = EditProposalCreator(self.control_sample.primary_base_calls,
                                   use_ctrl_trace=True,
                                   sanger_object=self.control_sample)
         proposals = []
 
-        # only consider HR for first guide_target
-        # we have already run homologous_recombination_proposal earlier, so no need to catch exceptions
         if self.donor_odn is not None:
             cutsite = self.guide_targets[0].cutsite
 
@@ -414,26 +428,20 @@ class SangerAnalysis:
             deletion_befores = list(range(self.indel_max_size + 1))
             deletion_afters = list(range(self.indel_max_size + 1))
 
-            # if there is a donor, remove deletions that are the same size as hdr deletion as they may
-            # interfere with the inference
-            if self.donor_odn and self.donor_alignment.hdr_indel_size in deletion_befores:
-                deletion_befores.remove(self.donor_alignment.hdr_indel_size)
-                deletion_afters.remove(self.donor_alignment.hdr_indel_size)
-
             for deletion_before in deletion_befores:
                 for deletion_after in deletion_afters:
+                    indel_size = -(deletion_before + deletion_after)
+                    if self._should_skip_proposal(indel_size):
+                        continue
                     ep = epc.single_cut_edit_proposal(cutsite, guide_target.label,
                                                       del_before=deletion_before, del_after=deletion_after)
                     proposals.append(ep)
 
-            insertions = list(range(self.indel_max_size))
-
-            # if there is a donor, remove insertions that are the same size as hdr insert as they may
-            # interfere with the inference
-            if self.donor_odn is not None and self.donor_alignment.hdr_indel_size in insertions:
-                insertions.remove(self.donor_alignment.hdr_indel_size)
+            insertions = list(range(self.indel_max_size + 1))
 
             for insertion in insertions:
+                if self._should_skip_proposal(insertion):
+                    continue
                 ep = epc.single_cut_edit_proposal(cutsite, guide_target.label, insertion=insertion)
                 proposals.append(ep)
 
