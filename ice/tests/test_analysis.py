@@ -207,6 +207,28 @@ def test_donor_example(temp_dir):
     assert pytest.approx(results['hdr_pct']) == 29.70283309122449
 
 
+def test_donor_substitution_example(temp_dir):
+    """ Running a good sample with donor containing only a 2bp substitution """
+    control = os.path.join(data_dir(), 'donor_sub_example_control.ab1')
+    sample = os.path.join(data_dir(), 'donor_sub_example_edited.ab1')
+
+    output_path = os.path.join(temp_dir, 'donor_example')
+
+    # this should result in a 2bp substitution
+    guide = 'GCTGCTTCCTGGGGGCGCCT'
+    donor = 'AGCCTCAGGGCCTCACACCAGCCCATGTGGATGACCTGAGGGTCCTGTTTCCCATCCCACttCAGGCGCCCCCAGGAAGCAGCGGCGGGAGCGCACCACCTTCACCCGGAGCCAACTGGAGG'
+
+    job_args = (control, sample, output_path, guide, donor)
+    job_kwargs = {'verbose': True}
+
+    results = single_sanger_analysis(*job_args, **job_kwargs)
+
+    pp(results)
+
+    assert results['status'] == 'succeeded'
+    assert pytest.approx(results['hdr_pct']) == 49.7428211026931
+
+
 def test_multiplex_0_0(temp_dir):
     """ Running a good multiplex sample"""
 
