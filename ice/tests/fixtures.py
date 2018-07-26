@@ -59,8 +59,21 @@ def donor_alignment_insert_and_deletion():
     aligned control seq 'CCCCTGAAATGTA-----ATGATAGCCAATTGACT'
     aligned donor seq   '----TGAAATGTATTTTTATGATAGCC--TTGACT'
     """
-    control_seq = 'CCCCTGAAATGTA-----ATGATAGCCAATTGACT'
-    donor_seq = '----TGAAATGTATTTTTATGATAGCC--TTGACT'
+    control_seq = 'CCCCTGAAATGTAATGATAGCCAATTGACT'
+    donor_seq = 'TGAAATGTATTTTTATGATAGCCTTGACT'
+    return DonorAlignment(control_seq, donor_seq)
+
+
+@pytest.fixture
+def donor_alignment_deletion():
+    """
+    Returns example of DonorAlignment with size 5 insert and size 2 deletion
+    Expected alignments:
+    aligned control seq 'CCCCTGAAATGTAATGATAGCCAATTGACT'
+    aligned donor seq   '----TGAAATGTAATGATAG----TTGACT'
+    """
+    control_seq = 'CCCCTGAAATGTAATGATAGCCAATTGACT'
+    donor_seq = 'TGAAATGTAATGATAGTTGACT'
     return DonorAlignment(control_seq, donor_seq)
 
 
