@@ -1,8 +1,8 @@
-
 import os
 from pprint import pprint as pp
 
 import pytest
+from unittest.mock import MagicMock
 
 from ice.analysis import single_sanger_analysis
 from ice.classes.sanger_analysis import SangerAnalysis
@@ -377,3 +377,42 @@ def test_multiplex_three_guides_no_editing(temp_dir):
     assert results['status'] == 'succeeded'
     assert results['ice'] == 0
     assert len(results['guides']) == 3
+
+
+def test_should_skip_proposal():
+    fake_donor = 'ATCG'
+    size_5_insertion = MagicMock(hdr_indel_size=5)
+    mocked_sanger_analysis = MagicMock(_should_skip_proposal=SangerAnalysis._should_skip_proposal, donor_odn=fake_donor,
+                                       HDR_OVERLAP_FILTER_CUTOFF=3, donor_alignment=size_5_insertion)
+
+    # does pass insert above cutoff that is same size as donor
+    assert mocked_sanger_analysis._should_skip_proposal(mocked_sanger_analysis, 5)
+
+    # does not pass if there is not a donor_odn
+    mocked_sanger_analysis.donor_odn = None
+    assert not mocked_sanger_analysis._should_skip_proposal(mocked_sanger_analysis, 5)
+    mocked_sanger_analysis.donor_odn = fake_donor  # add back fake donor for rest of tests
+
+    # does not pass insert above cutoff that isn't same size as donor
+    assert not mocked_sanger_analysis._should_skip_proposal(mocked_sanger_analysis, 6)
+
+    # does pass deletion above cutoff
+    size_7_deletion = MagicMock(hdr_indel_size=-7)
+    mocked_sanger_analysis.donor_alignment = size_7_deletion
+    assert mocked_sanger_analysis._should_skip_proposal(mocked_sanger_analysis, -7)
+
+    # does not pass deletion above cutoff that isn't same size as donor
+    assert not mocked_sanger_analysis._should_skip_proposal(mocked_sanger_analysis, -5)
+
+    # does not pass insert same size as deletion
+    assert not mocked_sanger_analysis._should_skip_proposal(mocked_sanger_analysis, 7)
+
+    # does not pass insert equal to cutoff
+    size_3_insertion = MagicMock(hdr_indel_size=3)
+    mocked_sanger_analysis.donor_alignment = size_3_insertion
+    assert not mocked_sanger_analysis._should_skip_proposal(mocked_sanger_analysis, 3)
+
+    # does not pass deletion below cutoff
+    size_2_deletion = MagicMock(hdr_indel_size=-2)
+    mocked_sanger_analysis.donor_alignment = size_2_deletion
+    assert not mocked_sanger_analysis._should_skip_proposal(mocked_sanger_analysis, -2)

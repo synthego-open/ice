@@ -396,7 +396,16 @@ class SangerAnalysis:
         """
         Indels larger than min cutoff that overlap in size with donor are not considered as an edit proposal
         """
-        return self.donor_odn and self.HDR_OVERLAP_FILTER_CUTOFF < indel_size == self.donor_alignment.hdr_indel_size
+        # Only consider skipping proposals if there is a donor
+        if not self.donor_odn:
+            return False
+
+        # Don't filter out small indels because they are still likely to occur with HDR
+        if abs(indel_size) <= self.HDR_OVERLAP_FILTER_CUTOFF:
+            return False
+
+        # Skip proposal if same size as donor
+        return indel_size == self.donor_alignment.hdr_indel_size
 
     def _generate_edit_proposals(self):
         epc = EditProposalCreator(self.control_sample.primary_base_calls,
@@ -421,7 +430,8 @@ class SangerAnalysis:
 
             for deletion_before in deletion_befores:
                 for deletion_after in deletion_afters:
-                    if self._should_skip_proposal(deletion_before + deletion_after):
+                    indel_size = -(deletion_before + deletion_after)
+                    if self._should_skip_proposal(indel_size):
                         continue
                     ep = epc.single_cut_edit_proposal(cutsite, guide_target.label,
                                                       del_before=deletion_before, del_after=deletion_after)
