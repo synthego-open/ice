@@ -67,7 +67,7 @@ def donor_alignment_insert_and_deletion():
 @pytest.fixture
 def donor_alignment_deletion():
     """
-    Returns example of DonorAlignment with size 5 insert and size 2 deletion
+    Returns example of DonorAlignment with size 4 deletion
     Expected alignments:
     aligned control seq 'CCCCTGAAATGTAATGATAGCCAATTGACT'
     aligned donor seq   '----TGAAATGTAATGATAG----TTGACT'
