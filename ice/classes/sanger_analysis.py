@@ -648,19 +648,16 @@ class SangerAnalysis:
 
         try:
 
-            xvals, rnorm = nnls(A, b)
+            # xvals, rnorm = nnls(A, b)
+            #
+            # # compute the predicted signal
+            # predicted = np.dot(A, xvals)
 
-            # compute the predicted signal
-            predicted = np.dot(A, xvals)
-
-            '''
-            optional L1
             lasso_model = linear_model.Lasso(alpha=0.5, positive=True)
             lasso_model.fit(A, b)
 
             xvals = lasso_model.coef_
             predicted = np.dot(A, xvals)
-            '''
 
 
         except Exception as e:
