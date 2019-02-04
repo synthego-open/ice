@@ -356,7 +356,9 @@ class SangerAnalysis:
         for ind in self.proposals:
             if len(ind.sequence) < min_indel_sequence_length:
                 min_indel_sequence_length = len(ind.sequence)
-
+                #min_indel = ind.sequence
+        #[print(str(ind.bases_changed) + '__' + str(len(ind.sequence))) for ind in self.proposals]
+        #import pdb;pdb.set_trace()
         ctrl_quality_windows = self.control_sample.find_alignable_window(window_size=10, QUAL_CUTOFF=35)
 
         # we should not be doing any calculations with data from low quality regions
@@ -508,7 +510,7 @@ class SangerAnalysis:
         num_proposals = len(self.proposals)
         iw_length = self.inference_window[1] - self.inference_window[0]
         output_matrix = np.zeros((num_proposals, 4 * iw_length))
-
+        #import pdb; pdb.set_trace()
         for edit_proposal_idx, ep in enumerate(self.proposals):
             for base_index in range(self.inference_window[0], self.inference_window[1]):
                 seq_index = base_index - self.inference_window[0]
@@ -625,7 +627,7 @@ class SangerAnalysis:
         A = self.coefficient_matrix
 
         b = self.output_vec
-
+        #import pdb; pdb.set_trace()
         if self.verbose:
             print("")
             print('NNLS input shapes')
@@ -648,17 +650,16 @@ class SangerAnalysis:
 
         try:
 
-            # xvals, rnorm = nnls(A, b)
-            #
-            # # compute the predicted signal
-            # predicted = np.dot(A, xvals)
+            #xvals, rnorm = nnls(A, b)
+
+            # compute the predicted signal
+            #predicted = np.dot(A, xvals)
 
             lasso_model = linear_model.Lasso(alpha=0.5, positive=True)
             lasso_model.fit(A, b)
 
             xvals = lasso_model.coef_
             predicted = np.dot(A, xvals)
-
 
         except Exception as e:
 
