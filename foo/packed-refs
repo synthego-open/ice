@@ -1,0 +1,8 @@
+# pack-refs with: peeled fully-peeled sorted 
+0d8d15e24979d8bcc84a22689b403707b8fd6f93 refs/remotes/origin/fix_throwing_out_wildtype_hdr
+df1446ec8de39fadab93ed2c67a54b4846cd0647 refs/remotes/origin/master
+a2830034f51e7d269b49a52e9847ea96d224a535 refs/remotes/origin/multiplex_inference_padding
+74e43b8e2ba7fe6f5d385f70791444cf6e0b80d2 refs/remotes/origin/revert-14-dev/COM-1038a
+516612ebafc6d67a8a156b2fc680023aaf114a1f refs/remotes/origin/temp_revert_indel_max_size
+281ff7135b0e92ae380dc7aed11159edce52a5ba refs/remotes/origin/update_knockin_indel_filtering
+08e345e87cdbb43638ec2536096bec913cbcb8cd refs/tags/1.1.0

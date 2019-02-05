@@ -274,7 +274,7 @@ class DonorAlignment(PairAlignment):
         return self.seq2
 
     def align_ssodn(self):
-        alignments = pairwise2.align.localms(self.control_seq, self.donor_seq, self.MATCH_BONUS, -1, -6, -1)
+        alignments = pairwise2.align.localms(self.control_seq, self.donor_seq, self.MATCH_BONUS, -1, -6, -.5)
         alignment = alignments[0]
         self.all_aligned_seqs = (alignment[0], alignment[1])
         self.all_aligned_clustal = self.align_list_to_clustal(alignment, 'control', 'donor')
