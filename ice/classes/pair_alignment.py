@@ -274,6 +274,7 @@ class DonorAlignment(PairAlignment):
         return self.seq2
 
     def align_ssodn(self):
+        print('starting to align ssodn')
         alignments = pairwise2.align.localms(self.control_seq, self.donor_seq, self.MATCH_BONUS, -1, -6, -.5)
         alignment = alignments[0]
         self.all_aligned_seqs = (alignment[0], alignment[1])
