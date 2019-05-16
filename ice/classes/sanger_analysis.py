@@ -45,7 +45,25 @@ from ice.outputs.create_discordance_indel_files import generate_discordance_inde
 from ice.outputs.create_json import write_individual_contribs, write_contribs_json, write_all_proposals_json
 from ice.outputs.create_trace_files import generate_trace_files
 from ice.utility.sequence import RNA2DNA, reverse_complement
+def round_percent(orig_array,r_squared):
+    # Scale the array by 100 in order to work with np.floor
+    scaled_array=np.array([x*100 for x in orig_array])
 
+
+    #floored array
+    fl_dist = np.floor(scaled_array)
+    # Calculate the total difference between the floored array and the r2, this difference must be added back
+    total_lost=round(r_squared*100)-np.sum(fl_dist)
+
+    # Rank each value by how much it lost when it was floored
+    order=sorted([ (x,ix) for ix,x in enumerate(scaled_array-np.floor(scaled_array))],reverse=True)
+
+
+    # Add back what was lost in total, accoridng to how much each value lost.
+    for l in range(int(total_lost)):
+        fl_dist[order[l][1]]+=1
+
+    return fl_dist/100 #set it back to a percentage
 
 class SangerAnalysis:
     """
@@ -219,6 +237,10 @@ class SangerAnalysis:
         epc = EditProposalCreator(self.control_sample.primary_base_calls,
                                   use_ctrl_trace=True,
                                   sanger_object=self.control_sample)
+
+        if len(self.donor_odn)> len(self.control_sample.primary_base_calls)*0.75:
+            self.warnings.append("Large Donor of {} bp compared to control sequence of {} bp".format(len(self.donor_odn),len(self.control_sample.primary_base_calls)))
+
         try:
             cutsite = self.guide_targets[0].cutsite
             hr_proposal, changed_bases, odn_start_pos, aln = epc.homologous_recombination_proposal(
@@ -356,7 +378,9 @@ class SangerAnalysis:
         for ind in self.proposals:
             if len(ind.sequence) < min_indel_sequence_length:
                 min_indel_sequence_length = len(ind.sequence)
-
+                #min_indel = ind.sequence
+        #[print(str(ind.bases_changed) + '__' + str(len(ind.sequence))) for ind in self.proposals]
+        #import pdb;pdb.set_trace()
         ctrl_quality_windows = self.control_sample.find_alignable_window(window_size=10, QUAL_CUTOFF=35)
 
         # we should not be doing any calculations with data from low quality regions
@@ -508,7 +532,7 @@ class SangerAnalysis:
         num_proposals = len(self.proposals)
         iw_length = self.inference_window[1] - self.inference_window[0]
         output_matrix = np.zeros((num_proposals, 4 * iw_length))
-
+        #import pdb; pdb.set_trace()
         for edit_proposal_idx, ep in enumerate(self.proposals):
             for base_index in range(self.inference_window[0], self.inference_window[1]):
                 seq_index = base_index - self.inference_window[0]
@@ -625,7 +649,7 @@ class SangerAnalysis:
         A = self.coefficient_matrix
 
         b = self.output_vec
-
+        #import pdb; pdb.set_trace()
         if self.verbose:
             print("")
             print('NNLS input shapes')
@@ -653,9 +677,8 @@ class SangerAnalysis:
             # compute the predicted signal
             #predicted = np.dot(A, xvals)
 
-            
             #optional L1
-            lasso_model = linear_model.Lasso(alpha=0.5, positive=True)
+            lasso_model = linear_model.Lasso(alpha=0.8, positive=True)
             lasso_model.fit(A, b)
 
             xvals = lasso_model.coef_
@@ -685,6 +708,16 @@ class SangerAnalysis:
                 ##edited cases
                 else:
                     self.proposals[n].x_rel = x_val / (1.0 * xtotal) * self.results.r_squared
+
+        new_array = round_percent([x.x_rel for x in self.proposals], self.results.r_squared)
+        # new_array=[np.floor(x.x_rel*100)/100 for x in self.proposals]
+
+        for n, val in enumerate(new_array):
+            self.proposals[n].x_rel = val
+
+        self.results.r_squared = np.round(self.results.r_squared,2)
+
+
 
     def analyze_and_rank(self):
 

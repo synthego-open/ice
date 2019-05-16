@@ -64,3 +64,17 @@ job_kwargs = {
 }
 
 multiple_sanger_analysis(*job_args, **job_kwargs)
+
+# ## for testing
+# definition_file = os.path.abspath('../knockin_test_data/knockin_test.xlsx')
+# data_directory = os.path.abspath('../knockin_test_data/ab1s/')
+# output_dir = '../knockin_test_data/output'
+#
+#
+# job_args = (definition_file, output_dir)
+# job_kwargs = {
+#     'verbose': True,
+#     'data_dir': data_directory
+# }
+#
+# multiple_sanger_analysis(*job_args, **job_kwargs)
