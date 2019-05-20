@@ -279,5 +279,3 @@ class DonorAlignment(PairAlignment):
         alignment = alignments[0]
         self.all_aligned_seqs = (alignment[0], alignment[1])
         self.all_aligned_clustal = self.align_list_to_clustal(alignment, 'control', 'donor')
-
-

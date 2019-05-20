@@ -34,7 +34,7 @@ import numpy as np
 from scipy.optimize import nnls
 from scipy.stats.stats import pearsonr
 from sklearn import linear_model
-
+import re
 from ice.classes.edit_proposal_creator import EditProposalCreator
 from ice.classes.guide_target import GuideTarget
 from ice.classes.ice_result import ICEResult
@@ -241,6 +241,9 @@ class SangerAnalysis:
         if len(self.donor_odn)> len(self.control_sample.primary_base_calls)*0.75:
             self.warnings.append("Large Donor of {} bp compared to control sequence of {} bp".format(len(self.donor_odn),len(self.control_sample.primary_base_calls)))
 
+
+            #int((len(re.split("(-+)", alignment[0])) - 3) / 2)
+
         try:
             cutsite = self.guide_targets[0].cutsite
             hr_proposal, changed_bases, odn_start_pos, aln = epc.homologous_recombination_proposal(
@@ -250,6 +253,10 @@ class SangerAnalysis:
             self.recombination_changed_bases = changed_bases
             self.odn_start_pos = odn_start_pos
             self.donor_alignment = aln
+
+            n_splits=int((len(re.split("(-+)", aln.all_aligned_seqs[0])) - 3) / 2)
+            if n_splits>0:
+                self.warnings.append("{} donor integration sites".format(n_splits+1))
 
 
         except Exception as e:
@@ -526,7 +533,11 @@ class SangerAnalysis:
                 if dropout_and_insert:
                     proposals.append(dropout_and_insert)
 
-        self.proposals = proposals
+
+        #removing degenerate proposals
+        seen=[]
+        self.proposals = list(filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
+
 
     def _generate_coefficient_matrix(self):
         num_proposals = len(self.proposals)
