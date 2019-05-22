@@ -136,6 +136,8 @@ class SangerObject:
         # find regions with windowed mean > QUAL_CUTOFF
         y = find_regions_greater_than(windowed_phred, QUAL_CUTOFF)
 
+
+
         max_window_size = 0
         max_window = None
         for region in y:

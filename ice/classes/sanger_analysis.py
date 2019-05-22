@@ -210,6 +210,15 @@ class SangerAnalysis:
             guide_start = ctrl_seq.index(found_seq)
             guide_end = guide_start + len(found_seq)
             cutsite = guide_start + cut_offset
+
+
+            ### checking for PAMs
+            if orientation=="rev" and ctrl_seq[guide_start - 3:guide_start - 1]!='CC':
+                self.warnings.append("No PAM upstream of guide {}".format(guide_label))
+
+            elif orientation=="fwd" and ctrl_seq[guide_end + 1:guide_end + 3]!='GG':
+                self.warnings.append("No PAM downstream of guide {}".format(guide_label))
+
             return GuideTarget(
                 orientation=orientation,
                 cut_offset=cut_offset,
@@ -755,6 +764,7 @@ class SangerAnalysis:
         if self.debug:
             print(aggregated_indel)
             print(sorted_by_contribution)
+        print(editing_efficiency)
         self.results.aggregate = aggregated_indel
         self.results.contribs = sorted_by_contribution
         self.results.edit_eff = editing_efficiency
