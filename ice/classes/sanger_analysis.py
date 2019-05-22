@@ -764,7 +764,6 @@ class SangerAnalysis:
         if self.debug:
             print(aggregated_indel)
             print(sorted_by_contribution)
-        print(editing_efficiency)
         self.results.aggregate = aggregated_indel
         self.results.contribs = sorted_by_contribution
         self.results.edit_eff = editing_efficiency
