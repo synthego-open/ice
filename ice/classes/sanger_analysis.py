@@ -370,6 +370,11 @@ class SangerAnalysis:
         if self.debug:
             print("Cutsite for discord calcs: {}".format(cutsite))
 
+        if not before_dsb or not after_dsb:
+            #TODO find more precise description of this error
+            self.warnings.append("Unable to compute discordance plots")
+
+
         mean_before = np.mean(before_dsb)
         mean_after = np.mean(after_dsb)
 

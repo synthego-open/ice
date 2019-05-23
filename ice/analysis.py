@@ -87,7 +87,10 @@ def single_sanger_analysis(control_path, sample_path, base_outputname, guide, do
 
         print('Exception Caught!')
         traceback.print_exc()
-        return results.to_json(sa.guide_targets, [str(e)])
+        if isinstance(e,KeyError):
+            return results.to_json(sa.guide_targets, [';'.join(sa.warnings)])
+        else:
+            return results.to_json(sa.guide_targets, [str(e)])
 
 
 def single_sanger_analysis_cli():
