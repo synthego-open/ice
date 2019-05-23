@@ -749,6 +749,7 @@ class SangerAnalysis:
 
         aggregated_indel = defaultdict(float)
         hdr_percentage = 0
+        ko_score=0
 
         for entry in sorted_by_contribution:
             if entry.bases_changed not in aggregated_indel:
@@ -756,14 +757,20 @@ class SangerAnalysis:
             aggregated_indel[entry.bases_changed] += entry.x_rel
             if entry.bases_changed == ProposalBase.HDR:
                 hdr_percentage += 100 * entry.x_rel
+            if entry.bases_changed != ProposalBase.HDR and (entry.bases_changed%3!=0 or abs(entry.bases_changed)>20):
+                ko_score += 100 * entry.x_rel
 
         unedited_percent = aggregated_indel[0] + (1 - self.results.r_squared)
 
         editing_efficiency = (1.0 - unedited_percent)
 
+
+
+
         if self.debug:
             print(aggregated_indel)
             print(sorted_by_contribution)
+        self.results.ko_score =ko_score
         self.results.aggregate = aggregated_indel
         self.results.contribs = sorted_by_contribution
         self.results.edit_eff = editing_efficiency
