@@ -54,39 +54,38 @@ from ice.analysis import single_sanger_analysis, multiple_sanger_analysis
 # Running a batch analysis
 
 #get list of files in directory
-QC_folder="/Users/nicholas.rossi/Documents/Code/2019/05/tools_notebooks/bioinformatics/tools/QC_dump/"
-folders=os.listdir((QC_folder))
-
-output_dir = '/Users/nicholas.rossi/Documents/Code/2019/05/tools_notebooks/bioinformatics/tools/v2/'
-try:
-    shutil.rmtree(output_dir)
-except:
-    pass
-for folder in folders:
-    try:
-        definition_file = os.path.abspath('{}/{}/{}.xlsx'.format(QC_folder,folder,folder))
-        data_directory = os.path.abspath('{}/{}/ab1s/'.format(QC_folder,folder))
-        #output_dir = '/Users/nicholas.rossi/Documents/Code/2019/05/tools_notebooks/bioinformatics/tools/vanilla_ice/'
-
-        job_args = (definition_file, output_dir)
-        job_kwargs = {
-            'verbose': True,
-            'data_dir': data_directory
-        }
-
-        multiple_sanger_analysis(*job_args, **job_kwargs)
-    except:
-        pass
+# QC_folder="/Users/nicholas.rossi/Documents/Code/2019/05/tools_notebooks/bioinformatics/tools/QC_dump/"
+# folders=os.listdir((QC_folder))
+#
+# output_dir = '/Users/nicholas.rossi/Documents/Code/2019/05/tools_notebooks/bioinformatics/tools/v2/'
+# try:
+#     shutil.rmtree(output_dir)
+# except:
+#     pass
+# for folder in folders:
+#     try:
+#         definition_file = os.path.abspath('{}/{}/{}.xlsx'.format(QC_folder,folder,folder))
+#         data_directory = os.path.abspath('{}/{}/ab1s/'.format(QC_folder,folder))
+#         #output_dir = '/Users/nicholas.rossi/Documents/Code/2019/05/tools_notebooks/bioinformatics/tools/vanilla_ice/'
+#
+#         job_args = (definition_file, output_dir)
+#         job_kwargs = {
+#             'verbose': True,
+#             'data_dir': data_directory
+#         }
+#
+#         multiple_sanger_analysis(*job_args, **job_kwargs)
+#     except:
+#         pass
 # ## for testing
-# definition_file = os.path.abspath('../knockin_test_data/knockin_test.xlsx')
-# data_directory = os.path.abspath('../knockin_test_data/ab1s/')
-# output_dir = '../knockin_test_data/output'
-#
-#
-# job_args = (definition_file, output_dir)
-# job_kwargs = {
-#     'verbose': True,
-#     'data_dir': data_directory
-# }
-#
-# multiple_sanger_analysis(*job_args, **job_kwargs)
+definition_file = os.path.abspath('../Jared_crispr_off/rework/ICESubmitreseq.xlsx')
+data_directory = os.path.abspath('../Jared_crispr_off/rework/119070076')
+output_dir = '../Jared_crispr_off/rework/output'
+
+job_args = (definition_file, output_dir)
+job_kwargs = {
+    'verbose': True,
+    'data_dir': data_directory
+}
+
+multiple_sanger_analysis(*job_args, **job_kwargs)
