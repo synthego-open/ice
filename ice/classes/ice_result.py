@@ -40,7 +40,6 @@ class ICEResult:
         self.ice_d = None
         self.r_squared = None
         self.hdr_percentage = None
-        self.ko_score= None
 
     def to_json(self, guide_targets, warnings):
 
@@ -67,7 +66,6 @@ class ICEResult:
             results['rsq'] = None
 
         results['hdr_pct'] = self.hdr_percentage
-        results['ko_score'] = self.ko_score
         results['notes'] = "; ".join(warnings)
         results['guides'] = [vars(g) for g in guide_targets]
 

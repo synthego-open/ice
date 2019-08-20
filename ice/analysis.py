@@ -87,10 +87,7 @@ def single_sanger_analysis(control_path, sample_path, base_outputname, guide, do
 
         print('Exception Caught!')
         traceback.print_exc()
-        if isinstance(e,KeyError):
-            return results.to_json(sa.guide_targets, [';'.join(sa.warnings)])
-        else:
-            return results.to_json(sa.guide_targets, [str(e)])
+        return results.to_json(sa.guide_targets, [str(e)])
 
 
 def single_sanger_analysis_cli():
@@ -221,16 +218,11 @@ def multiple_sanger_analysis(definition_file, output_dir,
     for job in jobs:
         r = job[1]
         experiment = job[0]
-        if 'Donor' in experiment and is_nuc_acid(experiment['Donor']):
-            donor = experiment['Donor']
-        else:
-            donor = None
-
         if r is not None:
-            tmp = [experiment['Label'], r['ice'], r['ice_d'], r['rsq'], r['hdr_pct'],r['ko_score'], r['guides'],
-                   r['notes'], experiment['Experiment File'], experiment['Control File'], donor]
+            tmp = [experiment['Label'], r['ice'], r['ice_d'], r['rsq'], r['hdr_pct'],
+                   r['guides'], r['notes']]
         else:
-            tmp = [experiment['Label'], 'Failed', '', '', '', '', '', '', '', '']
+            tmp = [experiment['Label'], 'Failed', '', '', '', '', '']
         results.append(tmp)
 
     if results:
@@ -239,8 +231,7 @@ def multiple_sanger_analysis(definition_file, output_dir,
         timestamp = '{:%Y-%m-%d-%H%M%S}'.format(datetime.datetime.now())
         out_file = os.path.join(output_dir, "ice.results.{}.xlsx".format(timestamp))
 
-        header = ["sample_name", "ice", 'ice_d', "r_squared", "hdr_pct","ko_score", "guides", "notes",
-                  "experiment_file", "control_file", "donor"]
+        header = ["sample_name", "ice", 'ice_d', "r_squared", "hdr_pct", "guides", "notes"]
         input_df.columns = header
         # to json
         out_dict = []

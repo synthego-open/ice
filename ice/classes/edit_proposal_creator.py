@@ -193,14 +193,6 @@ class EditProposalCreator:
                     for base_index, base_color in enumerate(self.base_order):
                         proposal_trace.append(self.wt_trace[base_color][idx])
                 proposal_bases.append(proposal_base)
-
-            #If deletion, restore length by padding end with N
-            for pad in range(len(deleted_bases)):
-                proposal_base = (ProposalBase('n', ProposalBase.INSERTION, idx+pad))
-                for base_index, base in enumerate(self.base_order):
-                    proposal_trace.append(0.25)
-                proposal_bases.append(proposal_base)
-
             ep = EditProposal()
             ep.sequence_data = proposal_bases
             ep.cutsite = cutsite1
@@ -255,14 +247,6 @@ class EditProposalCreator:
                     proposal_bases.append(ProposalBase(base, ProposalBase.WILD_TYPE, idx))
                     for base_index, base_color in enumerate(self.base_order):
                         proposal_trace.append(self.wt_trace[base_color][idx])
-
-            # If deletion, restore length by padding end with N
-            for pad in range(len(deleted_bases)):
-                proposal_base = (ProposalBase('n', ProposalBase.INSERTION, idx + pad))
-                for base_index, base in enumerate(self.base_order):
-                    proposal_trace.append(0.25)
-                proposal_bases.append(proposal_base)
-
             ep = EditProposal()
             ep.sequence_data = proposal_bases
             ep.cutsite = cutsite1 + cut1_ins
@@ -301,14 +285,6 @@ class EditProposalCreator:
                         for base_index, base_color in enumerate(self.base_order):
                             proposal_trace.append(self.wt_trace[base_color][idx])
                     proposal_bases.append(proposal_base)
-
-                # If deletion, restore length by padding end with N
-                for pad in range(len(deleted_bases)):
-                    proposal_base = (ProposalBase('n', ProposalBase.INSERTION, idx + pad))
-                    for base_index, base in enumerate(self.base_order):
-                        proposal_trace.append(0.25)
-                    proposal_bases.append(proposal_base)
-
                 ep = EditProposal()
                 ep.sequence_data = proposal_bases
                 ep.cutsite = cutsite1
@@ -375,7 +351,6 @@ class EditProposalCreator:
         if donor_sequence[:self.__class__.MIN_HOMOLOGY_ARM] in self.wt_basecalls and \
                 donor_sequence[-self.__class__.MIN_HOMOLOGY_ARM:] in self.wt_basecalls:
 
-
             # todo confirm that cutsite is inside the HDR region
             donor_alignment = DonorAlignment(self.wt_basecalls, donor_sequence)
             donor_alignment.align_ssodn()
@@ -391,7 +366,6 @@ class EditProposalCreator:
             ep.summary = ProposalBase.HDR
             ep.summary_json = {'total': ep.bases_changed,
                                'details': [{'label': ProposalBase.HDR, 'value': ep.bases_changed}]}
-
             return ep, changed_bases, odn_start_pos, donor_alignment
         else:
             raise Exception(
