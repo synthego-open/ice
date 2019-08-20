@@ -29,58 +29,33 @@ Synthego ICE will not infringe any patent, trademark or other rights.
 
 import os
 from pprint import pprint as pp
-import shutil
+
 from ice.analysis import single_sanger_analysis, multiple_sanger_analysis
 
-# # Running a single analysis
-#
-# control_path = os.path.abspath('./ice/tests/test_data/good_example_control.ab1')
-# sample_path = os.path.abspath('./ice/tests/test_data/good_example_edited.ab1')
-# guide = 'AACCAGTTGCAGGCGCCCCA'
-# base_outputname = './results/good_example'
-# donor = None
-# verbose = True
-#
-# results = single_sanger_analysis(control_path=control_path,
-#                                  sample_path=sample_path,
-#                                  base_outputname=base_outputname,
-#                                  guide=guide,
-#                                  donor=donor,
-#                                  verbose=verbose)
-#
-# pp(results)
-#
+# Running a single analysis
+
+control_path = os.path.abspath('./ice/tests/test_data/good_example_control.ab1')
+sample_path = os.path.abspath('./ice/tests/test_data/good_example_edited.ab1')
+guide = 'AACCAGTTGCAGGCGCCCCA'
+base_outputname = './results/good_example'
+donor = None
+verbose = True
+
+results = single_sanger_analysis(control_path=control_path,
+                                 sample_path=sample_path,
+                                 base_outputname=base_outputname,
+                                 guide=guide,
+                                 donor=donor,
+                                 verbose=verbose)
+
+pp(results)
+
 
 # Running a batch analysis
 
-#get list of files in directory
-# QC_folder="/Users/nicholas.rossi/Documents/Code/2019/05/tools_notebooks/bioinformatics/tools/QC_dump/"
-# folders=os.listdir((QC_folder))
-#
-# output_dir = '/Users/nicholas.rossi/Documents/Code/2019/05/tools_notebooks/bioinformatics/tools/v2/'
-# try:
-#     shutil.rmtree(output_dir)
-# except:
-#     pass
-# for folder in folders:
-#     try:
-#         definition_file = os.path.abspath('{}/{}/{}.xlsx'.format(QC_folder,folder,folder))
-#         data_directory = os.path.abspath('{}/{}/ab1s/'.format(QC_folder,folder))
-#         #output_dir = '/Users/nicholas.rossi/Documents/Code/2019/05/tools_notebooks/bioinformatics/tools/vanilla_ice/'
-#
-#         job_args = (definition_file, output_dir)
-#         job_kwargs = {
-#             'verbose': True,
-#             'data_dir': data_directory
-#         }
-#
-#         multiple_sanger_analysis(*job_args, **job_kwargs)
-#     except:
-#         pass
-# ## for testing
-definition_file = os.path.abspath('../Jared_crispr_off/rework/ICESubmitreseq.xlsx')
-data_directory = os.path.abspath('../Jared_crispr_off/rework/119070076')
-output_dir = '../Jared_crispr_off/rework/output'
+definition_file = os.path.abspath('./ice/tests/test_data/batch_example.xlsx')
+data_directory = os.path.abspath('./ice/tests/test_data/')
+output_dir = './results/batch_example'
 
 job_args = (definition_file, output_dir)
 job_kwargs = {
