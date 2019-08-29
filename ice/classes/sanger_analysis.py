@@ -741,6 +741,8 @@ class SangerAnalysis:
             self.proposals[n].x_rel = val
 
         self.results.r_squared = np.round(self.results.r_squared,2)
+        self.base=b.to_list()
+        self.predicted=predicted.to_list()
 
 
 
