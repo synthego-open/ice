@@ -131,6 +131,218 @@ class EditProposalCreator:
             ep.trace_data = proposal_trace
         return ep
 
+    def multiplex_trifecta_proposal(self, cutsite1, cutsite2, cutsite3, label1, label2, label3, cut1_del=(0, 0), cut1_ins=0, cut2_del=(0, 0),
+                           cut2_ins=0, cut3_del=(0, 0), cut3_ins=0, dropout=False):
+        """
+        This makes proposal for editing involving three guides. This method handles both two separate indel proposals
+        or a dropout proposals. Both sites must be part of the edit and cutsite1 must come before cutsite2.
+        :param cutsite1: position of first cutsite
+        :param cutsite2: position of second cutsite
+        :param label1: label of guide target that creates first cutsite
+        :param label2: label of guide target that creates second cutsite
+        :param cut1_del: deletion size before and after first cutsite
+        :param cut1_ins: insertion size at first cutsite
+        :param cut2_del: deletion size before and after second cutsite
+        :param cut2_ins: insertion size at first cutsite
+        :param dropout: if the proposal is a dropout (removal of all bases between cutsites)
+        :return: EditProposal instance
+        """
+        if cutsite2 <= cutsite1:
+            raise Exception('cutsite1 must come before cutsite2 values are ({}, {})'.format(cutsite1, cutsite2))
+
+        cutsite1 -= 1
+        cutsite2 -= 1
+        cutsite3 -= 1
+        proposal_bases = []
+        proposal_trace = []
+        summary_code = 'm'  # multiplex
+        deleted_bases = []
+
+        if dropout:
+            summary_code = 'md'  # multiplex dropout
+            for i in range(cutsite1 + 1, cutsite2 + 1):
+                deleted_bases.append(i)
+
+        # both cutsites results in deletions
+        # TODO, there are no safeguards for if the deletions for one cutsite exceed the boundaries of the other cutsite
+        # that info matters a lot for the summary
+        # for cut1 allow all deletions before
+        # for cut2 allow all deletions after
+        # for cut1 deletions after, stop if cut2 reached
+        # for cut2 deletions before, stop if cut1 reached
+        if cut1_del != (0, 0) and cut2_del != (0, 0):
+            # TODO, this should also handle the straight dropout case w/ no extra deletions
+            if dropout:
+                # zero out deletions between cutsites because dropout logic will take these deleted bases into account
+                # without double counting deletions
+                cut1_del_after = 0
+                cut2_del_before = 0
+            else:
+                cut1_del_after = cut1_del[1]
+                cut2_del_before = cut2_del[0]
+
+            cut1 = (cutsite1, cut1_del[0], cut1_del_after)
+            cut2 = (cutsite2, cut2_del_before, cut2_del[1])
+            cut3 = (cutsite3, cut3_del[0],cut3_del[1])
+            for cutsite, del_before, del_after in [cut1, cut2,cut3]:
+                # this is giving just a number not locations of the missing bases?
+                deleted_bases += [cutsite - i for i in range(del_before)] + [cutsite + i + 1 for i in range(del_after)]
+
+            for idx, base in enumerate(self.wt_basecalls):
+                if idx in deleted_bases:
+                    proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)
+                else:
+                    proposal_base = ProposalBase(base, ProposalBase.WILD_TYPE, idx)
+                    for base_index, base_color in enumerate(self.base_order):
+                        proposal_trace.append(self.wt_trace[base_color][idx])
+                proposal_bases.append(proposal_base)
+
+            #If deletion, restore length by padding end with N
+            for pad in range(len(deleted_bases)):
+                proposal_base = (ProposalBase('n', ProposalBase.INSERTION, idx+pad))
+                for base_index, base in enumerate(self.base_order):
+                    proposal_trace.append(0.25)
+                proposal_bases.append(proposal_base)
+
+            ep = EditProposal()
+            ep.sequence_data = proposal_bases
+            ep.cutsite = cutsite1
+            ep.cutsite2 = cutsite2
+            ep.cutsite3 = cutsite3
+            total_deleted = -cut1_del[0] - cut1_del_after - cut2_del_before - cut2_del[1]- cut3_del[0] - cut3_del[1]
+            if dropout:
+                total_deleted += -(cutsite2 - cutsite1)
+            ep.bases_changed = total_deleted
+            cut1_del_size = cut1_del[0] + cut1_del_after
+            cut2_del_size = cut2_del_before + cut2_del[1]
+            cut3_del_size =  cut3_del[0] + cut3_del[1]
+            ep.summary = '{}:{}-{}[{}],-{}[{}]'.format(total_deleted, summary_code,
+                                                       cut1_del_size,
+                                                       label1,
+                                                       cut2_del_size,
+                                                       label2,
+                                                       cut3_del_size,
+                                                       label3
+                                                       )
+            summary_json = {}
+            summary_json['total'] = ep.bases_changed
+            summary_json['details'] = []
+            if cut1_del_size > 0:
+                summary_json['details'].append({'label': label1, 'value': -cut1_del_size})
+            if cut2_del_size > 0:
+                summary_json['details'].append({'label': label2, 'value': -cut2_del_size})
+            if cut3_del_size > 0:
+                summary_json['details'].append({'label': label3, 'value': -cut3_del_size})
+            if dropout:
+                summary_json['details'].append({'label': 'dropout', 'value': cutsite1 - cutsite2})
+            ep.summary_json = summary_json
+            ep.trace_data = proposal_trace
+
+        # insertion case
+        elif cut1_ins != 0 or cut2_ins != 0 or  cut3_ins != 0:
+            if dropout:
+                cut2_ins = 0
+
+            cut1 = (cutsite1, cut1_ins)
+            cut2 = (cutsite2, cut2_ins)
+            cut3 = (cutsite3, cut3_ins)
+
+
+            for idx, base in enumerate(self.wt_basecalls):
+                if idx in deleted_bases:
+                    proposal_bases.append(ProposalBase('-', ProposalBase.DELETION, idx))
+                # if base is in range where we need to do insertion
+                elif idx in [cutsite1, cutsite2,cutsite3]:
+                    for cutsite, insertion_length in [cut1, cut2,cut3]:
+                        if cutsite == idx:
+                            proposal_bases.append(ProposalBase(base, ProposalBase.WILD_TYPE, idx))
+                            for base_index, base_color in enumerate(self.base_order):
+                                proposal_trace.append(self.wt_trace[base_color][idx])
+                            for i in range(insertion_length):
+                                proposal_bases.append(ProposalBase('n', ProposalBase.INSERTION, idx))
+                                for base_index, base in enumerate(self.base_order):
+                                    proposal_trace.append(0.25)
+                else:
+                    proposal_bases.append(ProposalBase(base, ProposalBase.WILD_TYPE, idx))
+                    for base_index, base_color in enumerate(self.base_order):
+                        proposal_trace.append(self.wt_trace[base_color][idx])
+
+            # If deletion, restore length by padding end with N
+            for pad in range(len(deleted_bases)):
+                proposal_base = (ProposalBase('n', ProposalBase.INSERTION, idx + pad))
+                for base_index, base in enumerate(self.base_order):
+                    proposal_trace.append(0.25)
+                proposal_bases.append(proposal_base)
+
+            ep = EditProposal()
+            ep.sequence_data = proposal_bases
+            ep.cutsite = cutsite1 + cut1_ins
+            ep.cutsite2 = cutsite1 + cut1_ins + (cutsite2 - cutsite1) + cut2_ins
+            ep.cutsite3 = cutsite1 + cut1_ins + (cutsite2 - cutsite1) + cut2_ins+cut3_ins
+
+            ep.bases_changed = cut1_ins + cut2_ins +cut3_ins
+            if dropout:
+                ep.bases_changed -= (cutsite2 - cutsite1 -cutsite3)
+            ep.summary = '{}:{}+{}[{}],+{}[{}]'.format(
+                ep.bases_changed,
+                summary_code,
+                cut1_ins,
+                label1,
+                cut2_ins,
+                label2,
+                cut3_ins,
+                label3
+            )
+            summary_json = {}
+            summary_json['total'] = ep.bases_changed
+            summary_json['details'] = []
+            if cut1_ins > 0:
+                summary_json['details'].append({'label': label1, 'value': cut1_ins})
+            if cut2_ins > 0:
+                summary_json['details'].append({'label': label2, 'value': cut2_ins})
+            if dropout:
+                summary_json['details'].append({'label': 'dropout', 'value': cutsite1 - cutsite2})
+            ep.summary_json = summary_json
+            ep.trace_data = proposal_trace
+            ep.trace_data = proposal_trace
+        # the intervening sequence is dropped out and no bases inserted or deleted
+        else:
+            if dropout:
+                for idx, base in enumerate(self.wt_basecalls):
+                    if idx in deleted_bases:
+                        proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)
+                    else:
+                        proposal_base = ProposalBase(base, ProposalBase.WILD_TYPE, idx)
+                        for base_index, base_color in enumerate(self.base_order):
+                            proposal_trace.append(self.wt_trace[base_color][idx])
+                    proposal_bases.append(proposal_base)
+
+                # If deletion, restore length by padding end with N
+                for pad in range(len(deleted_bases)):
+                    proposal_base = (ProposalBase('n', ProposalBase.INSERTION, idx + pad))
+                    for base_index, base in enumerate(self.base_order):
+                        proposal_trace.append(0.25)
+                    proposal_bases.append(proposal_base)
+
+                ep = EditProposal()
+                ep.sequence_data = proposal_bases
+                ep.cutsite = cutsite1
+                ep.cutsite2 = cutsite2
+                ep.cutsite3 = cutsite3
+
+
+                total_deleted = -(cutsite3 + cutsite2 - cutsite1)
+                ep.bases_changed = total_deleted
+                ep.summary = '{}:{}-0[{}],-0[{}]'.format(total_deleted, summary_code, label1, label2)
+                ep.bases_changed = total_deleted
+                ep.summary_json = {'total': ep.bases_changed,
+                                   'details': [{'label': 'dropout', 'value': total_deleted}]}
+                ep.trace_data = proposal_trace
+            else:
+                # wild type case, use the single edit to model this case
+                return None
+        return ep
+
     def multiplex_proposal(self, cutsite1, cutsite2, label1, label2, cut1_del=(0, 0), cut1_ins=0, cut2_del=(0, 0),
                            cut2_ins=0, dropout=False):
         """
