@@ -502,50 +502,71 @@ class SangerAnalysis:
             guide2 = max(combo, key=lambda x: x.cutsite)
             cutsite1 = guide1.cutsite
             cutsite2 = guide2.cutsite
+
+
+            ### left out
+            guide3=list(set(self.guide_targets) - set(combo))[0]
+            cutsite3=guide3.cutsite
+
             if cutsite1 == cutsite2:
                 print("Warning: cutsite1 == cutsite2")
                 continue
             label1 = guide1.label
             label2 = guide2.label
+            label3 = guide3.label
 
             for cut1_before in deletion_befores:
                 for cut1_after in deletion_afters:
                     for cut2_before in deletion_befores:
                         for cut2_after in deletion_afters:
-                            independent_cut = epc.multiplex_proposal(
-                                cutsite1,
-                                cutsite2,
-                                label1,
-                                label2,
-                                cut1_del=(cut1_before, cut1_after), cut2_del=(cut2_before, cut2_after))
-                            if independent_cut:
-                                proposals.append(independent_cut)
+                            for cut3_before in deletion_befores:
+                                for cut3_after in deletion_afters:
+                                    independent_cut = epc.multiplex_trifecta_proposal(
+                                        cutsite1,
+                                        cutsite2,
+                                        cutsite3,
+                                        label1,
+                                        label2,
+                                        label3,
+                                        cut1_del=(cut1_before, cut1_after),
+                                        cut2_del=(cut2_before, cut2_after),
+                                        cut3_del=(cut3_before, cut3_after))
+                                    if independent_cut:
+                                        proposals.append(independent_cut)
 
             # dropout case
-            for cut1_before in deletion_befores:
-                for cut2_after in deletion_afters:
-                    dropout = epc.multiplex_proposal(
-                        cutsite1,
-                        cutsite2,
-                        label1,
-                        label2,
-                        cut1_del=(cut1_before, 0), cut2_del=(0, cut2_after),
-                        dropout=True
-                    )
-                    if dropout:
-                        proposals.append(dropout)
+            for cut1_before in list(range(-5,10)):
+                for cut2_after in list(range(-5,10)):
+                    for cut3_before in deletion_befores:
+                        for cut3_after in deletion_afters:
+                            dropout = epc.multiplex_trifecta_proposal(
+                                        cutsite1,
+                                        cutsite2,
+                                        cutsite3,
+                                        label1,
+                                        label2,
+                                        label3,
+                                        cut1_del=(cut1_before, cut1_after),
+                                        cut2_del=(cut2_before, cut2_after),
+                                        cut3_del=(cut3_before, cut3_after),
+                                        dropout=True)
+                            if dropout:
+                                proposals.append(dropout)
             for insertion1 in insertions:
                 for insertion2 in insertions:
-                    cut_and_insert = epc.multiplex_proposal(cutsite1, cutsite2, label1, label2,
-                                                            cut1_ins=insertion1, cut2_ins=insertion2)
-                    if cut_and_insert:
-                        proposals.append(cut_and_insert)
+                    for insertion3 in insertions:
+                        cut_and_insert = epc.multiplex_trifecta_proposal(cutsite1, cutsite2,cutsite3, label1, label2,label3,
+
+                                                                cut1_ins=insertion1, cut2_ins=insertion2,cut3_ins=insertion3)
+                        if cut_and_insert:
+                            proposals.append(cut_and_insert)
             # dropout insertion case
             for insertion in insertions:
-                dropout_and_insert = epc.multiplex_proposal(cutsite1, cutsite2, label1, label2,
-                                                            cut1_ins=insertion, dropout=True)
-                if dropout_and_insert:
-                    proposals.append(dropout_and_insert)
+                for insertion3 in insertions:
+                    dropout_and_insert = epc.multiplex_trifecta_proposal(cutsite1, cutsite2, cutsite3,label1, label2,label3,
+                                                                cut1_ins=insertion,cut3_ins=insertion3, dropout=True)
+                    if dropout_and_insert:
+                        proposals.append(dropout_and_insert)
 
 
         #removing degenerate proposals
@@ -665,7 +686,25 @@ class SangerAnalysis:
 
         self.results.max_unexp_discord = max(unexplained_discord_signal) * 100
 
+
     def infer_abundances(self, norm_b=False):
+        def trace_to_base_calls(trace):
+            base_order = ['A', 'G', 'T', 'C']
+            BASE_CALL_CUTOFF = 0.25
+            assert len(trace) % 4 == 0
+            seq_len = int(len(trace) / 4)
+            seq = ""
+            for base_idx in range(seq_len):
+                slice_values = trace[base_idx * 4: base_idx * 4 + 4]
+                slice_max = max(slice_values)
+                if slice_max > BASE_CALL_CUTOFF:
+                    max_idx = slice_values.index(slice_max)
+                    base = base_order[max_idx]
+                    seq += base
+                else:
+                    seq += 'N'
+            return seq
+
         """
         This uses nnls to solve for abundances of each edit proposal
         :param norm_b:
@@ -741,8 +780,13 @@ class SangerAnalysis:
             self.proposals[n].x_rel = val
 
         self.results.r_squared = np.round(self.results.r_squared,2)
-        self.base=b.to_list()
-        self.predicted=predicted.to_list()
+        # self.base=b
+        # self.predicted=predicted.to_list()
+        # self.residual=(b-predicted).to_list()
+
+        temp = np.array((b - predicted))
+        temp[temp < 0] = 0
+        print(trace_to_base_calls(list(temp)))
 
 
 
