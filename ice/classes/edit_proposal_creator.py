@@ -216,7 +216,7 @@ class EditProposalCreator:
             cut1_del_size = cut1_del[0] + cut1_del_after
             cut2_del_size = cut2_del_before + cut2_del[1]
             cut3_del_size =  cut3_del[0] + cut3_del[1]
-            ep.summary = '{}:{}-{}[{}],-{}[{}]'.format(total_deleted, summary_code,
+            ep.summary = '{}:{}-{}[{}],-{}[{}],-{}[{}]'.format(total_deleted, summary_code,
                                                        cut1_del_size,
                                                        label1,
                                                        cut2_del_size,
@@ -283,7 +283,7 @@ class EditProposalCreator:
             ep.bases_changed = cut1_ins + cut2_ins +cut3_ins
             if dropout:
                 ep.bases_changed -= (cutsite2 - cutsite1 -cutsite3)
-            ep.summary = '{}:{}+{}[{}],+{}[{}]'.format(
+            ep.summary = '{}:{}+{}[{}],+{}[{}],+{}[{}]'.format(
                 ep.bases_changed,
                 summary_code,
                 cut1_ins,
@@ -333,7 +333,7 @@ class EditProposalCreator:
 
                 total_deleted = -(cutsite3 + cutsite2 - cutsite1)
                 ep.bases_changed = total_deleted
-                ep.summary = '{}:{}-0[{}],-0[{}]'.format(total_deleted, summary_code, label1, label2)
+                ep.summary = '{}:{}-0[{}],-0[{}],-0[{}]'.format(total_deleted, summary_code, label1, label2,label3)
                 ep.bases_changed = total_deleted
                 ep.summary_json = {'total': ep.bases_changed,
                                    'details': [{'label': 'dropout', 'value': total_deleted}]}
