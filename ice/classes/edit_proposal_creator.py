@@ -134,24 +134,26 @@ class EditProposalCreator:
     def multiplex_trifecta_proposal(self, cutsite1, cutsite2, cutsite3, label1, label2, label3, cut1_del=(0, 0), cut1_ins=0, cut2_del=(0, 0),
                            cut2_ins=0, cut3_del=(0, 0), cut3_ins=0, dropout=False):
         """
-        This makes proposal for editing involving three guides. This method handles both two separate indel proposals
-        or a dropout proposals. Both sites must be part of the edit and cutsite1 must come before cutsite2.
-        :param cutsite1: position of first cutsite
-        :param cutsite2: position of second cutsite
-        :param label1: label of guide target that creates first cutsite
-        :param label2: label of guide target that creates second cutsite
-        :param cut1_del: deletion size before and after first cutsite
-        :param cut1_ins: insertion size at first cutsite
-        :param cut2_del: deletion size before and after second cutsite
-        :param cut2_ins: insertion size at first cutsite
-        :param dropout: if the proposal is a dropout (removal of all bases between cutsites)
-        :return: EditProposal instance
+        This is the editing proposal generator that accomodates three guide edits for clones
+        It currently acomodates:
+        * a shifted cutsite for dropouts, preserving more base pairs. Negative values indicate a shorter dropout | (cutsite1 -= (1+min(0,cut1_del[0]))
+        * three independant single-guide edits for deletions and insertions.
+            -looping over all guides for delitions | for cutsite, del_before, del_after in [cut1, cut2,cut3]:
+            -insertions | for cutsite, insertion_length in [cut1, cut2,cut3]:
+        * Combining Dropouts with third guide edit ( the dropout step happens before each single guide edit. the third guide has deletions before and after)
+
+
+        # TODO there is no notion of ordering with the third guide, it's possible the third guide is between guides 1 and 3 generating redundant deletions, we should remove this case
+
+
         """
         if cutsite2 <= cutsite1:
             raise Exception('cutsite1 must come before cutsite2 values are ({}, {})'.format(cutsite1, cutsite2))
 
-        cutsite1 -= 1
-        cutsite2 -= 1
+
+        # changing the cutsite with negative values
+        cutsite1 -= (1+min(0,cut1_del[0]))
+        cutsite2 -= (1-min(0,cut2_del[1]))
         cutsite3 -= 1
         proposal_bases = []
         proposal_trace = []

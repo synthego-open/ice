@@ -491,7 +491,7 @@ class SangerAnalysis:
                 proposals.append(ep)
 
         # multiplex case
-        # we limit the deletion sizes here
+        # This is the limits for single guide edits
         deletion_befores = list(range(5))
         deletion_afters = list(range(5))
 
@@ -535,8 +535,8 @@ class SangerAnalysis:
                                         proposals.append(independent_cut)
 
             # dropout case
-            for cut1_before in list(range(-5,10)):
-                for cut2_after in list(range(-5,10)):
+            for cut1_before in list(range(-5,5)):
+                for cut2_after in list(range(-5,5)):
                     for cut3_before in deletion_befores:
                         for cut3_after in deletion_afters:
                             dropout = epc.multiplex_trifecta_proposal(
@@ -546,8 +546,8 @@ class SangerAnalysis:
                                         label1,
                                         label2,
                                         label3,
-                                        cut1_del=(cut1_before, cut1_after),
-                                        cut2_del=(cut2_before, cut2_after),
+                                        cut1_del=(cut1_before, 0),
+                                        cut2_del=(0, cut2_after),
                                         cut3_del=(cut3_before, cut3_after),
                                         dropout=True)
                             if dropout:
