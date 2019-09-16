@@ -131,8 +131,11 @@ class EditProposalCreator:
             ep.trace_data = proposal_trace
         return ep
 
-    def multiplex_trifecta_proposal(self, cutsite1, cutsite2, cutsite3, label1, label2, label3, cut1_del=(0, 0), cut1_ins=0, cut2_del=(0, 0),
-                           cut2_ins=0, cut3_del=(0, 0), cut3_ins=0, dropout=False):
+    def multiplex_trifecta_proposal(self, cutsite1, cutsite2, cutsite3, 
+                                    label1, label2, label3, 
+                                    cut1_del=(0, 0), cut1_ins=0, 
+                                    cut2_del=(0, 0), cut2_ins=0, 
+                                    cut3_del=(0, 0), cut3_ins=0, dropout=False):
         """
         This is the editing proposal generator that accomodates three guide edits for clones
         It currently acomodates:

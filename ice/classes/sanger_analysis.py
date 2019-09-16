@@ -555,9 +555,11 @@ class SangerAnalysis:
             for insertion1 in insertions:
                 for insertion2 in insertions:
                     for insertion3 in insertions:
-                        cut_and_insert = epc.multiplex_trifecta_proposal(cutsite1, cutsite2,cutsite3, label1, label2,label3,
-
-                                                                cut1_ins=insertion1, cut2_ins=insertion2,cut3_ins=insertion3)
+                        cut_and_insert = epc.multiplex_trifecta_proposal(cutsite1, cutsite2, cutsite3, 
+                                                                         label1, label2,label3,
+                                                                         cut1_ins=insertion1, 
+                                                                         cut2_ins=insertion2,
+                                                                         cut3_ins=insertion3)
                         if cut_and_insert:
                             proposals.append(cut_and_insert)
             # dropout insertion case
@@ -570,9 +572,10 @@ class SangerAnalysis:
 
 
         #removing degenerate proposals
+        print(len(proposals), "proposals before removing duplicate")
         seen=[]
         self.proposals = list(filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
-
+        print(len(self.proposals), "proposals after removing duplicate")
 
     def _generate_coefficient_matrix(self):
         num_proposals = len(self.proposals)
