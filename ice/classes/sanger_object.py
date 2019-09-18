@@ -102,9 +102,17 @@ class SangerObject:
         self.path = ab1_file_path
         self.basename = os.path.basename(ab1_file_path)
         record = SeqIO.read(ab1_file_path, 'abi')
-        traces = {}
-        for c in record.annotations['abif_raw'].keys():
-            traces[c] = record.annotations['abif_raw'][c]
+        
+        # In Biopython 1.74, some strings are converted to bytes in py3
+        # Convert strings with bytes-object back to regular string
+        traces_ = record.annotations['abif_raw']
+        traces  = {}
+        for k, v in traces_.items():
+            if isinstance(v, bytes):
+                v = v.decode()
+            else:
+                v = v
+            traces[k] = v
         self.data = traces
 
         phred_scores = []
