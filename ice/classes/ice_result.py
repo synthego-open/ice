@@ -42,11 +42,6 @@ class ICEResult:
         self.hdr_percentage = None
         self.ko_score= None
 
-        ## additional terms
-        self.base = None
-        self.predicted = None
-
-
     def to_json(self, guide_targets, warnings):
 
         results = {}
@@ -70,20 +65,6 @@ class ICEResult:
             results['rsq'] = round(self.r_squared, 2)
         else:
             results['rsq'] = None
-
-
-        # aditional
-
-        if self.base is not None:
-            results['base'] = self.base
-        else:
-            results['base'] = None
-
-        if self.predicted is not None:
-            results['predicted'] = self.predicted
-        else:
-            results['predicted'] = None
-
 
         results['hdr_pct'] = self.hdr_percentage
         results['ko_score'] = self.ko_score

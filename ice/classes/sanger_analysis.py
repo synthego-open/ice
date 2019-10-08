@@ -45,6 +45,9 @@ from ice.outputs.create_discordance_indel_files import generate_discordance_inde
 from ice.outputs.create_json import write_individual_contribs, write_contribs_json, write_all_proposals_json
 from ice.outputs.create_trace_files import generate_trace_files
 from ice.utility.sequence import RNA2DNA, reverse_complement
+from Bio import pairwise2
+import itertools
+
 def round_percent(orig_array,r_squared):
     # Scale the array by 100 in order to work with np.floor
     scaled_array=np.array([x*100 for x in orig_array])
@@ -491,7 +494,7 @@ class SangerAnalysis:
                 proposals.append(ep)
 
         # multiplex case
-        # This is the limits for single guide edits
+        # we limit the deletion sizes here
         deletion_befores = list(range(5))
         deletion_afters = list(range(5))
 
@@ -502,83 +505,79 @@ class SangerAnalysis:
             guide2 = max(combo, key=lambda x: x.cutsite)
             cutsite1 = guide1.cutsite
             cutsite2 = guide2.cutsite
-
-
-            ### left out
-            guide3=list(set(self.guide_targets) - set(combo))[0]
-            cutsite3=guide3.cutsite
-
             if cutsite1 == cutsite2:
                 print("Warning: cutsite1 == cutsite2")
                 continue
             label1 = guide1.label
             label2 = guide2.label
-            label3 = guide3.label
 
             for cut1_before in deletion_befores:
                 for cut1_after in deletion_afters:
                     for cut2_before in deletion_befores:
                         for cut2_after in deletion_afters:
-                            for cut3_before in deletion_befores:
-                                for cut3_after in deletion_afters:
-                                    independent_cut = epc.multiplex_trifecta_proposal(
-                                        cutsite1,
-                                        cutsite2,
-                                        cutsite3,
-                                        label1,
-                                        label2,
-                                        label3,
-                                        cut1_del=(cut1_before, cut1_after),
-                                        cut2_del=(cut2_before, cut2_after),
-                                        cut3_del=(cut3_before, cut3_after))
-                                    if independent_cut:
-                                        proposals.append(independent_cut)
+                            independent_cut = epc.multiplex_proposal(
+                                cutsite1,
+                                cutsite2,
+                                label1,
+                                label2,
+                                cut1_del=(cut1_before, cut1_after), cut2_del=(cut2_before, cut2_after))
+                            if independent_cut:
+                                proposals.append(independent_cut)
 
             # dropout case
-            for cut1_before in list(range(-5,5)):
-                for cut2_after in list(range(-5,5)):
-                    for cut3_before in deletion_befores:
-                        for cut3_after in deletion_afters:
-                            dropout = epc.multiplex_trifecta_proposal(
-                                        cutsite1,
-                                        cutsite2,
-                                        cutsite3,
-                                        label1,
-                                        label2,
-                                        label3,
-                                        cut1_del=(cut1_before, 0),
-                                        cut2_del=(0, cut2_after),
-                                        cut3_del=(cut3_before, cut3_after),
-                                        dropout=True)
-                            if dropout:
-                                proposals.append(dropout)
+            for cut1_before in deletion_befores:
+                for cut2_after in deletion_afters:
+                    dropout = epc.multiplex_proposal(
+                        cutsite1,
+                        cutsite2,
+                        label1,
+                        label2,
+                        cut1_del=(cut1_before, 0), cut2_del=(0, cut2_after),
+                        dropout=True
+                    )
+                    if dropout:
+                        proposals.append(dropout)
             for insertion1 in insertions:
                 for insertion2 in insertions:
-                    for insertion3 in insertions:
-                        cut_and_insert = epc.multiplex_trifecta_proposal(cutsite1, cutsite2,cutsite3, label1, label2,label3,
-
-                                                                cut1_ins=insertion1, cut2_ins=insertion2,cut3_ins=insertion3)
-                        if cut_and_insert:
-                            proposals.append(cut_and_insert)
+                    cut_and_insert = epc.multiplex_proposal(cutsite1, cutsite2, label1, label2,
+                                                            cut1_ins=insertion1, cut2_ins=insertion2)
+                    if cut_and_insert:
+                        proposals.append(cut_and_insert)
             # dropout insertion case
             for insertion in insertions:
-                for insertion3 in insertions:
-                    dropout_and_insert = epc.multiplex_trifecta_proposal(cutsite1, cutsite2, cutsite3,label1, label2,label3,
-                                                                cut1_ins=insertion,cut3_ins=insertion3, dropout=True)
-                    if dropout_and_insert:
-                        proposals.append(dropout_and_insert)
-
+                dropout_and_insert = epc.multiplex_proposal(cutsite1, cutsite2, label1, label2,
+                                                            cut1_ins=insertion, dropout=True)
+                if dropout_and_insert:
+                    proposals.append(dropout_and_insert)
 
         #removing degenerate proposals
         seen=[]
         self.proposals = list(filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
+
+    def _generate_peak_counted_proposals(self):
+
+        proposals = self.proposals
+
+        epc = EditProposalCreator(self.control_sample.primary_base_calls,
+                                  use_ctrl_trace=True,
+                                  sanger_object=self.control_sample)
+
+        alleles = self.peak_counting()
+        for allele in alleles:
+            proposals.append(epc.aligned_sequence_edit_proposal(allele, self.inference_window))
+
+
+        # removing degenerate proposals
+        seen = []
+        self.proposals = list(
+            filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
 
 
     def _generate_coefficient_matrix(self):
         num_proposals = len(self.proposals)
         iw_length = self.inference_window[1] - self.inference_window[0]
         output_matrix = np.zeros((num_proposals, 4 * iw_length))
-        #import pdb; pdb.set_trace()
+
         for edit_proposal_idx, ep in enumerate(self.proposals):
             for base_index in range(self.inference_window[0], self.inference_window[1]):
                 seq_index = base_index - self.inference_window[0]
@@ -686,25 +685,91 @@ class SangerAnalysis:
 
         self.results.max_unexp_discord = max(unexplained_discord_signal) * 100
 
+    def peak_counting(self):
+
+        # TODO: Play with 'match' metric. Currently alignment, but others might be more robust
+        # TODO: Add some notion of randomizing allele derivation starting position (e.g. loop through nts randomly) and take many alternates
+        ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
+        channels = ['DATA9', 'DATA10', 'DATA11', 'DATA12']
+        edit_seq = self.control_sample.data['PBAS2']
+        ctrl_seq = self.control_sample.data['PBAS2']
+
+        counting_window = (self.alignment_window[0], self.inference_window[1])
+
+        #exp = edit_seq[counting_window[0]:counting_window[1]]
+        ctrl = ctrl_seq[counting_window[0]:counting_window[1]]
+
+        # Extract peak values from chromatogram
+        peak_values = np.zeros((counting_window[1] - counting_window[0], 4))
+        for i in range(4):
+            region = np.array(self.edited_sample.data[channels[i]])
+            peak_values[:, i] = region[np.array(self.edited_sample.data['PLOC1'])][counting_window[0]:counting_window[1]]
+
+        # Normalize peak values
+        peak_values = (peak_values.T / np.sum(peak_values, axis=1)).T
+
+        # Derive number of alleles based on peak value distributions
+        n_peaks = np.sum(peak_values > 0.1, axis=1) # TODO: make threshold anchored to sequencing noise floor instead of static value
+        n_alleles = int(np.percentile(n_peaks, 95))
+
+        # Sort out un/ambiguous bps
+        alleles = [''] * n_alleles
+        ambiguous = [''] * n_alleles
+        # Loop through nucleotides 1 by 1
+        for n in range(peak_values.shape[0]):
+            # If one clear peak at a given position, then assign that peak to all alleles
+            if np.sort(peak_values[n, :])[-1] - np.sort(peak_values[n, :])[-2] > .75:
+                for a_idx in range(n_alleles):
+                    alleles[a_idx] += ntdict[np.argsort(peak_values[n, :])[-1]]
+                    ambiguous[a_idx] += 'N'
+
+            # If mixed peak with clear delineation, assign to alleles in order of decreasing prevalence
+            # (assumes that the reason for clear delineation is differences in allele prevalence)
+            # TODO: This interpretation may be straight up wrong. On test cases it did better, but no large scale evidence so far
+            elif np.sort(peak_values[n, :])[-1] - np.sort(peak_values[n, :])[-2] > .3:  # TODO: this is janky
+                for a_idx in range(n_alleles):
+                    alleles[a_idx] += ntdict[np.argsort(peak_values[n, :])[3 - a_idx]]
+                    ambiguous[a_idx] += 'N'
+
+            # Otherwise document the ambiguity
+            else:
+                for a_idx in range(n_alleles):
+                    alleles[a_idx] += 'N'
+                    ambiguous[a_idx] += ntdict[np.argsort(peak_values[n, :])[3 - a_idx]]
+
+        # Parameters for scoring alignments
+        match = 4
+        mismatch = -2
+        gapopen = -6
+        gapextend = -0.1
+        comparisons = list(itertools.permutations(np.arange(n_alleles), n_alleles))
+        n_proposals = len(comparisons)
+        # Now that we have decreased the uncertainty of the alleles, go back to the ambiguous ones and see which alternatives fit best
+        for n in range(peak_values.shape[0]):
+            if alleles[0][n] == 'N':
+
+                # Populate list of possible bps at this position
+                proposals = [[list(a) for a in alleles]] * n_proposals
+                for i, proposal in enumerate(proposals):
+                    for j, allele in enumerate(proposal):
+                        proposals[i][j][n] = ambiguous[comparisons[i][j]][n]
+
+                # Score each possible bp according to how well it would make the possible alleles align
+                scores = [0] * len(comparisons)
+                for i, comparison in enumerate(comparisons):
+                    for j in comparison:
+                        scores[i] += pairwise2.align.globalms(''.join(proposals[i][j]), ctrl, match, mismatch, gapopen,
+                                                              gapextend, score_only=True, penalize_end_gaps=False)
+
+                # IF there is a single proposal that does best, then assign it as truth
+                if scores[np.argsort(scores)[-1]] > scores[np.argsort(scores)[-2]]:
+                    best_prop = np.argsort(scores)[-1]
+                    for a in range(len(alleles)):
+                        alleles[a] = ''.join(proposals[best_prop][a])
+
+        return alleles
 
     def infer_abundances(self, norm_b=False):
-        def trace_to_base_calls(trace):
-            base_order = ['A', 'G', 'T', 'C']
-            BASE_CALL_CUTOFF = 0.25
-            assert len(trace) % 4 == 0
-            seq_len = int(len(trace) / 4)
-            seq = ""
-            for base_idx in range(seq_len):
-                slice_values = trace[base_idx * 4: base_idx * 4 + 4]
-                slice_max = max(slice_values)
-                if slice_max > BASE_CALL_CUTOFF:
-                    max_idx = slice_values.index(slice_max)
-                    base = base_order[max_idx]
-                    seq += base
-                else:
-                    seq += 'N'
-            return seq
-
         """
         This uses nnls to solve for abundances of each edit proposal
         :param norm_b:
@@ -780,13 +845,6 @@ class SangerAnalysis:
             self.proposals[n].x_rel = val
 
         self.results.r_squared = np.round(self.results.r_squared,2)
-        # self.base=b
-        # self.predicted=predicted.to_list()
-        # self.residual=(b-predicted).to_list()
-
-        temp = np.array((b - predicted))
-        temp[temp < 0] = 0
-        print(trace_to_base_calls(list(temp)))
 
 
 
@@ -872,6 +930,9 @@ class SangerAnalysis:
 
         print("analyzing {} number of edit proposals".format(len(self.proposals)))
         self._calculate_inference_window()
+
+        self._generate_peak_counted_proposals()
+
         self._generate_coefficient_matrix()
         self._generate_outcomes_vector()
 
