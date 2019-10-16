@@ -47,6 +47,7 @@ from ice.outputs.create_trace_files import generate_trace_files
 from ice.utility.sequence import RNA2DNA, reverse_complement
 from Bio import pairwise2
 import itertools
+import pickle as pkl
 
 def round_percent(orig_array,r_squared):
     # Scale the array by 100 in order to work with np.floor
@@ -699,6 +700,16 @@ class SangerAnalysis:
                 b[v, i] = 1
             return b.T
 
+        def homology_locator(binary_peak_mat,search_size,search_mat):
+            MH_locations=[]
+            for l in range(binary_peak_mat.shape[0]-search_size):
+                # check to see if the mapping sequence is in the peak counting window
+                if (binary_peak_mat[l:l+search_size,:]*search_mat).max(axis=1).min()==True:
+                    # only add it if it's in the inference window
+                    if l > self.alignment_window[1]:
+                        MH_locations.append(l)
+            return MH_locations
+
         channels = ['DATA9', 'DATA10', 'DATA11', 'DATA12']
         edit_seq = self.control_sample.data['PBAS2']
         ctrl_seq = self.control_sample.data['PBAS2']
@@ -721,23 +732,30 @@ class SangerAnalysis:
 
 
         ### Experiments in microhomology
+        threshold=max(peak_values.min(axis=1))
+
         binary_peak_mat=peak_values>0.1
         search_size=10
         homology_seq=ctrl[-search_size:]
         search_mat=test_encoder(homology_seq).astype('bool')
+        MH_locations=homology_locator(binary_peak_mat, search_size, search_mat)
+
         # we only need to look for homologies in the inference window
 
-        MH_locations=[]
-        for l in range(binary_peak_mat.shape[0]-search_size):
-            # check to see if the mapping sequence is in the peak counting window
-            if (binary_peak_mat[l:l+search_size,:]*search_mat).max(axis=1).min()==True:
-                # only add it if it's in the inference window
-                if l > self.alignment_window[1]:
-                    MH_locations.append(l)
-        #find locations of test sequence
+        ###Testing optial length
+        # results={}
+        # for sz in np.arange(4,30):
+        #     search_size = sz
+        #     homology_seq = ctrl[-search_size:]
+        #     search_mat = test_encoder(homology_seq).astype('bool')
+        #     temp_locations = homology_locator(binary_peak_mat, search_size, search_mat)
+        #     results[sz]=temp_locations
+        #
+        # #find locations of test sequence
+        # with open(str(int(np.random.random()*100))+'.pkl', 'wb') as handle:
+        #     pkl.dump(results, handle)
 
 
-        threshold=max(peak_values.min(axis=1))
         n_peaks = np.sum(peak_values > threshold, axis=1)
         # the number of alleles is either the maximum number of peaks or
         n_alleles = int(np.percentile(n_peaks, 95))
