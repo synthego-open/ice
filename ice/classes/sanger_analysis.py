@@ -804,14 +804,13 @@ class SangerAnalysis:
 
                 # IF there is a single proposal that does best, then assign it as truth
                 if scores[np.argsort(scores)[-1]] > scores[np.argsort(scores)[-2]]:
-                    print(n)
                     best_prop = np.argsort(scores)[-1]
                     for a in range(len(alleles)):
                         alleles[a] = ''.join(proposals[best_prop][a])
 
 
         # replace dashes with Ns
-        alleles=[allele.replace('-','N') for allele in alleles]
+        alleles=[allele.strip('-') for allele in alleles]
         return alleles
 
     def infer_abundances(self, norm_b=False):
