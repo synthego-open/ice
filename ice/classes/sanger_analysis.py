@@ -690,6 +690,15 @@ class SangerAnalysis:
         # TODO: Play with 'match' metric. Currently alignment, but others might be more robust
         # TODO: Add some notion of randomizing allele derivation starting position (e.g. loop through nts randomly) and take many alternates
         ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
+        peakdict={v: k for k, v in ntdict.items()}
+
+        def test_encoder(test_seq):
+            a = np.array([peakdict[x] for x in test_seq])
+            b = np.zeros((4, len(a)))
+            for i, v in enumerate(a):
+                b[v, i] = 1
+            return b.T
+
         channels = ['DATA9', 'DATA10', 'DATA11', 'DATA12']
         edit_seq = self.control_sample.data['PBAS2']
         ctrl_seq = self.control_sample.data['PBAS2']
@@ -698,6 +707,8 @@ class SangerAnalysis:
 
         #exp = edit_seq[counting_window[0]:counting_window[1]]
         ctrl = ctrl_seq[counting_window[0]:counting_window[1]]
+
+
 
         # Extract peak values from chromatogram
         peak_values = np.zeros((counting_window[1] - counting_window[0], 4))
@@ -708,13 +719,37 @@ class SangerAnalysis:
         # Normalize peak values
         peak_values = (peak_values.T / np.sum(peak_values, axis=1)).T
 
-        # Derive number of alleles based on peak value distributions
-        n_peaks = np.sum(peak_values > 0.1, axis=1) # TODO: make threshold anchored to sequencing noise floor instead of static value
+
+        ### Experiments in microhomology
+        binary_peak_mat=peak_values>0.1
+        search_size=10
+        homology_seq=ctrl[-search_size:]
+        search_mat=test_encoder(homology_seq).astype('bool')
+        # we only need to look for homologies in the inference window
+
+        MH_locations=[]
+        for l in range(binary_peak_mat.shape[0]-search_size):
+            # check to see if the mapping sequence is in the peak counting window
+            if (binary_peak_mat[l:l+search_size,:]*search_mat).max(axis=1).min()==True:
+                # only add it if it's in the inference window
+                if l > self.alignment_window[1]:
+                    MH_locations.append(l)
+        #find locations of test sequence
+
+
+        threshold=max(peak_values.min(axis=1))
+        n_peaks = np.sum(peak_values > threshold, axis=1)
+        # the number of alleles is either the maximum number of peaks or
         n_alleles = int(np.percentile(n_peaks, 95))
+
+        if n_alleles != len(MH_locations):
+            print('WARNING: homologies not equal to number of distinct peaks')
 
         # Sort out un/ambiguous bps
         alleles = [''] * n_alleles
         ambiguous = [''] * n_alleles
+
+
         # Loop through nucleotides 1 by 1
         for n in range(peak_values.shape[0]):
             # If one clear peak at a given position, then assign that peak to all alleles
@@ -723,19 +758,25 @@ class SangerAnalysis:
                     alleles[a_idx] += ntdict[np.argsort(peak_values[n, :])[-1]]
                     ambiguous[a_idx] += 'N'
 
-            # If mixed peak with clear delineation, assign to alleles in order of decreasing prevalence
-            # (assumes that the reason for clear delineation is differences in allele prevalence)
-            # TODO: This interpretation may be straight up wrong. On test cases it did better, but no large scale evidence so far
-            elif np.sort(peak_values[n, :])[-1] - np.sort(peak_values[n, :])[-2] > .3:  # TODO: this is janky
-                for a_idx in range(n_alleles):
-                    alleles[a_idx] += ntdict[np.argsort(peak_values[n, :])[3 - a_idx]]
-                    ambiguous[a_idx] += 'N'
-
-            # Otherwise document the ambiguity
             else:
                 for a_idx in range(n_alleles):
                     alleles[a_idx] += 'N'
                     ambiguous[a_idx] += ntdict[np.argsort(peak_values[n, :])[3 - a_idx]]
+
+        # Next, lets add in our microhomologies followed by N's post cut
+        for j,location in enumerate(MH_locations):
+            loc=MH_locations[j]
+            allele_list=list(alleles[j])
+            allele_list[loc:loc+search_size]=list(homology_seq)
+
+            # this Xs are known unknowns - we ill not try to set them to N's until the end
+            allele_list[loc + search_size:] = ['-']*len(allele_list[loc + search_size:])
+
+            ambiguous_list = list(ambiguous[j])
+            # append Ns after
+
+            alleles[j]="".join(allele_list)
+            ambiguous[j]="".join(ambiguous_list)
 
         # Parameters for scoring alignments
         match = 4
@@ -758,15 +799,19 @@ class SangerAnalysis:
                 scores = [0] * len(comparisons)
                 for i, comparison in enumerate(comparisons):
                     for j in comparison:
-                        scores[i] += pairwise2.align.globalms(''.join(proposals[i][j]), ctrl, match, mismatch, gapopen,
+                        scores[j] += pairwise2.align.globalms(''.join(proposals[i][j]).strip('-'), ctrl, match, mismatch, gapopen,
                                                               gapextend, score_only=True, penalize_end_gaps=False)
 
                 # IF there is a single proposal that does best, then assign it as truth
                 if scores[np.argsort(scores)[-1]] > scores[np.argsort(scores)[-2]]:
+                    print(n)
                     best_prop = np.argsort(scores)[-1]
                     for a in range(len(alleles)):
                         alleles[a] = ''.join(proposals[best_prop][a])
 
+
+        # replace dashes with Ns
+        alleles=[allele.replace('-','N') for allele in alleles]
         return alleles
 
     def infer_abundances(self, norm_b=False):
