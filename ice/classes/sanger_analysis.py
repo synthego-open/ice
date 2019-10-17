@@ -400,9 +400,15 @@ class SangerAnalysis:
         MAX_BASES_AFTER_CUTSITE = 100
 
         # find minimum length of all generated sequences
-        for ind in self.proposals:
-            if len(ind.sequence) < min_indel_sequence_length:
-                min_indel_sequence_length = len(ind.sequence)
+
+        #if we're skipping traditonal ICE proposal generation and just relying on the allele matching
+        if isinstance(self.proposals,list)==False:
+            print('allele mode engaged')
+
+        else:
+            for ind in self.proposals:
+                if len(ind.sequence) < min_indel_sequence_length:
+                    min_indel_sequence_length = len(ind.sequence)
                 #min_indel = ind.sequence
         #[print(str(ind.bases_changed) + '__' + str(len(ind.sequence))) for ind in self.proposals]
         #import pdb;pdb.set_trace()
@@ -557,8 +563,9 @@ class SangerAnalysis:
 
     def _generate_peak_counted_proposals(self):
 
-        proposals = self.proposals
-
+        #proposals = self.proposals
+        #debug
+        proposals = []
         epc = EditProposalCreator(self.control_sample.primary_base_calls,
                                   use_ctrl_trace=True,
                                   sanger_object=self.control_sample)
@@ -734,31 +741,23 @@ class SangerAnalysis:
         ### Experiments in microhomology
         threshold=max(peak_values.min(axis=1))
 
-        binary_peak_mat=peak_values>0.1
-        search_size=10
-        homology_seq=ctrl[-search_size:]
-        search_mat=test_encoder(homology_seq).astype('bool')
-        MH_locations=homology_locator(binary_peak_mat, search_size, search_mat)
+        binary_peak_mat=peak_values>threshold
+        search_size=2
+        MH_locations=[0,0,0]
+        while len(MH_locations)>2:
+            search_size+=1
+            homology_seq=ctrl[-search_size:]
+            search_mat=test_encoder(homology_seq).astype('bool')
+            MH_locations=homology_locator(binary_peak_mat, search_size, search_mat)
 
         # we only need to look for homologies in the inference window
 
-        ###Testing optial length
-        # results={}
-        # for sz in np.arange(4,30):
-        #     search_size = sz
-        #     homology_seq = ctrl[-search_size:]
-        #     search_mat = test_encoder(homology_seq).astype('bool')
-        #     temp_locations = homology_locator(binary_peak_mat, search_size, search_mat)
-        #     results[sz]=temp_locations
-        #
-        # #find locations of test sequence
-        # with open(str(int(np.random.random()*100))+'.pkl', 'wb') as handle:
-        #     pkl.dump(results, handle)
+
 
 
         n_peaks = np.sum(peak_values > threshold, axis=1)
         # the number of alleles is either the maximum number of peaks or
-        n_alleles = int(np.percentile(n_peaks, 95))
+        n_alleles = int(np.percentile(n_peaks, 90))
 
         if n_alleles != len(MH_locations):
             print('WARNING: homologies not equal to number of distinct peaks')
@@ -790,11 +789,9 @@ class SangerAnalysis:
             # this Xs are known unknowns - we ill not try to set them to N's until the end
             allele_list[loc + search_size:] = ['-']*len(allele_list[loc + search_size:])
 
-            ambiguous_list = list(ambiguous[j])
             # append Ns after
 
             alleles[j]="".join(allele_list)
-            ambiguous[j]="".join(ambiguous_list)
 
         # Parameters for scoring alignments
         match = 4
@@ -827,8 +824,8 @@ class SangerAnalysis:
                         alleles[a] = ''.join(proposals[best_prop][a])
 
 
-        # replace dashes with Ns
-        alleles=[allele.strip('-') for allele in alleles]
+        # replace dashes with Ns - padding out the solutions
+        alleles=[allele.replace('-','N') for allele in alleles]
         return alleles
 
     def infer_abundances(self, norm_b=False):
@@ -981,8 +978,8 @@ class SangerAnalysis:
         alignment.write_json(alignment.all_aligned_seqs, aln_json_file)
         aln_json_file = self.base_outputname + "windowed.json"
         alignment.write_json(alignment.aln_seqs, aln_json_file)
-
-        self._generate_edit_proposals()
+        #debug
+        #self._generate_edit_proposals()
 
         if self.donor_odn:
             aln_file = self.base_outputname + "donor.txt"
@@ -990,10 +987,10 @@ class SangerAnalysis:
             aln_json_file = self.base_outputname + "donor.json"
             self.donor_alignment.write_json(self.donor_alignment.all_aligned_seqs, aln_json_file)
 
-        print("analyzing {} number of edit proposals".format(len(self.proposals)))
         self._calculate_inference_window()
 
         self._generate_peak_counted_proposals()
+        print("analyzing {} number of edit proposals".format(len(self.proposals)))
 
         self._generate_coefficient_matrix()
         self._generate_outcomes_vector()
@@ -1001,6 +998,7 @@ class SangerAnalysis:
         self.analyze_and_rank()
         self.calculate_discordance()
         self.simple_discordance_algorithm()
+
         # output
         indel_file = self.base_outputname + "indel.json"
         trace_file = self.base_outputname + "trace.json"
