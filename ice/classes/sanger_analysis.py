@@ -842,6 +842,14 @@ class SangerAnalysis:
         write_individual_contribs(self, to_file=self.base_outputname + "contribs.txt")
         write_contribs_json(self, self.base_outputname + "contribs.json")
 
+        #Raising exceptions for multiguide failures:
+        weights=[x.x_rel for x in self.results.contribs if x.x_rel>0]
+        if len(self.guide_targets)>1:
+            if self.results.r_squared<0.9:
+                if len(weights)>4:
+                    raise Exception("Multiguide Failure: Unable to resolve contributions")
+
+
 
         if self.allprops:
             write_all_proposals_json(self, self.base_outputname + "allproposals.json")
