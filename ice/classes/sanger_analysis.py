@@ -843,7 +843,7 @@ class SangerAnalysis:
         write_contribs_json(self, self.base_outputname + "contribs.json")
 
         #Raising exceptions for multiguide failures:
-        weights=[x.x_rel for x in self.results.contribs if x.x_rel>0]
+        weights=[x.x_rel for x in self.results.contribs if x.x_rel>0 and  x.x_rel<0.2]
         if len(self.guide_targets)>1:
             if self.results.r_squared<0.9:
                 if len(weights)>1:
