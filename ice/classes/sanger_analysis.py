@@ -563,9 +563,9 @@ class SangerAnalysis:
 
     def _generate_peak_counted_proposals(self):
 
-        #proposals = self.proposals
-        #debug
-        proposals = []
+        proposals = self.proposals
+        # #debug
+        # proposals = []
         epc = EditProposalCreator(self.control_sample.primary_base_calls,
                                   use_ctrl_trace=True,
                                   sanger_object=self.control_sample)
@@ -979,7 +979,7 @@ class SangerAnalysis:
         aln_json_file = self.base_outputname + "windowed.json"
         alignment.write_json(alignment.aln_seqs, aln_json_file)
         #debug
-        #self._generate_edit_proposals()
+        self._generate_edit_proposals()
 
         if self.donor_odn:
             aln_file = self.base_outputname + "donor.txt"
