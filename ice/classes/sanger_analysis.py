@@ -846,7 +846,7 @@ class SangerAnalysis:
         weights=[x.x_rel for x in self.results.contribs if x.x_rel>0]
         if len(self.guide_targets)>1:
             if self.results.r_squared<0.9:
-                if len(weights)>4:
+                if len(weights)>1:
                     raise Exception("Multiguide Failure: Unable to resolve contributions")
 
 
