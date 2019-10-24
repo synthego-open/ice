@@ -47,7 +47,7 @@ def single_sanger_analysis(control_path, sample_path, base_outputname, guide, do
     """
 
     :param control_path: path to control ab1 file
-    :param sample_path: path to sample ab1 file
+    :param sample_path: path to sample ab1 fileimport correlate from scipy.signal
     :param base_outputname: path to output (eg, /path/to/out/basename) will be saved using basename
     :param guide: RNA/DNA sequence of guide
     :param verbose: verbosity True/False
