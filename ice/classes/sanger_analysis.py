@@ -48,6 +48,13 @@ from ice.utility.sequence import RNA2DNA, reverse_complement
 from Bio import pairwise2
 import itertools
 import pickle as pkl
+from scipy.signal import correlate
+
+### plotting
+import matplotlib.pyplot as plt
+
+plt.style.use('rossidata')
+
 
 def round_percent(orig_array,r_squared):
     # Scale the array by 100 in order to work with np.floor
@@ -565,12 +572,13 @@ class SangerAnalysis:
 
         proposals = self.proposals
         # #debug
-        proposals = []
+        #proposals = []
         epc = EditProposalCreator(self.control_sample.primary_base_calls,
                                   use_ctrl_trace=True,
                                   sanger_object=self.control_sample)
 
         alleles = self.peak_counting()
+        #alleles = self.allele_evolution()
         for allele in alleles:
             proposals.append(epc.aligned_sequence_edit_proposal(allele, self.inference_window))
 
@@ -582,33 +590,15 @@ class SangerAnalysis:
 
 
 
-    def _generate_coefficient_matrix(self,alleles=None):
-        if alleles is not None:
-            num_proposals = len(alleles)
-            props=[]
-            base_order='GATC'
-            for allele in alleles:
-                proposal_trace=[]
-                for idx, base in enumerate(allele):
-                    for base_index, base_color in enumerate(base_order):
-                        if base=='N':
-                            proposal_trace.append(.25)
-                        elif base=='-':
-                            proposal_trace.append(0)
-                        elif base == base_color:
-                            proposal_trace.append(1)
-                        else:
-                            proposal_trace.append(0)
-                props.append(proposal_trace)
-            iw_length = len(alleles[0])
-            start,stop=0, iw_length
+    def _generate_coefficient_matrix(self):
 
 
-        else:
-            num_proposals = len(self.proposals)
-            props=self.proposals
-            iw_length = self.inference_window[1] - self.inference_window[0]
-            start, stop = self.inference_window[0], self.inference_window[1]
+
+
+        num_proposals = len(self.proposals)
+        props=self.proposals
+        iw_length = self.inference_window[1] - self.inference_window[0]
+        start, stop = self.inference_window[0], self.inference_window[1]
         output_matrix = np.zeros((num_proposals, 4 * iw_length))
 
         for edit_proposal_idx, ep in enumerate(props):
@@ -616,20 +606,17 @@ class SangerAnalysis:
                 seq_index = base_index - start
                 for color_index in range(4):
                     base_color_index = base_index * 4 + color_index
-                    if alleles is not None:
-                        output_matrix[edit_proposal_idx][seq_index * 4 + color_index] = ep[seq_index * 4 + color_index]
-
-                    else:
-                        output_matrix[edit_proposal_idx][seq_index * 4 + color_index] = ep.trace_data[base_color_index]
+                    output_matrix[edit_proposal_idx][seq_index * 4 + color_index] = ep.trace_data[base_color_index]
 
                 # normalize values
                 sum = np.sum(output_matrix[edit_proposal_idx][seq_index * 4:seq_index * 4 + 4])
                 for color_index in range(4):
-                    normalized_amt = output_matrix[edit_proposal_idx][seq_index * 4 + color_index] / sum
-                    if np.isnan(normalized_amt * 100):
-                        output_matrix[edit_proposal_idx][seq_index * 4 + color_index] = 0
-                    else:
-                        output_matrix[edit_proposal_idx][seq_index * 4 + color_index] = normalized_amt * 100
+                    if sum!=0:
+                        normalized_amt = output_matrix[edit_proposal_idx][seq_index * 4 + color_index] / sum
+                        if np.isnan(normalized_amt * 100):
+                            output_matrix[edit_proposal_idx][seq_index * 4 + color_index] = 0
+                        else:
+                            output_matrix[edit_proposal_idx][seq_index * 4 + color_index] = normalized_amt * 100
         # if self.verbose:
         #     print("Shape of coefficient matrix:", output_matrix.shape)
 
@@ -723,6 +710,37 @@ class SangerAnalysis:
 
         self.results.max_unexp_discord = max(unexplained_discord_signal) * 100
 
+    def allele_evolution(self):
+
+        channels = ['DATA9', 'DATA10', 'DATA11', 'DATA12']
+        ctrl_seq = self.control_sample.data['PBAS2']
+
+        counting_window = (self.alignment_window[0], self.inference_window[1])
+
+        #exp = edit_seq[counting_window[0]:counting_window[1]]
+        ctrl = ctrl_seq[counting_window[0]:counting_window[1]]
+
+        alignment_offset=np.mean([np.diff(x) for x in self.alignment.alignment_pairs if None not in x]).round().astype(int)
+
+
+        # Extract peak values from chromatogram
+        peak_values = np.zeros((counting_window[1] - counting_window[0], 4))
+        for i in range(4):
+            region = np.array(self.edited_sample.data[channels[i]])
+            peak_values[:, i] = region[np.array(self.edited_sample.data['PLOC1'])][counting_window[0]+alignment_offset:counting_window[1]+alignment_offset]
+
+        # Normalize peak values
+        peak_values = (peak_values.T / np.sum(peak_values, axis=1)).T
+        b = peak_values.reshape(-1, 1)
+
+        # generate two alleles:
+        alleles=[]
+        for _ in range(2):
+            alleles.append(ctrl[counting_window[0] : counting_window[1]])
+
+
+
+        return alleles
 
     def peak_counting(self):
 
@@ -752,8 +770,8 @@ class SangerAnalysis:
             r2=seq1-seq2
             return r2
 
-
-
+        def autocorr(x, t=1):
+            return np.corrcoef(np.array([x[:-t], x[t:]]))[1,0]
 
         channels = ['DATA9', 'DATA10', 'DATA11', 'DATA12']
         edit_seq = self.control_sample.data['PBAS2']
@@ -764,13 +782,16 @@ class SangerAnalysis:
         #exp = edit_seq[counting_window[0]:counting_window[1]]
         ctrl = ctrl_seq[counting_window[0]:counting_window[1]]
 
+        alignment_offset=np.mean([np.diff(x) for x in self.alignment.alignment_pairs if None not in x]).round().astype(int)
+        print(ctrl)
 
-
+        print(self.edited_sample.data['PBAS2'][
+              counting_window[0] + alignment_offset:counting_window[1] + alignment_offset])
         # Extract peak values from chromatogram
         peak_values = np.zeros((counting_window[1] - counting_window[0], 4))
         for i in range(4):
             region = np.array(self.edited_sample.data[channels[i]])
-            peak_values[:, i] = region[np.array(self.edited_sample.data['PLOC1'])][counting_window[0]:counting_window[1]]
+            peak_values[:, i] = region[np.array(self.edited_sample.data['PLOC1'])][counting_window[0]+alignment_offset:counting_window[1]+alignment_offset]
 
         # Normalize peak values
         peak_values = (peak_values.T / np.sum(peak_values, axis=1)).T
@@ -782,6 +803,22 @@ class SangerAnalysis:
         threshold=max(peak_values.min(axis=1))
 
         binary_peak_mat=peak_values>threshold
+
+
+
+        ### testing autocorrelation hypothesis
+        # labels=list('GATC')
+        # fig,ax=plt.subplots()
+        # for r in range(4):
+        #     nucleotides=peak_values[:, r]
+        #     x=correlate(nucleotides, nucleotides)
+        #     ax.plot(x[int(len(x)/2):]/max(x),label=labels[r])
+        # ax.legend()
+        # fig.savefig('{}.png'.format(np.random.random()))
+            # trace=[]
+            # for t in range(len(nucleotides)-10):
+            #     trace.append(autocorr(nucleotides, t=t+1))
+
         search_size=2
         MH_locations=[0,0,0]
         while len(MH_locations)>2:
@@ -789,6 +826,12 @@ class SangerAnalysis:
             homology_seq=ctrl[-search_size:]
             search_mat=test_encoder(homology_seq).astype('bool')
             MH_locations=homology_locator(binary_peak_mat, search_size, search_mat)
+            difs=np.diff(MH_locations)
+            new_mh=[MH_locations[0]]
+            for l, dif in enumerate(difs):
+                if abs(dif) > search_size:
+                    new_mh.append(MH_locations[l+1])
+            MH_locations=new_mh
 
         # we only need to look for homologies in the inference window
 
@@ -801,8 +844,11 @@ class SangerAnalysis:
 
         if n_alleles != len(MH_locations):
             print('WARNING: homologies not equal to number of distinct peaks')
+            n_alleles=max(n_alleles,len(MH_locations))
 
         # Sort out un/ambiguous bps
+        if n_alleles!=2:
+            n_alleles=2
         alleles = [''] * n_alleles
         ambiguous = [''] * n_alleles
 
@@ -833,6 +879,16 @@ class SangerAnalysis:
 
             alleles[j]="".join(allele_list)
 
+        # if n_alleles==1:
+        #     ctrl_list=list(ctrl)
+        #     allele_list=list(alleles[0])
+        #     for j,bp in enumerate(allele_list):
+        #         if bp=='N':
+        #             ctrl_list[j]='N'
+        #
+        #     alleles=[''.join(ctrl_list),''.join(allele_list)]
+        #     n_alleles+=1
+
         # Parameters for scoring alignments
         match = 4
         mismatch = -2
@@ -843,15 +899,10 @@ class SangerAnalysis:
 
         b=peak_values.reshape(-1,1)
 
-        b=[]
-        for j in range(len(peak_values)):
-
-            for l in range(4):
-                b.append(peak_values[j,l])
 
         # Now that we have decreased the uncertainty of the alleles, go back to the ambiguous ones and see which alternatives fit best
         for n in range(peak_values.shape[0]):
-            if alleles[0][n] == 'N':
+            if alleles[0][n] == 'N' or alleles[1][n] == 'N':
 
                 # Populate list of possible bps at this position
                 proposals = [[list(a) for a in alleles]] * n_proposals
@@ -867,13 +918,12 @@ class SangerAnalysis:
 
 
 
-                    #self._generate_coefficient_matrix(alleles=[''.join(proposals[1][i]),''.join(proposals[0][i])])
-                    self._generate_coefficient_matrix(alleles=[ctrl])
+                    self._generate_coefficient_matrix(alleles=[''.join(proposals[1][i]).replace('-','N'),''.join(proposals[0][i]).replace('-','N')])
                     A = self.coefficient_matrix
 
                     (fit_r, p_val_2_tailed) = pearsonr(A.mean(axis=1).ravel(), b.ravel()*100)
 
-                    scores[i] += fit_r ** 2
+                    scores[i] = fit_r ** 2
 
                 # Score each possible bp according to how well it would make the possible alleles align
                 # scores = [0] * len(comparisons)
@@ -884,11 +934,10 @@ class SangerAnalysis:
                 #                                               gapextend, score_only=True, penalize_end_gaps=False)
 
                 # IF there is a single proposal that does best, then assign it as truth
-                print(scores)
                 if scores[np.argsort(scores)[-1]] > scores[np.argsort(scores)[-2]]:
                     best_prop = np.argsort(scores)[-1]
                     for a in range(len(alleles)):
-                        alleles[a] = ''.join(proposals[best_prop][a])
+                        alleles[a] = ''.join(proposals[a][best_prop])
 
 
         # replace dashes with Ns - padding out the solutions
@@ -1046,7 +1095,7 @@ class SangerAnalysis:
         aln_json_file = self.base_outputname + "windowed.json"
         alignment.write_json(alignment.aln_seqs, aln_json_file)
         #debug
-        #self._generate_edit_proposals()
+        self._generate_edit_proposals()
 
         if self.donor_odn:
             aln_file = self.base_outputname + "donor.txt"
