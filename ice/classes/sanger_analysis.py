@@ -45,6 +45,7 @@ from ice.outputs.create_discordance_indel_files import generate_discordance_inde
 from ice.outputs.create_json import write_individual_contribs, write_contribs_json, write_all_proposals_json
 from ice.outputs.create_trace_files import generate_trace_files
 from ice.utility.sequence import RNA2DNA, reverse_complement
+from ice.classes.edit_proposal import EditProposal
 from Bio import pairwise2
 import itertools
 import pickle as pkl
@@ -568,11 +569,42 @@ class SangerAnalysis:
         seen=[]
         self.proposals = list(filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
 
-    def _generate_peak_counted_proposals(self):
+    ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
+    peakdict = {v: k for k, v in ntdict.items()}
 
-        proposals = self.proposals
+
+
+    def convert_to_seq(self,peaks):
+
+        ## restructure the data if it's the wrong shape
+        if min(peaks.shape) == 1:
+            peaks = peaks.reshape(-1, 4)
+        seq = ['']
+        # Loop through nucleotides 1 by 1
+        for n in range(peaks.shape[0]):
+            # If one clear peak at a given position, then assign that peak to all alleles
+            if np.sort(peaks[n, :])[-1] - np.sort(peaks[n, :])[-2] > .75:
+                seq += ntdict[np.argsort(peaks[n, :])[-1]]
+            else:
+                seq += 'N'
+        return ''.join(seq)
+
+    def _generate_peak_counted_proposals(self):
+        ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
+        peakdict = {v: k for k, v in ntdict.items()}
+        def convert_to_peaks(seq):
+            # loop through seq
+            peaks = np.zeros((len(seq), 4))
+            for i, n in enumerate(seq):
+                if n in 'AGTC':
+                    peaks[i, peakdict[n]] = 1
+                else:
+                    peaks[i, :] = 0.25
+
+            return peaks
+        #proposals = self.proposals
         # #debug
-        #proposals = []
+        proposals = []
         epc = EditProposalCreator(self.control_sample.primary_base_calls,
                                   use_ctrl_trace=True,
                                   sanger_object=self.control_sample)
@@ -582,11 +614,28 @@ class SangerAnalysis:
         for allele in alleles:
             proposals.append(epc.aligned_sequence_edit_proposal(allele, self.inference_window))
 
+        for allele in alleles:
+            ep = EditProposal()
 
+            sequence = [''] * 1000
+            sequence[self.alignment_window[0]:self.inference_window[1]] = list(allele)
+
+            peaks = np.zeros((1000, 4))
+            peaks[self.alignment_window[0]:self.inference_window[1], :] = convert_to_peaks(allele) * 100
+            ep.sequence_data = ''.join(sequence)
+            ep.trace_data = peaks.reshape(-1, 1)
+            ep.bases_changed = 20
+            ep.summary = '{}[{}]'.format((20), 'agnostic')
+            ep.summary_json = {'total': ep.bases_changed,
+                               'details': [{'label': 'agnostic', 'value': ep.bases_changed}]}
+            ep.cutsite = 0
+            proposals.append(ep)
+
+        self.proposals=proposals
         # removing degenerate proposals
-        seen = []
-        self.proposals = list(
-            filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
+        # seen = []
+        # self.proposals = list(
+        #     filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
 
 
 
@@ -742,12 +791,35 @@ class SangerAnalysis:
 
         return alleles
 
+    def r_squared_cost_function(self,X, Y):
+        ''
+        ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
+        peakdict = {v: k for k, v in ntdict.items()}
+        def convert_to_peaks(seq):
+            # loop through seq
+            peaks = np.zeros((len(seq), 4))
+            for i, n in enumerate(seq):
+                if n in 'AGTC':
+                    peaks[i, peakdict[n]] = 1
+                else:
+                    peaks[i, :] = 0.25
+
+            return peaks
+        X = np.hstack((convert_to_peaks(X[0]).reshape(-1, 1), convert_to_peaks(X[1]).reshape(-1, 1))).mean(axis=1)
+        if min(Y.shape) != 1:
+            Y = Y.reshape(-1, 1)
+
+        (fit_r, p_val_2_tailed) = pearsonr(X, Y.ravel() * 100)
+
+        return fit_r ** 2
+
     def peak_counting(self):
 
         # TODO: Play with 'match' metric. Currently alignment, but others might be more robust
         # TODO: Add some notion of randomizing allele derivation starting position (e.g. loop through nts randomly) and take many alternates
         ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
         peakdict={v: k for k, v in ntdict.items()}
+
 
         def test_encoder(test_seq):
             a = np.array([peakdict[x] for x in test_seq])
@@ -783,10 +855,7 @@ class SangerAnalysis:
         ctrl = ctrl_seq[counting_window[0]:counting_window[1]]
 
         alignment_offset=np.mean([np.diff(x) for x in self.alignment.alignment_pairs if None not in x]).round().astype(int)
-        print(ctrl)
 
-        print(self.edited_sample.data['PBAS2'][
-              counting_window[0] + alignment_offset:counting_window[1] + alignment_offset])
         # Extract peak values from chromatogram
         peak_values = np.zeros((counting_window[1] - counting_window[0], 4))
         for i in range(4):
@@ -916,14 +985,7 @@ class SangerAnalysis:
                 scores = [0] * len(comparisons)
                 for i, comparison in enumerate(comparisons):
 
-
-
-                    self._generate_coefficient_matrix(alleles=[''.join(proposals[1][i]).replace('-','N'),''.join(proposals[0][i]).replace('-','N')])
-                    A = self.coefficient_matrix
-
-                    (fit_r, p_val_2_tailed) = pearsonr(A.mean(axis=1).ravel(), b.ravel()*100)
-
-                    scores[i] = fit_r ** 2
+                    scores[i] = self.r_squared_cost_function([''.join(proposals[1][i]).replace('-','N'),''.join(proposals[0][i]).replace('-','N')],b.ravel()*100)
 
                 # Score each possible bp according to how well it would make the possible alleles align
                 # scores = [0] * len(comparisons)
@@ -1095,7 +1157,7 @@ class SangerAnalysis:
         aln_json_file = self.base_outputname + "windowed.json"
         alignment.write_json(alignment.aln_seqs, aln_json_file)
         #debug
-        self._generate_edit_proposals()
+        #self._generate_edit_proposals()
 
         if self.donor_odn:
             aln_file = self.base_outputname + "donor.txt"
@@ -1122,8 +1184,8 @@ class SangerAnalysis:
         generate_discordance_indel_files(self, self.results, to_file=indel_file)
         generate_trace_files(self, to_file=trace_file)
 
-        write_individual_contribs(self, to_file=self.base_outputname + "contribs.txt")
-        write_contribs_json(self, self.base_outputname + "contribs.json")
+        # write_individual_contribs(self, to_file=self.base_outputname + "contribs.txt")
+        # write_contribs_json(self, self.base_outputname + "contribs.json")
 
 
         if self.allprops:
