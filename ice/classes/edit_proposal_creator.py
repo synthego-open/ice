@@ -132,6 +132,40 @@ class EditProposalCreator:
             ep.trace_data = proposal_trace
         return ep
 
+
+    def allele_proposal(self,sequence,total_deleted,proposal_trace,control_sequence,cutsites):
+        proposal_bases=[]
+        for idx, base in enumerate(control_sequence):
+            if sequence[idx] == '-':
+                proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)
+            elif sequence[idx] == base:
+                proposal_base = ProposalBase(sequence[idx], ProposalBase.WILD_TYPE, idx)
+            else:
+                proposal_base = ProposalBase(base, ProposalBase.BASE_EDIT, idx)
+
+            proposal_bases.append(proposal_base)
+
+        ep = EditProposal()
+        ep.sequence_data = proposal_bases
+        ep.cutsite = cutsites[0]
+        ep.cutsite2 =cutsites[1]
+        ep.cutsite3 = cutsites[2]
+
+
+        ep.bases_changed = total_deleted
+
+        ep.summary = '{}:{}'.format(total_deleted, 'allele')
+        summary_json = {}
+        summary_json['total'] = ep.bases_changed
+        summary_json['details'] = []
+
+        summary_json['details'].append({'label': 'dropout', 'value': total_deleted})
+        ep.summary_json = summary_json
+        ep.trace_data = proposal_trace
+
+        return ep
+
+
     def multiplex_proposal(self, cutsite1, cutsite2, label1, label2, cut1_del=(0, 0), cut1_ins=0, cut2_del=(0, 0),
                            cut2_ins=0, dropout=False):
         """
@@ -289,7 +323,6 @@ class EditProposalCreator:
             if dropout:
                 summary_json['details'].append({'label': 'dropout', 'value': cutsite1 - cutsite2})
             ep.summary_json = summary_json
-            ep.trace_data = proposal_trace
             ep.trace_data = proposal_trace
         # the intervening sequence is dropped out and no bases inserted or deleted
         else:
