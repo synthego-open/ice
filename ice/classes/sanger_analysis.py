@@ -1036,7 +1036,6 @@ class SangerAnalysis:
 
         mismatch_range=np.linspace(0,-10,10)
         for r in range(10):
-            random.shuffle(N_indexes)
             temp_alleles=alleles.copy()
             for n in N_indexes:
                 # Populate list of possible bps at this position
@@ -1103,11 +1102,13 @@ class SangerAnalysis:
             assert temp_alleles!=alleles
 
             final_score=sum([pairwise2.align.globalmd(''.join(allele).replace('-',''),
-                                                 ctrl, match, 0, -10, -2, gapopen, gapextend,
+                                                 ctrl, match, mismatch, -10, -2, gapopen, gapextend,
                                                  penalize_end_gaps=True,score_only=True) for allele in temp_alleles])
 
             print(final_score)
             score_tracking[final_score]=temp_alleles
+            random.shuffle(N_indexes)
+
         final_max_score=max(score_tracking.keys())
         alleles=score_tracking[final_max_score]
 
