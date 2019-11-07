@@ -138,10 +138,11 @@ class EditProposalCreator:
         for idx, base in enumerate(control_sequence):
             if sequence[idx] == '-':
                 proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)
+
             elif sequence[idx] == base:
                 proposal_base = ProposalBase(sequence[idx], ProposalBase.WILD_TYPE, idx)
             else:
-                proposal_base = ProposalBase(base, ProposalBase.BASE_EDIT, idx)
+                proposal_base = ProposalBase(sequence[idx], ProposalBase.BASE_EDIT, idx)
 
             proposal_bases.append(proposal_base)
 
@@ -150,7 +151,6 @@ class EditProposalCreator:
         ep.cutsite = cutsites[0]
         ep.cutsite2 =cutsites[1]
         ep.cutsite3 = cutsites[2]
-
 
         ep.bases_changed = total_deleted
 
