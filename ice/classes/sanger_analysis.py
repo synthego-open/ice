@@ -604,9 +604,9 @@ class SangerAnalysis:
                 else:
                     seq += 'N'
             return ''.join(seq)
-        #proposals = self.proposals
+        proposals = self.proposals
         # #debug
-        proposals = []
+        #proposals = []
         epc = EditProposalCreator(self.control_sample.primary_base_calls,
                                   use_ctrl_trace=True,
                                   sanger_object=self.control_sample)
@@ -1272,21 +1272,23 @@ class SangerAnalysis:
             #predicted = np.dot(A, xvals)
 
             #optional L1
-            # lasso_model = linear_model.Lasso(alpha=0.8, positive=True)
-            # lasso_model.fit(A, b)
+            lasso_model = linear_model.Lasso(alpha=0.8, positive=True)
+            b=b[:A.shape[0]]
 
-            #xvals = lasso_model.coef_
+            lasso_model.fit(A, b)
+
+            xvals = lasso_model.coef_
 
 
             # optional lars
-            Lars_model = linear_model.Lars(n_nonzero_coefs=2,positive=True)
-            #TODO figure out this bug
-            b=b[:A.shape[0]]
-
-            # print(np.mean(A))
-            # print(np.mean(b))
-            Lars_model.fit(A, b)
-            xvals = Lars_model.coef_
+            # Lars_model = linear_model.Lars(n_nonzero_coefs=2,positive=True)
+            # #TODO figure out this bug
+            # b=b[:A.shape[0]]
+            #
+            # # print(np.mean(A))
+            # # print(np.mean(b))
+            # Lars_model.fit(A, b)
+            # xvals = Lars_model.coef_
             predicted = np.dot(A, xvals)
             
 
@@ -1396,7 +1398,7 @@ class SangerAnalysis:
         aln_json_file = self.base_outputname + "windowed.json"
         alignment.write_json(alignment.aln_seqs, aln_json_file)
         #debug
-        #self._generate_edit_proposals()
+        self._generate_edit_proposals()
 
         if self.donor_odn:
             aln_file = self.base_outputname + "donor.txt"
