@@ -95,7 +95,11 @@ class EditProposal:
         :param pos: position to check if at cutsite
         :return: bool indicating if pos is at a cutsite
         """
-        return (self.cutsite and self.cutsite == pos) or (self.cutsite2 and self.cutsite2 == pos) or (self.cutsite3 and self.cutsite3 == pos)
+        try:
+            return (self.cutsite and self.cutsite == pos) or (self.cutsite2 and self.cutsite2 == pos) or (self.cutsite3 and self.cutsite3 == pos)
+        except:
+            return(self.cutsite and self.cutsite == pos) or (self.cutsite2 and self.cutsite2 == pos)
+
 
     def _calc_default_bp_after_cutsite(self):
         """

@@ -104,7 +104,7 @@ class SangerAnalysis:
         self.valid_configuration = False
         self.donor_odn = None
         self.recombination_changed_bases = []
-
+        self.deletion_thresholds =None
         # list of EditProposals
         self.proposals = None
 
@@ -574,20 +574,7 @@ class SangerAnalysis:
 
 
 
-    def convert_to_seq(self,peaks):
 
-        ## restructure the data if it's the wrong shape
-        if min(peaks.shape) == 1:
-            peaks = peaks.reshape(-1, 4)
-        seq = ['']
-        # Loop through nucleotides 1 by 1
-        for n in range(peaks.shape[0]):
-            # If one clear peak at a given position, then assign that peak to all alleles
-            if np.sort(peaks[n, :])[-1] - np.sort(peaks[n, :])[-2] > .75:
-                seq += ntdict[np.argsort(peaks[n, :])[-1]]
-            else:
-                seq += 'N'
-        return ''.join(seq)
 
     def _generate_peak_counted_proposals(self):
         ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
@@ -596,12 +583,27 @@ class SangerAnalysis:
             # loop through seq
             peaks = np.zeros((len(seq), 4))
             for i, n in enumerate(seq):
-                if n in 'AGTC':
+                if n in 'ATCG':
                     peaks[i, peakdict[n]] = 1
                 else:
                     peaks[i, :] = 0.25
 
             return peaks
+
+        def convert_to_seq( peaks):
+
+            ## restructure the data if it's the wrong shape
+            if min(peaks.shape) == 1:
+                peaks = peaks.reshape(-1, 4)
+            seq = ['']
+            # Loop through nucleotides 1 by 1
+            for n in range(peaks.shape[0]):
+                # If one clear peak at a given position, then assign that peak to all alleles
+                if np.sort(peaks[n, :])[-1] - np.sort(peaks[n, :])[-2] > .75:
+                    seq += ntdict[np.argsort(peaks[n, :])[-1]]
+                else:
+                    seq += 'N'
+            return ''.join(seq)
         #proposals = self.proposals
         # #debug
         proposals = []
@@ -615,22 +617,28 @@ class SangerAnalysis:
         #alleles = self.allele_evolution()
         for j,allele in enumerate(alleles):
             remade=allele.replace('-','')+'N'*(allele.count('-'))
-            proposal_trace=(convert_to_peaks(remade) * 100)#.reshape(-1, 1)
+            proposal_trace=(convert_to_peaks(remade) )#.reshape(-1, 1)
+
 
 
             sequence = [''] * 1000
-            sequence[self.alignment_window[0]:self.inference_window[1]] = list(allele)
+            sequence[self.alignment_window[0]:self.inference_window[1]] = list(remade)
 
             ctrl_seq=[''] * 1000
             ctrl_seq[self.alignment_window[0]:self.inference_window[1]] = list(control_seq)
 
 
-            peaks = np.zeros((1000, 4))
-            peaks[self.alignment_window[0]:self.inference_window[1], :] = proposal_trace
+            peaks = np.ones((1000, 4))
+            peaks=peaks*.25
+            try:
+                peaks[self.alignment_window[0]:self.inference_window[1], :] = proposal_trace
+            except:
+                #hacky fix for unkown bug
+                peaks[self.alignment_window[0]:self.inference_window[1], :] = proposal_trace[:(self.inference_window[1]-self.alignment_window[0]),:]
             cutsites=[x.cutsite for x in self.guide_targets]
 
 
-            ep=epc.allele_proposal( allele,deletions[j],peaks.reshape(-1,1), ''.join(control_seq),cutsites)
+            ep=epc.allele_proposal( allele,deletions[j],peaks.reshape(-1,1), ''.join(ctrl_seq),cutsites)
 
 
             #ep2=epc.aligned_sequence_edit_proposal(allele.strip('-'), self.inference_window)
@@ -656,6 +664,7 @@ class SangerAnalysis:
         self.proposals = list(
             filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
         self.proposals=proposals
+        self.deletion_thresholds=deletions
 
 
 
@@ -667,9 +676,18 @@ class SangerAnalysis:
 
         num_proposals = len(self.proposals)
         props=self.proposals
+
+
         iw_length = self.inference_window[1] - self.inference_window[0]
         start, stop = self.inference_window[0], self.inference_window[1]
         output_matrix = np.zeros((num_proposals, 4 * iw_length))
+
+        if self.deletion_thresholds is not None:
+            print(self.deletion_thresholds)
+            stop-=max(self.deletion_thresholds)
+            iw_length-=max(self.deletion_thresholds)
+            output_matrix = np.zeros((num_proposals, 4 * iw_length))
+
 
         for edit_proposal_idx, ep in enumerate(props):
             for base_index in range(start, stop):
@@ -815,6 +833,7 @@ class SangerAnalysis:
     def r_squared_cost_function(self,X, Y):
         ''
         ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
+
         peakdict = {v: k for k, v in ntdict.items()}
         def convert_to_peaks(seq):
             # loop through seq
@@ -830,7 +849,9 @@ class SangerAnalysis:
         if min(Y.shape) != 1:
             Y = Y.reshape(-1, 1)
 
-        (fit_r, p_val_2_tailed) = pearsonr(X, Y.ravel() * 100)
+        (fit_r, p_val_2_tailed) = pearsonr(X, Y.ravel())
+
+
 
         return fit_r ** 2
 
@@ -949,19 +970,21 @@ class SangerAnalysis:
         alleles = [''] * n_alleles
         ambiguous = [''] * n_alleles
 
-
+        complete_traces=[''] * n_alleles
         # Loop through nucleotides 1 by 1
         for n in range(peak_values.shape[0]):
             # If one clear peak at a given position, then assign that peak to all alleles
-            if np.sort(peak_values[n, :])[-1] - np.sort(peak_values[n, :])[-2] > .75:
+            if np.sort(peak_values[n, :])[-1] - np.sort(peak_values[n, :])[-2] > .5:
                 for a_idx in range(n_alleles):
                     alleles[a_idx] += ntdict[np.argsort(peak_values[n, :])[-1]]
                     ambiguous[a_idx] += 'N'
+                    complete_traces[a_idx]+= ntdict[np.argsort(peak_values[n, :])[-1]]
 
             else:
                 for a_idx in range(n_alleles):
                     alleles[a_idx] += 'N'
                     ambiguous[a_idx] += ntdict[np.argsort(peak_values[n, :])[3 - a_idx]]
+                    complete_traces[a_idx]+= ntdict[np.argsort(peak_values[n, :])[3 - a_idx]]
 
         # Next, lets add in our microhomologies followed by N's post cut
         for j,location in enumerate(MH_locations):
@@ -991,8 +1014,8 @@ class SangerAnalysis:
         # Parameters for scoring alignments
         match = 4
         mismatch = -2
-        gapopen = -6
-        gapextend = -0.1
+        gapopen = -10
+        gapextend = -0
         comparisons = list(itertools.permutations(np.arange(n_alleles), n_alleles))
         n_proposals = len(comparisons)
 
@@ -1001,23 +1024,7 @@ class SangerAnalysis:
 
         # Now that we have decreased the uncertainty of the alleles, go back to the ambiguous ones and see which alternatives fit best
 
-        def mismatch_counter(align1, align2, score, begin, end):
-            s = []
-            s.append("%s\n" % align1)
-            s.append(" " * begin)
-            gap = 0
-            mismatch = 0
-            for a, b in zip(align1[begin:end], align2[begin:end]):
-                if a == b:
-                    s.append("|")  # match
-                elif a == "-" or b == "-":
-                    s.append(" ")  # gap
-                    gap += 1
-                else:
-                    s.append(".")  # mismatch
-                    mismatch += 1
 
-            return mismatch
 
 
             ### base pair identification step
@@ -1034,83 +1041,153 @@ class SangerAnalysis:
 
         N_indexes=[j for j, x in enumerate(zip(alleles[0], alleles[1])) if 'N' in x]
 
-        mismatch_range=np.linspace(0,-10,10)
-        for r in range(10):
-            temp_alleles=alleles.copy()
-            for n in N_indexes:
-                # Populate list of possible bps at this position
-
-                # A1,A2,B1,B2
-                proposals=[]
-                l=0
-                for i,allele in enumerate(temp_alleles):
-                    for j in range(2):
-                        proposals.append(list(allele))
-                        proposals[l][n]=ambiguous[j][n]
-                        l += 1
-
-                #assert ''.join(proposals[0]) != ''.join(proposals[2]), 'Same bases in differnt allele proposals'
-                assert proposals[0][n] != proposals[1][n], 'Same bases in allele pair'
-
-                # R_squared scoring system:
-
-                # scores = [0] * len(comparisons)
-                # for i, comparison in enumerate(comparisons):
-                #
-                #     scores[i] = self.r_squared_cost_function([''.join(proposals[1][i]).replace('-','N'),''.join(proposals[0][i]).replace('-','N')],b.ravel()*100)
-
-                # Score each possible bp according to how well it would make the possible alleles align
-
-                pairs=[[proposals[0],proposals[3]],[proposals[1],proposals[2]]]
-                scores = [0, 0]
-                for i,pair in enumerate(pairs):
-
-                        for al in pair:
-
-                            scores[i]+=pairwise2.align.globalmd(''.join(al).replace('-',''),
-                                                     ctrl, match, mismatch, -10, -2, gapopen, gapextend,
-                                                     penalize_end_gaps=True,score_only=True)
+        ### Cycle over orientations
 
 
+        for seq_orientation in range(2):
+            for n_orientation in range(2):
 
-                # IF there is a single proposal that does best, then assign it as truth
-                max_score_index, max_score = max(enumerate(scores), key=operator.itemgetter(1))
-                if scores.count(max_score)==1:
-
-                    temp_alleles[0] = ''.join(pairs[max_score_index][0])
-                    temp_alleles[1] = ''.join(pairs[max_score_index][1])
+                # determining orientation of the various elements
+                if seq_orientation ==1:
+                    temp_alleles = [allele[::-1] for allele in alleles.copy()]
+                    temp_ctrl=ctrl[::-1]
+                    temp_ambiguous=[ambig[::-1] for ambig in ambiguous]
                 else:
-                    temp_alleles[0] = ''.join(pairs[0][0])
-                    temp_alleles[1] = ''.join(pairs[0][1])
+                    temp_alleles=alleles.copy()
+                    temp_ctrl=ctrl
+                    temp_ambiguous = ambiguous.copy()
+
+                N_indexes = [j for j, x in enumerate(zip(temp_alleles[0], temp_alleles[1])) if 'N' in x]
+                if n_orientation==1:
+                    N_indexes=N_indexes[::-1]
 
 
-                # print(max_score)
 
-            ### repeat MH_deleitions
-            for j, location in enumerate(MH_locations):
-                loc = MH_locations[j]
-                allele_list = list(temp_alleles[j])
-                allele_list[loc:loc + search_size] = list(homology_seq)
 
-                # this Xs are known unknowns - we ill not try to set them to N's until the end
-                allele_list[loc + search_size:] = ['-'] * len(allele_list[loc + search_size:])
+                for n in N_indexes:
+                    # Populate list of possible bps at this position
 
-                # append Ns after
 
-                temp_alleles[j] = "".join(allele_list)
+                    # A1,A2,B1,B2
+                    proposals=[]
+                    l=0
+                    for i,allele in enumerate(temp_alleles):
+                        for j in range(2):
+                            proposals.append(list(allele))
+                            proposals[l][n]=temp_ambiguous[j][n]
+                            l += 1
 
-            assert temp_alleles!=alleles
+                    #assert ''.join(proposals[0]) != ''.join(proposals[2]), 'Same bases in differnt allele proposals'
+                    assert proposals[0][n] != proposals[1][n], 'Same bases in allele pair'
 
-            final_score=sum([pairwise2.align.globalmd(''.join(allele).replace('-',''),
-                                                 ctrl, match, mismatch, -10, -2, gapopen, gapextend,
-                                                 penalize_end_gaps=True,score_only=True) for allele in temp_alleles])
+                    # R_squared scoring system:
 
-            print(final_score)
-            score_tracking[final_score]=temp_alleles
-            random.shuffle(N_indexes)
+                    # scores = [0] * len(comparisons)
+                    # for i, comparison in enumerate(comparisons):
+                    #
+                    #     scores[i] = self.r_squared_cost_function([''.join(proposals[1][i]).replace('-','N'),''.join(proposals[0][i]).replace('-','N')],b.ravel()*100)
+
+                    # Score each possible bp according to how well it would make the possible alleles align
+
+                    pairs=[[proposals[0],proposals[3]],[proposals[1],proposals[2]]]
+                    scores = [0, 0]
+                    for i,pair in enumerate(pairs):
+
+                            for al in pair:
+
+                                scores[i]+=pairwise2.align.globalmd(''.join(al).replace('-',''),
+                                                         temp_ctrl, match, 0, -10, -2, gapopen, gapextend,
+                                                         penalize_end_gaps=True,score_only=True)
+
+
+
+                    # IF there is a single proposal that does best, then assign it as truth
+                    max_score_index, max_score = max(enumerate(scores), key=operator.itemgetter(1))
+                    if scores.count(max_score)==1:
+
+                        temp_alleles[0] = ''.join(pairs[max_score_index][0])
+                        temp_alleles[1] = ''.join(pairs[max_score_index][1])
+                    else:
+                        temp_alleles[0] = ''.join(pairs[0][0])
+                        temp_alleles[1] = ''.join(pairs[0][1])
+
+
+                    # print(max_score)
+                if seq_orientation == 1:
+                    temp_alleles=[allele[::-1] for allele in temp_alleles]
+                ### repeat MH_deleitions
+                for j, location in enumerate(MH_locations):
+
+                    loc = MH_locations[j]
+                    allele_list = list(temp_alleles[j])
+                    allele_list[loc:loc + search_size] = list(homology_seq)
+
+                    # this Xs are known unknowns - we ill not try to set them to N's until the end
+                    allele_list[loc + search_size:] = ['-'] * len(allele_list[loc + search_size:])
+
+                    # append Ns after
+
+                    temp_alleles[j] = "".join(allele_list)
+
+
+                assert temp_alleles!=alleles
+
+
+
+                # calculating the residuals
+
+
+                # for allele in temp_alleles:
+                #     residual=''
+                #     for ido in zip(allele,ctrl):
+                #         if ido[0]==ido[1]:
+                #             residual+='-'
+                #         else:
+                #             residual+=ido[0]
+                r_squared_cutoff = self.alignment_window[1] - self.alignment_window[0]
+
+
+                a1=''.join(temp_alleles[0]).replace('-', 'N')[r_squared_cutoff:]
+                a2=''.join(temp_alleles[1]).replace('-', 'N')[r_squared_cutoff:]
+                final_score = self.r_squared_cost_function([a1,a2],
+                                                          b.ravel()[r_squared_cutoff * 4:])
+                # final_score=self.r_squared_cost_function(
+                #     [''.join(temp_alleles[0]).replace('-', 'N'), ''.join(temp_alleles[1]).replace('-', 'N')],
+                #     b.ravel())
+
+
+
+                    # final_score=sum([pairwise2.align.globalmd(''.join(allele).replace('-',''),
+                    #                                  ctrl, match,mismatch, gapopen, -2, gapopen, gapextend,
+                    #                                  penalize_end_gaps=True,score_only=True) for allele in temp_alleles])
+
+
+
+                # print(final_score)
+                # print(pairwise2.align.globalmd(''.join(temp_alleles[1]).replace('-',''),
+                #                                      ctrl, match,mismatch, gapopen, -2, gapopen, gapextend,
+                #                                      penalize_end_gaps=True,score_only=False)[0][0])
+
+                score_tracking[final_score]=temp_alleles
 
         final_max_score=max(score_tracking.keys())
         alleles=score_tracking[final_max_score]
+
+        r_squared_cutoff = self.alignment_window[1] - self.alignment_window[0]
+        theoretical_max = self.r_squared_cost_function(
+            [complete_traces[0][r_squared_cutoff:], complete_traces[1][r_squared_cutoff:]],
+            b.ravel()[r_squared_cutoff * 4:])
+        print('THEORETICAL MAX: {}'.format(theoretical_max))
+
+        actual_max = self.r_squared_cost_function([allele[r_squared_cutoff:] for allele in alleles],
+                                                  b.ravel()[r_squared_cutoff * 4:])
+        print('ACTUAL MAX: {}'.format(actual_max))
+
+
+        ## lets do max with fit truncation
+        trunc_max = self.r_squared_cost_function([allele[r_squared_cutoff:-max(deletions)] for allele in alleles],
+                                                  b.ravel()[r_squared_cutoff * 4:(-max(deletions)*4)])
+        print('Trunc MAX: {}'.format(trunc_max))
 
         for r,allele in enumerate(alleles):
             # out=re.split('(-)', allele, 1)
@@ -1121,23 +1198,24 @@ class SangerAnalysis:
             # inspoint=self.alignment_window[1]
 
             allele_list=pairwise2.align.globalmd(''.join(allele).strip('-'),
-                         ctrl, match, 0, -10, -2, gapopen, gapextend, penalize_end_gaps=True)
-            if not allele_list:
+                         ctrl, match,0, -30, -2, -30, gapextend, penalize_end_gaps=True)
+            new_allele = allele_list[0][0]#[:len(ctrl)]
 
-                discordance=[j for j,x in enumerate(zip(list(allele),list(ctrl))) if x[0]!=x[1]]
-
-                max_jump=np.argsort(np.diff(discordance))[:-2:-1][0]
-
-                inspoint = discordance[max_jump.astype('int')+1]
-                out=re.split('(-)', allele, 1)
-                basepairs=out[0]
-                dels=''.join(out[1:])
-
-
-
-                new_allele=basepairs[:inspoint]+dels+basepairs[inspoint:]
-            else:
-                new_allele=allele_list[0][0][:len(ctrl)]
+            # if not allele_list:
+            #
+            #     discordance=[j for j,x in enumerate(zip(list(allele),list(ctrl))) if x[0]!=x[1]]
+            #
+            #     max_jump=np.argsort(np.diff(discordance))[:-2:-1][0]
+            #
+            #     inspoint = discordance[max_jump.astype('int')+1]
+            #     out=re.split('(-)', allele, 1)
+            #     basepairs=out[0]
+            #     dels=''.join(out[1:])
+            #
+            #
+            #
+            #     new_allele=basepairs[:inspoint]+dels+basepairs[inspoint:]
+            # else:
 
             alleles[r]=new_allele
 
@@ -1194,10 +1272,21 @@ class SangerAnalysis:
             #predicted = np.dot(A, xvals)
 
             #optional L1
-            lasso_model = linear_model.Lasso(alpha=0.8, positive=True)
-            lasso_model.fit(A, b)
+            # lasso_model = linear_model.Lasso(alpha=0.8, positive=True)
+            # lasso_model.fit(A, b)
 
-            xvals = lasso_model.coef_
+            #xvals = lasso_model.coef_
+
+
+            # optional lars
+            Lars_model = linear_model.Lars(n_nonzero_coefs=2,positive=True)
+            #TODO figure out this bug
+            b=b[:A.shape[0]]
+
+            # print(np.mean(A))
+            # print(np.mean(b))
+            Lars_model.fit(A, b)
+            xvals = Lars_model.coef_
             predicted = np.dot(A, xvals)
             
 
