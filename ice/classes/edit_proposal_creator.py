@@ -154,7 +154,7 @@ class EditProposalCreator:
 
         ep.bases_changed = total_deleted
 
-        ep.summary = '{}:{}'.format(total_deleted, 'allele')
+        ep.summary = '{}:{}'.format(-total_deleted, 'allele')
         summary_json = {}
         summary_json['total'] = ep.bases_changed
         summary_json['details'] = []

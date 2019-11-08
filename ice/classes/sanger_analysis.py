@@ -104,7 +104,7 @@ class SangerAnalysis:
         self.valid_configuration = False
         self.donor_odn = None
         self.recombination_changed_bases = []
-        self.deletion_thresholds =None
+        self.deletion_truncation =None
         # list of EditProposals
         self.proposals = None
 
@@ -630,6 +630,8 @@ class SangerAnalysis:
 
             peaks = np.ones((1000, 4))
             peaks=peaks*.25
+
+            #TODO this is a bug that arises from the length of the proposal changing during the final alignement
             try:
                 peaks[self.alignment_window[0]:self.inference_window[1], :] = proposal_trace
             except:
@@ -641,22 +643,7 @@ class SangerAnalysis:
             ep=epc.allele_proposal( allele,deletions[j],peaks.reshape(-1,1), ''.join(ctrl_seq),cutsites)
 
 
-            #ep2=epc.aligned_sequence_edit_proposal(allele.strip('-'), self.inference_window)
-            #
-            #
-            #
-            # sequence = [''] * 1000
-            # sequence[self.alignment_window[0]:self.inference_window[1]] = list(allele)
-            #
-            # peaks = np.zeros((1000, 4))
-            # peaks[self.alignment_window[0]:self.inference_window[1], :] = convert_to_peaks(allele) * 100
-            # # ep.sequence_data = ''.join(sequence)
-            # ep.trace_data = peaks.reshape(-1, 1)
-            # ep.bases_changed = -deletions[j]
-            # ep.summary = '{}[{}]'.format((-deletions[j]), 'agnostic')
-            # ep.summary_json = {'total': ep.bases_changed,
-            #                    'details': [{'label': 'agnostic', 'value': ep.bases_changed}]}
-            # ep.cutsite = 0
+
             proposals.append(ep)
 
         # removing degenerate proposals
@@ -664,7 +651,10 @@ class SangerAnalysis:
         self.proposals = list(
             filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
         self.proposals=proposals
-        self.deletion_thresholds=deletions
+
+        # in the case of large deletions, to many Ns might make a propsal unfavorable during regression even though it's biologically acurate
+        # This value is a how much of the inference window to throw away durning the regression
+        self.deletion_truncation=max(deletions)
 
 
 
@@ -682,10 +672,9 @@ class SangerAnalysis:
         start, stop = self.inference_window[0], self.inference_window[1]
         output_matrix = np.zeros((num_proposals, 4 * iw_length))
 
-        if self.deletion_thresholds is not None:
-            print(self.deletion_thresholds)
-            stop-=max(self.deletion_thresholds)
-            iw_length-=max(self.deletion_thresholds)
+        if self.deletion_truncation is not None:
+            stop-=self.deletion_truncation
+            iw_length-=self.deletion_truncation
             output_matrix = np.zeros((num_proposals, 4 * iw_length))
 
 
@@ -857,8 +846,8 @@ class SangerAnalysis:
 
     def peak_counting(self):
 
-        # TODO: Play with 'match' metric. Currently alignment, but others might be more robust
-        # TODO: Add some notion of randomizing allele derivation starting position (e.g. loop through nts randomly) and take many alternates
+        #TODO this is hard coded for 2 alleles right now but should be made to generalize to other conditions
+
         ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
         peakdict={v: k for k, v in ntdict.items()}
 
@@ -882,6 +871,7 @@ class SangerAnalysis:
 
 
 
+        ### THIS SECTION SETS UP THE RAW PEAKS TO BE ANALYZED
 
         channels = ['DATA9', 'DATA10', 'DATA11', 'DATA12']
         edit_seq = self.control_sample.data['PBAS2']
@@ -889,7 +879,6 @@ class SangerAnalysis:
 
         counting_window = (self.alignment_window[0], self.inference_window[1])
 
-        #exp = edit_seq[counting_window[0]:counting_window[1]]
         ctrl = ctrl_seq[counting_window[0]:counting_window[1]]
 
         alignment_offset=np.mean([np.diff(x) for x in self.alignment.alignment_pairs if None not in x]).round().astype(int)
@@ -903,29 +892,15 @@ class SangerAnalysis:
         # Normalize peak values
         peak_values = (peak_values.T / np.sum(peak_values, axis=1)).T
 
-        # for regressino (r2)
-        b_normed = self.normalize_observed_trace()
 
-        ### Experiments in microhomology
+        #### THIS SECTION COMPUTES THE SHIFT IN THE TAIL END OF THE CONTROL SEQUENCE RESULTING FROM DELETIONS IN THE EXPERIMENTAL SEQUENCE
+
         threshold=max(peak_values.min(axis=1))
 
         binary_peak_mat=peak_values>threshold
 
 
-
-        ### testing autocorrelation hypothesis
-        # labels=list('GATC')
-        # fig,ax=plt.subplots()
-        # for r in range(4):
-        #     nucleotides=peak_values[:, r]
-        #     x=correlate(nucleotides, nucleotides)
-        #     ax.plot(x[int(len(x)/2):]/max(x),label=labels[r])
-        # ax.legend()
-        # fig.savefig('{}.png'.format(np.random.random()))
-            # trace=[]
-            # for t in range(len(nucleotides)-10):
-            #     trace.append(autocorr(nucleotides, t=t+1))
-
+        # we start looking for homologies and size 2 and increase the size until we find under 2
         search_size=2
         MH_locations=[0,0,0]
 
@@ -942,20 +917,27 @@ class SangerAnalysis:
                 search_mat=test_encoder(homology_seq).astype('bool')
                 MH_locations=homology_locator(binary_peak_mat, search_size, search_mat)
                 difs=np.diff(MH_locations)
-                new_mh=[MH_locations[0]]
-                for l, dif in enumerate(difs):
-                    if abs(dif) > search_size:
-                        new_mh.append(MH_locations[l+1])
-                MH_locations=new_mh
+
+                # if we made too long of a search sequence use the last one
+                if MH_locations:
+                    new_mh=[MH_locations[0]]
+
+                    # no overlapping homologies (maybe eliminate this?)
+                    for l, dif in enumerate(difs):
+                        if abs(dif) > search_size:
+                            new_mh.append(MH_locations[l+1])
+                    MH_locations=new_mh
+                else:
+                    MH_locations=new_mh[:2]
+                    search_size-=1
+                    homology_seq = ctrl[-search_size:]
 
         if len(MH_locations)==1:
             MH_locations.append(MH_locations[0])
 
-        # we only need to look for homologies in the inference window
 
-
-
-
+        ### THIS SECTION IS FOR COMPUTING THE NUMBER OF ALLELES
+        #TODO this is bascially a worthless section right now, we don't use this information anywhere but at some point we should have some "estimation" of number of alleles in the sample
         n_peaks = np.sum(peak_values > threshold, axis=1)
         # the number of alleles is either the maximum number of peaks or
         n_alleles = int(np.percentile(n_peaks, 90))
@@ -970,7 +952,11 @@ class SangerAnalysis:
         alleles = [''] * n_alleles
         ambiguous = [''] * n_alleles
 
+
+        ## The "complete traces" object is for debugging and calcuating the theoretical maximum R2 you could get from two arbitrary alleles
         complete_traces=[''] * n_alleles
+
+
         # Loop through nucleotides 1 by 1
         for n in range(peak_values.shape[0]):
             # If one clear peak at a given position, then assign that peak to all alleles
@@ -1001,15 +987,6 @@ class SangerAnalysis:
 
         deletions=[allele.count('-') for allele in alleles]
 
-        # if n_alleles==1:
-        #     ctrl_list=list(ctrl)
-        #     allele_list=list(alleles[0])
-        #     for j,bp in enumerate(allele_list):
-        #         if bp=='N':
-        #             ctrl_list[j]='N'
-        #
-        #     alleles=[''.join(ctrl_list),''.join(allele_list)]
-        #     n_alleles+=1
 
         # Parameters for scoring alignments
         match = 4
@@ -1019,31 +996,23 @@ class SangerAnalysis:
         comparisons = list(itertools.permutations(np.arange(n_alleles), n_alleles))
         n_proposals = len(comparisons)
 
+        gape1=0
+        gapo1=-30
+        gape2=-2
+        gapo2=-30
+
+
+        # this value is for calcuating R2
         b=peak_values.reshape(-1,1)
 
 
-        # Now that we have decreased the uncertainty of the alleles, go back to the ambiguous ones and see which alternatives fit best
+        #We're going to perform 4 allignments with various orientations of the sequences and how well they fit control.
+        # We will evaluate them by how well they score on R2 on the experimental trace
 
-
-
-
-            ### base pair identification step
-
-        #globalmd(sequenceA, sequenceB, match, mismatch, openA, extendA, openB, extendB)
-
-
-
-        Aligned_alleles=[]
-
-        # cycle over n values 10 times, collect best scores for each
-        # get indexes we need to check
         score_tracking={}
 
-        N_indexes=[j for j, x in enumerate(zip(alleles[0], alleles[1])) if 'N' in x]
 
-        ### Cycle over orientations
-
-
+        ### Cycle over orientations, fill in the values and score them
         for seq_orientation in range(2):
             for n_orientation in range(2):
 
@@ -1067,7 +1036,7 @@ class SangerAnalysis:
                 for n in N_indexes:
                     # Populate list of possible bps at this position
 
-
+                    #TODO fix this hardcoding nonsense to make it more pythonic and nice - this was a hack
                     # A1,A2,B1,B2
                     proposals=[]
                     l=0
@@ -1080,14 +1049,6 @@ class SangerAnalysis:
                     #assert ''.join(proposals[0]) != ''.join(proposals[2]), 'Same bases in differnt allele proposals'
                     assert proposals[0][n] != proposals[1][n], 'Same bases in allele pair'
 
-                    # R_squared scoring system:
-
-                    # scores = [0] * len(comparisons)
-                    # for i, comparison in enumerate(comparisons):
-                    #
-                    #     scores[i] = self.r_squared_cost_function([''.join(proposals[1][i]).replace('-','N'),''.join(proposals[0][i]).replace('-','N')],b.ravel()*100)
-
-                    # Score each possible bp according to how well it would make the possible alleles align
 
                     pairs=[[proposals[0],proposals[3]],[proposals[1],proposals[2]]]
                     scores = [0, 0]
@@ -1095,12 +1056,13 @@ class SangerAnalysis:
 
                             for al in pair:
 
+                                # we don't care about mismatches right here - that will come in during the r2 calculation
                                 scores[i]+=pairwise2.align.globalmd(''.join(al).replace('-',''),
                                                          temp_ctrl, match, 0, -10, -2, gapopen, gapextend,
                                                          penalize_end_gaps=True,score_only=True)
 
 
-
+                    #TODO fix more of this fragile hardcoding
                     # IF there is a single proposal that does best, then assign it as truth
                     max_score_index, max_score = max(enumerate(scores), key=operator.itemgetter(1))
                     if scores.count(max_score)==1:
@@ -1112,10 +1074,10 @@ class SangerAnalysis:
                         temp_alleles[1] = ''.join(pairs[0][1])
 
 
-                    # print(max_score)
                 if seq_orientation == 1:
                     temp_alleles=[allele[::-1] for allele in temp_alleles]
-                ### repeat MH_deleitions
+
+                ### repeat MH_deleitions now that we've filled things in
                 for j, location in enumerate(MH_locations):
 
                     loc = MH_locations[j]
@@ -1130,20 +1092,8 @@ class SangerAnalysis:
                     temp_alleles[j] = "".join(allele_list)
 
 
-                assert temp_alleles!=alleles
+                # Scoring how well these allele perform on the
 
-
-
-                # calculating the residuals
-
-
-                # for allele in temp_alleles:
-                #     residual=''
-                #     for ido in zip(allele,ctrl):
-                #         if ido[0]==ido[1]:
-                #             residual+='-'
-                #         else:
-                #             residual+=ido[0]
                 r_squared_cutoff = self.alignment_window[1] - self.alignment_window[0]
 
 
@@ -1151,82 +1101,43 @@ class SangerAnalysis:
                 a2=''.join(temp_alleles[1]).replace('-', 'N')[r_squared_cutoff:]
                 final_score = self.r_squared_cost_function([a1,a2],
                                                           b.ravel()[r_squared_cutoff * 4:])
-                # final_score=self.r_squared_cost_function(
-                #     [''.join(temp_alleles[0]).replace('-', 'N'), ''.join(temp_alleles[1]).replace('-', 'N')],
-                #     b.ravel())
-
-
-
-                    # final_score=sum([pairwise2.align.globalmd(''.join(allele).replace('-',''),
-                    #                                  ctrl, match,mismatch, gapopen, -2, gapopen, gapextend,
-                    #                                  penalize_end_gaps=True,score_only=True) for allele in temp_alleles])
-
-
-
-                # print(final_score)
-                # print(pairwise2.align.globalmd(''.join(temp_alleles[1]).replace('-',''),
-                #                                      ctrl, match,mismatch, gapopen, -2, gapopen, gapextend,
-                #                                      penalize_end_gaps=True,score_only=False)[0][0])
 
                 score_tracking[final_score]=temp_alleles
 
         final_max_score=max(score_tracking.keys())
         alleles=score_tracking[final_max_score]
 
-        r_squared_cutoff = self.alignment_window[1] - self.alignment_window[0]
+
+        # we're only fitting on the inference window
+        inf_window_cutoff = self.alignment_window[1] - self.alignment_window[0]
+
+
+        ### THIS section quantifies how important truncation in of the alleles in fiting the experimental sanger data
+        # tons of Ns lower the R2 which is what happens in large deletions
+
+
         theoretical_max = self.r_squared_cost_function(
-            [complete_traces[0][r_squared_cutoff:], complete_traces[1][r_squared_cutoff:]],
+            [complete_traces[0][inf_window_cutoff:], complete_traces[1][inf_window_cutoff:]],
             b.ravel()[r_squared_cutoff * 4:])
+
+        actual_max = self.r_squared_cost_function([allele[inf_window_cutoff:] for allele in alleles],
+                                                  b.ravel()[inf_window_cutoff * 4:])
+
+        trunc_max = self.r_squared_cost_function([allele[inf_window_cutoff:-max(deletions)] for allele in alleles],
+                                                  b.ravel()[inf_window_cutoff * 4:(-max(deletions)*4)])
+
         print('THEORETICAL MAX: {}'.format(theoretical_max))
-
-        actual_max = self.r_squared_cost_function([allele[r_squared_cutoff:] for allele in alleles],
-                                                  b.ravel()[r_squared_cutoff * 4:])
         print('ACTUAL MAX: {}'.format(actual_max))
-
-
-        ## lets do max with fit truncation
-        trunc_max = self.r_squared_cost_function([allele[r_squared_cutoff:-max(deletions)] for allele in alleles],
-                                                  b.ravel()[r_squared_cutoff * 4:(-max(deletions)*4)])
         print('Trunc MAX: {}'.format(trunc_max))
 
         for r,allele in enumerate(alleles):
-            # out=re.split('(-)', allele, 1)
-            # basepairs=out[0]
-            # dels=''.join(out[1:])
-            #
-            # #inspoint=np.floor(len(basepairs)/2).astype('int')
-            # inspoint=self.alignment_window[1]
+
 
             allele_list=pairwise2.align.globalmd(''.join(allele).strip('-'),
-                         ctrl, match,0, -30, -2, -30, gapextend, penalize_end_gaps=True)
-            new_allele = allele_list[0][0]#[:len(ctrl)]
-
-            # if not allele_list:
-            #
-            #     discordance=[j for j,x in enumerate(zip(list(allele),list(ctrl))) if x[0]!=x[1]]
-            #
-            #     max_jump=np.argsort(np.diff(discordance))[:-2:-1][0]
-            #
-            #     inspoint = discordance[max_jump.astype('int')+1]
-            #     out=re.split('(-)', allele, 1)
-            #     basepairs=out[0]
-            #     dels=''.join(out[1:])
-            #
-            #
-            #
-            #     new_allele=basepairs[:inspoint]+dels+basepairs[inspoint:]
-            # else:
+                         ctrl, match,0, gapo1, gape2, gapo2, gapextend, penalize_end_gaps=True)
+            new_allele = allele_list[0][0]
 
             alleles[r]=new_allele
-
-            # scores[j] += pairwise2.align.globalmd(allele.strip('-'),
-            #                                       ctrl,
-            #                                       match,
-            #                                       mismatch,
-            #                                       gapopen, mismatch,
-            #                                       gapopen, 0, score_only=False, penalize_end_gaps=True)
-            # just stick the deletions in the middle
-
 
 
         ## add the control allele to alleles
