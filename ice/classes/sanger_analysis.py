@@ -48,8 +48,7 @@ from ice.utility.sequence import RNA2DNA, reverse_complement
 from ice.classes.edit_proposal import EditProposal
 from Bio import pairwise2
 import itertools
-import pickle as pkl
-from scipy.signal import correlate
+
 import operator
 ### plotting
 import matplotlib.pyplot as plt
@@ -908,7 +907,7 @@ class SangerAnalysis:
 
                 # if we made too long of a search sequence use the last one
                 if MH_locations:
-                    new_mh=[MH_locations[0]]
+                    new_mh=[MH_locations[0]].copy()
 
                     # no overlapping homologies (maybe eliminate this?)
                     for l, dif in enumerate(difs):
@@ -916,9 +915,15 @@ class SangerAnalysis:
                             new_mh.append(MH_locations[l+1])
                     MH_locations=new_mh
                 else:
-                    MH_locations=new_mh[:2]
-                    search_size-=1
-                    homology_seq = ctrl[-search_size:]
+                    try:
+                    # if you skipped over by choosing homologies too long, use the last one
+                        MH_locations=new_mh[:2]
+                        search_size-=1
+                        homology_seq = ctrl[-search_size:]
+                    except:
+                        # no homology shifts detected
+                        MH_locations = [len(ctrl)-search_size,len(ctrl)-search_size]
+                        homology_seq = ctrl[-search_size:]
 
         if len(MH_locations)==1:
             MH_locations.append(MH_locations[0])
@@ -1307,8 +1312,10 @@ class SangerAnalysis:
 
         self._calculate_inference_window()
         self._generate_outcomes_vector()
-
-        self._generate_peak_counted_proposals()
+        try:
+            self._generate_peak_counted_proposals()
+        except:
+            print('Peak counting failed')
         print("analyzing {} number of edit proposals".format(len(self.proposals)))
 
         self._generate_coefficient_matrix()
