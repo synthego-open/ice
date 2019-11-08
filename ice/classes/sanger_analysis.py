@@ -569,8 +569,7 @@ class SangerAnalysis:
         seen=[]
         self.proposals = list(filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
 
-    ntdict = {0: 'G', 1: 'A', 2: 'T', 3: 'C'}
-    peakdict = {v: k for k, v in ntdict.items()}
+
 
 
 
@@ -590,20 +589,7 @@ class SangerAnalysis:
 
             return peaks
 
-        def convert_to_seq( peaks):
 
-            ## restructure the data if it's the wrong shape
-            if min(peaks.shape) == 1:
-                peaks = peaks.reshape(-1, 4)
-            seq = ['']
-            # Loop through nucleotides 1 by 1
-            for n in range(peaks.shape[0]):
-                # If one clear peak at a given position, then assign that peak to all alleles
-                if np.sort(peaks[n, :])[-1] - np.sort(peaks[n, :])[-2] > .75:
-                    seq += ntdict[np.argsort(peaks[n, :])[-1]]
-                else:
-                    seq += 'N'
-            return ''.join(seq)
         proposals = self.proposals
         # #debug
         #proposals = []
@@ -616,27 +602,30 @@ class SangerAnalysis:
 
         #alleles = self.allele_evolution()
         for j,allele in enumerate(alleles):
+
+            # take all the deletions and put them at the end when converting to peaks
             remade=allele.replace('-','')+'N'*(allele.count('-'))
             proposal_trace=(convert_to_peaks(remade) )#.reshape(-1, 1)
 
 
-
+            # remapping the data produced by peak_counting() to arrays that work with the rest of ICE
+            # TODO fix this janky remapping
             sequence = [''] * 1000
             sequence[self.alignment_window[0]:self.inference_window[1]] = list(remade)
 
             ctrl_seq=[''] * 1000
             ctrl_seq[self.alignment_window[0]:self.inference_window[1]] = list(control_seq)
 
-
             peaks = np.ones((1000, 4))
             peaks=peaks*.25
 
             #TODO this is a bug that arises from the length of the proposal changing during the final alignement
+            # this is fuckit level hackyness
             try:
                 peaks[self.alignment_window[0]:self.inference_window[1], :] = proposal_trace
             except:
-                #hacky fix for unkown bug
                 peaks[self.alignment_window[0]:self.inference_window[1], :] = proposal_trace[:(self.inference_window[1]-self.alignment_window[0]),:]
+
             cutsites=[x.cutsite for x in self.guide_targets]
 
 
