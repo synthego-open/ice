@@ -54,7 +54,6 @@ import operator
 ### plotting
 import matplotlib.pyplot as plt
 import random
-plt.style.use('rossidata')
 
 
 def round_percent(orig_array,r_squared):
