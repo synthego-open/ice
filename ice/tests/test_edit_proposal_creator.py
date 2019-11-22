@@ -56,13 +56,13 @@ def test_human_readable_sequence_multiplex_proposal():
     far_apart_dropout_proposal = epc.multiplex_proposal(30, 90, 'g1', 'g2', dropout=True)
     seq = far_apart_dropout_proposal.human_readable_sequence()
     assert seq == ('AAATCCGCTTTACAGTCACTAGACT|------------------------------------------------------------|GCTATGGAAAGC'
-                    'CTTTGGGTTATTT')
+                   'CTTTGGGTTATTT')
 
     # test far apart insertion default padding
     far_apart_dropout_proposal = epc.multiplex_proposal(30, 90, 'g1', 'g2', dropout=False, cut1_ins=2, cut2_ins=4)
     seq = far_apart_dropout_proposal.human_readable_sequence()
     assert seq == ('ATCCGCTTTACAGTCACTAGACTnn|AGGACCAATTTCACGACAGGGACTAGACCTTGCTGGATAGCACCTGTCCCCATAGAAATGnnnn|GCTATGGA'
-                    'AAGCCTTTGGGTTATTT')
+                   'AAGCCTTTGGGTTATTT')
 
 
 def test_multiplex_cut():
@@ -71,18 +71,18 @@ def test_multiplex_cut():
     epc = EditProposalCreator(wt_basecalls, use_ctrl_trace=False)
 
     dropout_proposal = epc.multiplex_proposal(10, 35, "test1", "test2", dropout=True)
-    assert dropout_proposal.sequence == "GCACCTGTCCTTGGGTTATTTGCG"
+    assert dropout_proposal.sequence == "GCACCTGTCCTTGGGTTATTTGCGnnnnnnnnnnnnnnnnnnnnnnnnn"
     assert dropout_proposal.summary.startswith('-25:md')
 
     dropout_ins_proposal = epc.multiplex_proposal(10, 35, "test1", "test2", dropout=True, cut1_ins=2, cut2_ins=3)
-    assert dropout_ins_proposal.sequence == "GCACCTGTCCnnTTGGGTTATTTGCG"
+    assert dropout_ins_proposal.sequence == "GCACCTGTCCnnTTGGGTTATTTGCGnnnnnnnnnnnnnnnnnnnnnnnnn"
 
     indep_cut = epc.multiplex_proposal(10, 35, "test1", "test2", cut1_del=(4, 0), cut2_del=(0, 3))
-    assert indep_cut.sequence == "GCACCTCCATAGAAATGGCTATGGAAAGCCTGGTTATTTGCG"
+    assert indep_cut.sequence == "GCACCTCCATAGAAATGGCTATGGAAAGCCTGGTTATTTGCGnnnnnnn"
     assert indep_cut.summary.startswith('-7:m-4[test1]')
 
     indep_cut2 = epc.multiplex_proposal(10, 35, "test1", "test2", cut1_del=(-4, 0), cut2_del=(3, 0))
-    assert indep_cut2.sequence == "GCACCTGTCCCCATAGAAATGGCTATGGAAAGTTGGGTTATTTGCG"
+    assert indep_cut2.sequence == "GCACCTGTCCCCATAGAAATGGCTATGGAAAGTTGGGTTATTTGCGnnn"
 
 
 def test_bad_multiplex():
@@ -110,7 +110,7 @@ def test_generated_trace():
 
     epc = EditProposalCreator(seq, use_ctrl_trace=False)
 
-    expected_trace = {'A':[], 'T':[], 'C':[], 'G':[]}
+    expected_trace = {'A': [], 'T': [], 'C': [], 'G': []}
     for base in seq:
         if base == 'N':
             for color in expected_trace.keys():

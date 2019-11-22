@@ -1,8 +1,3 @@
-# Python 3 CircleCI 2.0 configuration file
-# For Synthego ICE
-#
-# https://circleci.com/docs/2.0/language-python/
-#
 version: 2
 jobs:
   build:
