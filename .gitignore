@@ -37,3 +37,8 @@ env
 
 # default results
 results/
+
+# python build files
+*.egg-info/
+*.egg
+dist/
