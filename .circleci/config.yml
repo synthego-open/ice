@@ -1,10 +1,9 @@
 version: 2
 jobs:
-  build:
+  test:
     working_directory: ~/ice
     docker:
-      - image: circleci/python:3.6.1
-
+      - image: circleci/python:3.6
     steps:
       - checkout
       - restore_cache:
@@ -30,3 +29,31 @@ jobs:
           destination: tr1
       - store_test_results:
           path: test-reports/
+  publish:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - run:
+          name: init .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = __token__" >> ~/.pypirc
+            echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
+      - run:
+          name: Build the package
+          command: python3 setup.py sdist bdist_wheel
+      - run:
+          name: Upload to pypi
+          command: python3 -m twine upload dist/*
+workflows:
+  version: 2
+  test-and-publish:
+    jobs:
+      - test:
+      - publish:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/

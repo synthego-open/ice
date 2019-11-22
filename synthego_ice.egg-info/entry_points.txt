@@ -1,0 +1,4 @@
+[console_scripts]
+synthego_ice = ice.analysis:single_sanger_analysis_cli
+synthego_ice_batch = ice.analysis:multiple_sanger_analysis_cli
+
