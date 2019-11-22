@@ -45,7 +45,11 @@ jobs:
           command: python3 setup.py sdist bdist_wheel
       - run:
           name: Upload to pypi
-          command: python3 -m twine upload dist/*
+          command: 
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install twine
+            python3 -m twine upload dist/*
 workflows:
   version: 2
   test-and-publish:
