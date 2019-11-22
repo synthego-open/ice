@@ -50,7 +50,7 @@ workflows:
   version: 2
   test-and-publish:
     jobs:
-      - test:
+      - test
       - publish:
           filters:
             branches:
