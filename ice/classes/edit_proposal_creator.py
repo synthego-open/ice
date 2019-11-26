@@ -138,11 +138,15 @@ class EditProposalCreator:
         for idx, base in enumerate(control_sequence):
             if sequence[idx] == '-':
                 proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)
-
-            elif sequence[idx] == base:
-                proposal_base = ProposalBase(sequence[idx], ProposalBase.WILD_TYPE, idx)
+            if sequence[idx]=='n':
+                proposal_base = ProposalBase('n', ProposalBase.INSERTION, idx)
             else:
-                proposal_base = ProposalBase(sequence[idx], ProposalBase.BASE_EDIT, idx)
+                proposal_base = ProposalBase(sequence[idx], ProposalBase.WILD_TYPE, idx)
+
+            # elif sequence[idx] == base:
+            #     proposal_base = ProposalBase(sequence[idx], ProposalBase.WILD_TYPE, idx)
+            # else:
+            #     proposal_base = ProposalBase(sequence[idx], ProposalBase.BASE_EDIT, idx)
 
             proposal_bases.append(proposal_base)
 
