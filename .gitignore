@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache
+
 
 # Installer logs
 pip-log.txt
@@ -37,3 +39,8 @@ env
 
 # default results
 results/
+
+# python build files
+*.egg-info/
+*.egg
+dist/
