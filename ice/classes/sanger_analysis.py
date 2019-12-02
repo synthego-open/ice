@@ -588,17 +588,22 @@ class SangerAnalysis:
 
         alleles,deletions,control_seq,cutsites,peaks = self.peak_counting()
 
-
+        bases_changed=[prop.bases_changed for prop in proposals]
         for j,allele in enumerate(alleles):
 
             ep=epc.allele_proposal(allele, deletions[j], peaks[j].reshape(-1, 1), ''.join(control_seq), cutsites)
 
-            proposals.append(ep)
 
-        # removing degenerate proposals
-        seen = []
-        self.proposals = list(
-            filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
+            # remove redundant alleles
+            clean_counter=0
+            double_indexes=[i for i, e in enumerate(bases_changed) if e == ep.bases_changed]
+            for double_index in double_indexes:
+                if ep.sequence not in proposals[double_index].sequence:
+                    clean_counter+=1
+            if clean_counter==len(double_indexes):
+                proposals.append(ep)
+
+
         self.proposals=proposals
 
         # This value is a how much of the inference window to throw away durning the regression // our way of dealing with super large multiguide deletions
