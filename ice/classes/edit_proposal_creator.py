@@ -153,7 +153,7 @@ class EditProposalCreator:
         if len(cutsites)==3:
             ep.cutsite3 = cutsites[2]
 
-        ep.bases_changed = total_deleted
+        ep.bases_changed = -total_deleted
 
         ep.summary = '{}:{}'.format(-total_deleted, 'allele')
         summary_json = {}
