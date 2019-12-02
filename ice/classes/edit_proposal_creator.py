@@ -31,7 +31,6 @@ from ice.classes.pair_alignment import DonorAlignment, PairAlignment
 from ice.classes.proposal_base import ProposalBase
 from ice.utility.sequence import reverse_complement
 from Bio import pairwise2
-import numpy as np
 
 class EditProposalCreator:
     MIN_HOMOLOGY_ARM = 15
