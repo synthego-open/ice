@@ -589,41 +589,9 @@ class SangerAnalysis:
         alleles,deletions,control_seq,cutsites,peaks = self.peak_counting()
 
 
-        #alleles = self.allele_evolution()
         for j,allele in enumerate(alleles):
 
-
-
-
             ep=epc.allele_proposal(allele, deletions[j], peaks[j].reshape(-1, 1), ''.join(control_seq), cutsites)
-
-            # # remapping the data produced by peak_counting() to arrays that work with the rest of ICE
-            # # TODO fix this janky remapping
-            # sequence = [''] * 1000
-            # sequence[self.alignment_window[0]:self.inference_window[1]] = list(remade)
-            #
-            # ctrl_seq=[''] * 1000
-            # ctrl_seq[self.alignment_window[0]:self.inference_window[1]] = list(control_seq)
-            #
-            # peaks = np.ones((1000, 4))
-            # peaks=peaks*.25
-            #
-            # #TODO this is a bug that arises from the length of the proposal changing during the final alignement
-            # # this is fuckit level hackyness
-            # try:
-            #     peaks[self.alignment_window[0]:self.inference_window[1], :] = proposal_trace
-            # except:
-            #     peaks[self.alignment_window[0]:self.inference_window[1], :] = proposal_trace[:(self.inference_window[1]-self.alignment_window[0]),:]
-            #
-            #
-            #
-            #
-            # #cutsites=[x.cutsite for x in self.guide_targets]
-            #
-            #
-            # ep=epc.allele_proposal( allele,deletions[j],peaks.reshape(-1,1), ''.join(ctrl_seq),cutsites)
-
-
 
             proposals.append(ep)
 
@@ -633,11 +601,8 @@ class SangerAnalysis:
             filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
         self.proposals=proposals
 
-        # in the case of large deletions, to many Ns might make a propsal unfavorable during regression even though it's biologically acurate
-        # This value is a how much of the inference window to throw away durning the regression
+        # This value is a how much of the inference window to throw away durning the regression // our way of dealing with super large multiguide deletions
         self.deletion_truncation=max(deletions)
-
-
 
 
     def _generate_coefficient_matrix(self):
@@ -768,37 +733,7 @@ class SangerAnalysis:
 
         self.results.max_unexp_discord = max(unexplained_discord_signal) * 100
 
-    def allele_evolution(self):
 
-        channels = ['DATA9', 'DATA10', 'DATA11', 'DATA12']
-        ctrl_seq = self.control_sample.data['PBAS2']
-
-        counting_window = (self.alignment_window[0], self.inference_window[1])
-
-        #exp = edit_seq[counting_window[0]:counting_window[1]]
-        ctrl = ctrl_seq[counting_window[0]:counting_window[1]]
-
-        alignment_offset=np.mean([np.diff(x) for x in self.alignment.alignment_pairs if None not in x]).round().astype(int)
-
-
-        # Extract peak values from chromatogram
-        peak_values = np.zeros((counting_window[1] - counting_window[0], 4))
-        for i in range(4):
-            region = np.array(self.edited_sample.data[channels[i]])
-            peak_values[:, i] = region[np.array(self.edited_sample.data['PLOC1'])][counting_window[0]+alignment_offset:counting_window[1]+alignment_offset]
-
-        # Normalize peak values
-        peak_values = (peak_values.T / np.sum(peak_values, axis=1)).T
-        b = peak_values.reshape(-1, 1)
-
-        # generate two alleles:
-        alleles=[]
-        for _ in range(2):
-            alleles.append(ctrl[counting_window[0] : counting_window[1]])
-
-
-
-        return alleles
 
     def r_squared_cost_function(self,X, Y):
         ''
@@ -1030,7 +965,6 @@ class SangerAnalysis:
                             proposals[l][n]=temp_ambiguous[j][n]
                             l += 1
 
-                    #assert ''.join(proposals[0]) != ''.join(proposals[2]), 'Same bases in differnt allele proposals'
                     assert proposals[0][n] != proposals[1][n], 'Same bases in allele pair'
 
 
@@ -1040,7 +974,7 @@ class SangerAnalysis:
 
                             for al in pair:
 
-                                # we don't care about mismatches right here - that will come in during the r2 calculation
+                                # we don't care about mismatches right here - that will come in during the r2 calculations
                                 scores[i]+=pairwise2.align.globalmd(''.join(al).replace('-',''),
                                                          temp_ctrl, match, mismatch, -10, -2, gapopen, gapextend,
                                                          penalize_end_gaps=True,score_only=True)
@@ -1074,22 +1008,16 @@ class SangerAnalysis:
                     temp_alleles[j] = "".join(allele_list)
 
 
-                # Scoring how well these allele perform on the
+                # Scoring how well these allele perform on the control sequence
 
                 r_squared_cutoff = self.alignment_window[1] - self.alignment_window[0]
 
-
-                # a1=''.join(temp_alleles[0]).replace('-', 'N')[r_squared_cutoff:]
-                # a2=''.join(temp_alleles[1]).replace('-', 'N')[r_squared_cutoff:]
-                # final_score = self.r_squared_cost_function([a1,a2],
-                #                                           b.ravel()[r_squared_cutoff * 4:])
                 final_score=0
                 for al in temp_alleles:
                     final_score+=pairwise2.align.globalmd(''.join(al).replace('-',''),
                                                              ctrl, match, mismatch, -10, -2, gapopen, gapextend,
                                                              penalize_end_gaps=True,score_only=True)
                 score_tracking[final_score]=temp_alleles
-                print(final_score)
 
         final_max_score=max(score_tracking.keys())
         alleles=score_tracking[final_max_score]
@@ -1113,9 +1041,7 @@ class SangerAnalysis:
         trunc_max = self.r_squared_cost_function([allele[inf_window_cutoff:-max(deletions)] for allele in alleles],
                                                   b.ravel()[inf_window_cutoff * 4:(-max(deletions)*4)])
 
-        print('THEORETICAL MAX: {}'.format(theoretical_max))
-        print('ACTUAL MAX: {}'.format(actual_max))
-        print('Trunc MAX: {}'.format(trunc_max))
+
         proposal_traces=[]
         for r,allele in enumerate(alleles):
 
@@ -1127,8 +1053,6 @@ class SangerAnalysis:
 
 
             ### making the alleles more like the control
-            if r==1:
-                print('check')
             tallele =list(allele_list[0][0])
             tcontrol=list(allele_list[0][1])
             for j,bp in enumerate(tallele):
@@ -1353,7 +1277,7 @@ class SangerAnalysis:
 
                 self._generate_peak_counted_proposals()
             except:
-                raise Exception("Allele Driven Regression Failed")
+                self.warnings.append("Allele Driven Regression Failed")
 
 
         print("analyzing {} number of edit proposals".format(len(self.proposals)))
