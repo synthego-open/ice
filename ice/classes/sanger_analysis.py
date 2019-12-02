@@ -31,7 +31,6 @@ from itertools import combinations
 from collections import defaultdict
 
 import numpy as np
-from scipy.optimize import nnls
 from scipy.stats.stats import pearsonr
 from sklearn import linear_model
 import re
@@ -45,14 +44,11 @@ from ice.outputs.create_discordance_indel_files import generate_discordance_inde
 from ice.outputs.create_json import write_individual_contribs, write_contribs_json, write_all_proposals_json
 from ice.outputs.create_trace_files import generate_trace_files
 from ice.utility.sequence import RNA2DNA, reverse_complement
-from ice.classes.edit_proposal import EditProposal
 from Bio import pairwise2
 import itertools
 
 import operator
-### plotting
-import matplotlib.pyplot as plt
-import random
+
 
 
 def round_percent(orig_array,r_squared):
