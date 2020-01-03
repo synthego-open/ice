@@ -157,8 +157,8 @@ def multiple_sanger_analysis(definition_file, output_dir,
 
 
     input_df = pd.read_excel(definition_file)
-
-    input_df = input_df.rename(columns={"Donor Sequence": "Donor", "Control": "Control File", "Experiment": "Experiment File"})
+    input_df.columns=[c.strip(' ') for c in input_df.columns]
+    input_df = input_df.rename(columns={"Donor Sequence": "Donor", "Donor Sequence": "Donor","Control": "Control File", "Experiment": "Experiment File"})
 
     results = []
 
