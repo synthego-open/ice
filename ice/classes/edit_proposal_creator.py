@@ -148,7 +148,8 @@ class EditProposalCreator:
         ep = EditProposal()
         ep.sequence_data = proposal_bases
         ep.cutsite = cutsites[0]
-        ep.cutsite2 =cutsites[1]
+        if len(cutsites)>1:
+            ep.cutsite2 =cutsites[1]
         if len(cutsites)==3:
             ep.cutsite3 = cutsites[2]
 

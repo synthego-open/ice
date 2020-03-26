@@ -7,9 +7,10 @@ from ice.analysis import single_sanger_analysis, multiple_sanger_analysis
 
 
 
-definition_file = os.path.abspath('/Users/nicholas.rossi/Documents/Timeline/2019/05/ICE_V2_pull_request/ying_data/mznqj4xcyudg3d29/truncated.xlsx')
-data_directory = os.path.abspath('/Users/nicholas.rossi/Documents/Timeline/2019/05/ICE_V2_pull_request/ying_data/mznqj4xcyudg3d29/ab1s')
-output_dir = '/Users/nicholas.rossi/Documents/Timeline/2019/05/ICE_V2_pull_request/ying_data/mznqj4xcyudg3d29/output'
+upper_dir='/Users/nicholas.rossi/Documents/Repos/2020/3/allspice_reviews/'
+definition_file = os.path.abspath(upper_dir+'debug_jansen.xlsx')
+data_directory = os.path.abspath(upper_dir+'Janssen_Ratio_AB1_20200319/')
+output_dir = upper_dir+'allspice'
 
 
 job_args = (definition_file, output_dir)

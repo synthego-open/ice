@@ -1273,12 +1273,14 @@ class SangerAnalysis:
         self._generate_outcomes_vector()
 
         # only engage allele driven regression if the sample is multiguide
-        if len(self.guide_targets)>1:
-            try:
-
-                self._generate_peak_counted_proposals()
-            except:
-                self.warnings.append("Allele Driven Regression Failed")
+        # if len(self.guide_targets)>1:
+        #     try:
+        try:
+            self._generate_peak_counted_proposals()
+        except:
+            print('peak counting failed')
+            # except:
+            #     self.warnings.append("Allele Driven Regression Failed")
 
 
         print("analyzing {} number of edit proposals".format(len(self.proposals)))
