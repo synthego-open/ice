@@ -43,6 +43,7 @@ class EditProposal:
         self.sequence_data = None
 
         # the index in the sequence_data @ where the cutsite is
+
         self.cutsite = None
 
         # to store the second cutsite, if there is any
