@@ -34,28 +34,28 @@ from ice.analysis import single_sanger_analysis, multiple_sanger_analysis
 
 # Running a single analysis
 
-control_path = os.path.abspath('./ice/tests/test_data/good_example_control.ab1')
-sample_path = os.path.abspath('./ice/tests/test_data/good_example_edited.ab1')
-guide = 'AACCAGTTGCAGGCGCCCCA'
-base_outputname = './results/good_example'
-donor = None
-verbose = True
-
-results = single_sanger_analysis(control_path=control_path,
-                                 sample_path=sample_path,
-                                 base_outputname=base_outputname,
-                                 guide=guide,
-                                 donor=donor,
-                                 verbose=verbose)
-
-pp(results)
+# control_path = os.path.abspath('./ice/tests/test_data/good_example_control.ab1')
+# sample_path = os.path.abspath('./ice/tests/test_data/good_example_edited.ab1')
+# guide = 'AACCAGTTGCAGGCGCCCCA'
+# base_outputname = './results/good_example'
+# donor = None
+# verbose = True
+#
+# results = single_sanger_analysis(control_path=control_path,
+#                                  sample_path=sample_path,
+#                                  base_outputname=base_outputname,
+#                                  guide=guide,
+#                                  donor=donor,
+#                                  verbose=verbose)
+#
+# pp(results)
 
 
 # Running a batch analysis
 
-definition_file = os.path.abspath('./ice/tests/test_data/batch_example.xlsx')
-data_directory = os.path.abspath('./ice/tests/test_data/')
-output_dir = './results/batch_example'
+definition_file = os.path.abspath('/Users/nicholas.rossi/Documents/Repos/2020/4/cas12a_restructure/jansen_debug.xlsx')
+data_directory = os.path.abspath('/Users/nicholas.rossi/Documents/Repos/2020/4/cas12a_restructure/jansen')
+output_dir = '/Users/nicholas.rossi/Documents/Repos/2020/4/cas12a_restructure/vanilla_output'
 
 job_args = (definition_file, output_dir)
 job_kwargs = {

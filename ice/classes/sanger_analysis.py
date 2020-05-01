@@ -130,13 +130,17 @@ class SangerAnalysis:
         self.plot_guide_line = True  # False if we want to use css for denoting where the guide lines are
         self.allprops = False  # print out all proposals in the json, even if they have 0 contribution
 
+        # cas12a changes
+        self.cas12a_val=False
+
     def initialize_with(self, control_path, edited_path, gRNA_sequences,
                         alignment_window=None,
                         inference_window=None,
                         indel_max_size=5,
                         base_outputname=None,
                         donor=None,
-                        allprops=False):
+                        allprops=False,
+                        cas12a_val=None):
         """
            indel_size_range=(1,10)
 
@@ -178,6 +182,7 @@ class SangerAnalysis:
         self.indel_max_size = indel_max_size
         self.donor_odn = donor
         self.allprops = allprops
+        self.cas12a_val=cas12a_val
         return True
 
     @property
@@ -202,11 +207,17 @@ class SangerAnalysis:
         revcomp_guide = reverse_complement(guide_seq)
         found_seq = None
         if guide_seq in ctrl_seq:
-            cut_offset = len(guide_seq) - 3
+            if self.cas12a_val is not None:
+                cut_offset = len(guide_seq) - 3-self.cas12a_val
+            else:
+                cut_offset = len(guide_seq) - 3
             orientation = "fwd"
             found_seq = guide_seq
         elif revcomp_guide in ctrl_seq:
-            cut_offset = 3
+            if self.cas12a_val is not None:
+                cut_offset = 3+self.cas12a_val
+            else:
+                cut_offset = 3
             orientation = "rev"
             found_seq = revcomp_guide
         else:
@@ -235,7 +246,7 @@ class SangerAnalysis:
                 label=guide_label
             )
 
-    def find_targets(self):
+    def find_targets(self,cas12a_val):
         '''
         This function verifies that the sgRNA sequence is in the control sample or reference,
         it also checks if the reverse complement is in the sequence
@@ -1226,11 +1237,19 @@ class SangerAnalysis:
         self.results.edit_eff = editing_efficiency
         self.results.hdr_percentage = hdr_percentage
 
+        # computing DUMB ICE
+
+        wt_idx=[j for j,prop in enumerate(self.proposals) if prop.wildtype==True][0]
+
+
+        self.results.dumb_ICE=(1-pearsonr(self.coefficient_matrix[:,wt_idx], self.output_vec)[0]**2)*100
+
+
     #############################
 
     def analyze_sample(self):
         self.quality_check()
-        self.find_targets()
+        self.find_targets(cas12a_val=self.cas12a_val)
         if self.donor_odn:
             self.check_recombination()
 
@@ -1275,11 +1294,11 @@ class SangerAnalysis:
         # only engage allele driven regression if the sample is multiguide
         # if len(self.guide_targets)>1:
         #     try:
-        try:
-            self._generate_peak_counted_proposals()
-        except:
-            print('peak counting failed')
-            # except:
+        # try:
+        #     self._generate_peak_counted_proposals()
+        # except:
+        #     print('peak counting failed')
+        #     # except:
             #     self.warnings.append("Allele Driven Regression Failed")
 
 

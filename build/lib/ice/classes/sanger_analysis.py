@@ -192,15 +192,15 @@ class SangerAnalysis:
 
         return sample_cutsite
 
-    def find_guide_in_ctrl(self, guide_label, guide_seq, ctrl_seq):
+    def find_guide_in_ctrl(self, guide_label, guide_seq, ctrl_seq,cas12a_val):
         revcomp_guide = reverse_complement(guide_seq)
         found_seq = None
         if guide_seq in ctrl_seq:
-            cut_offset = len(guide_seq) - 3
+            cut_offset = len(guide_seq) - 3 -cas12a_val
             orientation = "fwd"
             found_seq = guide_seq
         elif revcomp_guide in ctrl_seq:
-            cut_offset = 3
+            cut_offset = 3 +cas12a_val
             orientation = "rev"
             found_seq = revcomp_guide
         else:
@@ -229,7 +229,7 @@ class SangerAnalysis:
                 label=guide_label
             )
 
-    def find_targets(self):
+    def find_targets(self,cas12a_val):
         '''
         This function verifies that the sgRNA sequence is in the control sample or reference,
         it also checks if the reverse complement is in the sequence
@@ -238,7 +238,7 @@ class SangerAnalysis:
         if self.control_sample and self.edited_sample and self.gRNA_sequences:
             for guide_idx, guide in enumerate(self.gRNA_sequences):
                 label = "g{}".format(guide_idx + 1)
-                g_t = self.find_guide_in_ctrl(label, guide, self.control_sample.primary_base_calls)
+                g_t = self.find_guide_in_ctrl(label, guide, self.control_sample.primary_base_calls,cas12a_val)
                 self.guide_targets.append(g_t)
             self.guide_targets = sorted(self.guide_targets, key=lambda x: x.cutsite)
 
