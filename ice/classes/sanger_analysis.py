@@ -604,6 +604,9 @@ class SangerAnalysis:
 
         # This value is a how much of the inference window to throw away durning the regression // our way of dealing with super large multiguide deletions
         self.deletion_truncation=max(deletions)
+        # self.deletion_truncation=0
+
+        #self.deletion_truncation=135
 
 
     def _generate_coefficient_matrix(self):
@@ -620,9 +623,15 @@ class SangerAnalysis:
         output_matrix = np.zeros((num_proposals, 4 * iw_length))
 
         if self.deletion_truncation is not None:
-            stop-=self.deletion_truncation
-            iw_length-=self.deletion_truncation
+            original_iw=iw_length
+            new_iw_length=iw_length-self.deletion_truncation
+
+
+            iw_length=max(150,new_iw_length)
+
+            stop -= abs(original_iw-iw_length)
             output_matrix = np.zeros((num_proposals, 4 * iw_length))
+
 
 
         for edit_proposal_idx, ep in enumerate(props):
@@ -810,11 +819,20 @@ class SangerAnalysis:
         alignment_offset=np.mean([np.diff(x) for x in self.alignment.alignment_pairs if None not in x]).round().astype(int)
 
         # Extract peak values from chromatogram
-        peak_values = np.zeros((counting_window[1] - counting_window[0], 4))
+        peak_values = np.ones((counting_window[1] - counting_window[0], 4))
         for i in range(4):
             region = np.array(self.edited_sample.data[channels[i]])
-            peak_values[:, i] = region[np.array(self.edited_sample.data['PLOC1'])][counting_window[0]+alignment_offset:counting_window[1]+alignment_offset]
 
+            ### this alignment can't go negative
+            left_shift=counting_window[0] + alignment_offset
+
+            if left_shift>0:
+
+                peak_values[:, i] = region[np.array(self.edited_sample.data['PLOC1'])][counting_window[0]+alignment_offset:counting_window[1]+alignment_offset]
+
+            else:
+                peak_values[abs(left_shift):, i]=region[np.array(self.edited_sample.data['PLOC1'])][0:counting_window[1]+alignment_offset]
+        peak_values[np.isnan(peak_values)] = 1
         # Normalize peak values
         peak_values = (peak_values.T / np.sum(peak_values, axis=1)).T
 
@@ -1273,12 +1291,12 @@ class SangerAnalysis:
         self._generate_outcomes_vector()
 
         # only engage allele driven regression if the sample is multiguide
-        if len(self.guide_targets)>1:
-            try:
+        # if len(self.guide_targets)>1:
+        #     try:
 
-                self._generate_peak_counted_proposals()
-            except:
-                self.warnings.append("Allele Driven Regression Failed")
+        self._generate_peak_counted_proposals()
+            # except:
+            #     self.warnings.append("Allele Driven Regression Failed")
 
 
         print("analyzing {} number of edit proposals".format(len(self.proposals)))
