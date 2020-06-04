@@ -623,15 +623,9 @@ class SangerAnalysis:
         output_matrix = np.zeros((num_proposals, 4 * iw_length))
 
         if self.deletion_truncation is not None:
-            original_iw=iw_length
-            new_iw_length=iw_length-self.deletion_truncation
-
-
-            iw_length=max(150,new_iw_length)
-
-            stop -= abs(original_iw-iw_length)
+            stop-=self.deletion_truncation
+            iw_length-=self.deletion_truncation
             output_matrix = np.zeros((num_proposals, 4 * iw_length))
-
 
 
         for edit_proposal_idx, ep in enumerate(props):
