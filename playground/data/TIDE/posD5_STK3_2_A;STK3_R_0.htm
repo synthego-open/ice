@@ -1,0 +1,4956 @@
+<!DOCTYPE html>
+<!-- saved from url=(0025)https://tide.deskgen.com/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Bootstrap -->
+    <link href="./posD5_STK3_2_A;STK3_R_0_files/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="./posD5_STK3_2_A;STK3_R_0_files/bootstrap-select.css">
+
+    <!-- Sliders -->
+    <link rel="stylesheet" href="./posD5_STK3_2_A;STK3_R_0_files/ion.rangeSlider.css">
+    <link rel="stylesheet" href="./posD5_STK3_2_A;STK3_R_0_files/ion.rangeSlider.skinShiny.css">
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" type="text/css" href="./posD5_STK3_2_A;STK3_R_0_files/styleupdates.css">
+
+    <title>TIDE | Web tool</title>
+    <link rel="shortcut icon" href="https://tide.deskgen.com/static/favicon.ico">
+
+    <!-- Analytics change tracking number based on domain -->
+    <script type="text/javascript" async="" src="./posD5_STK3_2_A;STK3_R_0_files/mixpanel-2-latest.min.js"></script><script type="text/javascript">
+    // assume the user is on production
+    var GoogleAnalyticsTrackingNumber = 'UA-39875030-1'
+    var MixpanelTrackingNumber = '787a506ef2d6e33074d4607d5a35ca5e'
+
+    var full = window.location.host
+    var parts = full.split('.')
+    var subdomain = parts[0]
+
+    if (subdomain.substring(0, 9) == 'localhost' || subdomain == 'showroom') {
+        GoogleAnalyticsTrackingNumber = 'UA-39875030-8'
+        MixpanelTrackingNumber = 'efb8c5fdaa74bb361ea95797871a3eec'
+    }
+    </script>
+    <!-- Google Analytics -->
+    <script>
+    window.ga = window.ga || function() {
+        (ga.q = ga.q || []).push(arguments)
+    };
+    ga.l = +new Date;
+    ga('create', GoogleAnalyticsTrackingNumber, 'auto');
+    ga('send', 'pageview');
+    </script>
+    <script async="" src="./posD5_STK3_2_A;STK3_R_0_files/analytics.js"></script>
+    <!-- End Google Analytics -->
+    <!-- start Mixpanel -->
+    <script type="text/javascript">
+    (function(e, a) {
+        if (!a.__SV) {
+            var b = window;
+            try {
+                var c, l, i, j = b.location,
+                    g = j.hash;
+                c = function(a, b) { return (l = a.match(RegExp(b + "=([^&]*)"))) ? l[1] : null };
+                g && c(g, "state") && (i = JSON.parse(decodeURIComponent(c(g, "state"))), "mpeditor" === i.action && (b.sessionStorage.setItem("_mpcehash", g), history.replaceState(i.desiredHash || "", e.title, j.pathname + j.search)))
+            } catch (m) {}
+            var k, h;
+            window.mixpanel = a;
+            a._i = [];
+            a.init = function(b, c, f) {
+                function e(b, a) {
+                    var c = a.split(".");
+                    2 == c.length && (b = b[c[0]], a = c[1]);
+                    b[a] = function() {
+                        b.push([a].concat(Array.prototype.slice.call(arguments,
+                            0)))
+                    }
+                }
+                var d = a;
+                "undefined" !== typeof f ? d = a[f] = [] : f = "mixpanel";
+                d.people = d.people || [];
+                d.toString = function(b) {
+                    var a = "mixpanel";
+                    "mixpanel" !== f && (a += "." + f);
+                    b || (a += " (stub)");
+                    return a
+                };
+                d.people.toString = function() { return d.toString(1) + ".people (stub)" };
+                k = "disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+                for (h = 0; h < k.length; h++) e(d, k[h]);
+                a._i.push([b, c, f])
+            };
+            a.__SV = 1.2;
+            b = e.createElement("script");
+            b.type = "text/javascript";
+            b.async = !0;
+            b.src = "undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL ? MIXPANEL_CUSTOM_LIB_URL : "file:" === e.location.protocol && "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//) ? "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js" : "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";
+            c = e.getElementsByTagName("script")[0];
+            c.parentNode.insertBefore(b, c)
+        }
+    })(document, window.mixpanel || []);
+    mixpanel.init(MixpanelTrackingNumber);
+    </script>
+    <!-- end Mixpanel -->
+
+  </head>
+
+  <body class="                                                                                                                                                                                                        pace-done"><div class="pace  pace-inactive"><div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+  <div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div></div>
+
+    <!-- Sidebar -->
+    <div class="col-sm-4">
+      <form class="well" id="upload-data" method="post" enctype="multipart/form-data">
+        <a href="https://tide.deskgen.com/"><img src="./posD5_STK3_2_A;STK3_R_0_files/headerMain.png" alt="TIDE" width="100%" class="unframed"></a>
+        <h2>TIDE: Tracking of Indels by DEcomposition</h2>
+        <hr>
+        <h4>Upload Data:</h4>
+        <h5><b>Title plot (e.g. sample name)</b></h5>
+        <input id="title" type="text" name="title" class="form-control inputchange" placeholder="Title" value="Sample">
+         <!-- Enable all nucleases if user is logged in -->
+          <h5><b>Nuclease</b></h5>
+          <select class="form-control" id="nuclease" name="nuclease">
+              <option value="SpCas9">SpCas9</option>
+              <option value="SaCas9">SaCas9</option>
+              <option value="St1Cas9">St1Cas9</option>
+              <option value="NmCas9">NmCas9</option>
+              <option value="AsCpf1">AsCpf1</option>
+              <option value="FnCpf1">FnCpf1</option>
+              <option value="LbCpf1">LbCpf1</option>
+          </select><br>
+        
+        <label>Guide sequence</label>
+        <span class="help-block">
+          <small>Paste your guide sequence (from '5 to '3). Do not include the PAM.</small>
+        </span>
+        <input type="text" class="form-control" id="guide" name="guide" placeholder="CATGCCGAGAGTGATCCCGG"><br>
+        <label>Control Sample Chromatogram (.ab1)</label>
+        <div class="input-group">
+          <label class="input-group-btn">
+              <span class="btn btn-default">
+                  Browse... <input id="control" name="control" type="file" style="display: none;">
+              </span>
+          </label>
+          <input type="text" class="form-control" readonly="">
+        </div><br>
+        <label>Test Sample Chromatogram (.ab1)</label>
+        <div class="input-group">
+          <label class="input-group-btn">
+              <span class="btn btn-default">
+                  Browse... <input id="sample" name="sample" type="file" style="display: none;">
+              </span>
+          </label>
+          <input type="text" class="form-control" readonly="">
+        </div><br>
+        <div class="checkbox">
+          <label>
+           <input type="checkbox" name="example" value="checked"><b>Load Example Data</b>
+          </label>
+        </div>
+        <hr>
+        <h4>Parameters</h4>
+        <span class="help-block">
+          <small>All parameters have default settings but can be adjusted by checking the 'advance settings' box. </small>
+        </span>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" name="advanced" onclick="showSettings(&#39;settings&#39;)">Advanced settings
+            </label>
+          </div>
+        <div id="settings" style="display:none"><br>
+          <span class="help-block">
+            <span style="color:black">
+              <strong>Alignment window (bp)</strong>
+            </span>
+          </span>
+          <span class="help-block">
+            <small>The sequence segment used to align the control and test sample</small>
+          </span>
+          <span class="help-block">
+            <small>
+              <strong>left boundary</strong>
+            </small>
+          </span>
+            <span class="irs js-irs-0  irs-with-grid"><span class="irs"><span class="irs-line" tabindex="0"><span class="irs-line-left"></span><span class="irs-line-mid"></span><span class="irs-line-right"></span></span><span class="irs-min">1</span><span class="irs-max">700</span><span class="irs-from" style="visibility: hidden;">0</span><span class="irs-to" style="visibility: hidden;">0</span><span class="irs-single">0</span></span><span class="irs-grid"><span class="irs-grid-pol" style="left: 0%"></span><span class="irs-grid-text js-grid-text-0" style="left: 0%">1</span><span class="irs-grid-pol small" style="left: 6.676204101096802%"></span><span class="irs-grid-pol small" style="left: 3.338102050548401%"></span><span class="irs-grid-pol" style="left: 10.014306151645204%"></span><span class="irs-grid-text js-grid-text-1" style="left: 10.0143%; visibility: hidden;">71</span><span class="irs-grid-pol small" style="left: 16.69051025274201%"></span><span class="irs-grid-pol small" style="left: 13.352408202193605%"></span><span class="irs-grid-pol" style="left: 20.02861230329041%"></span><span class="irs-grid-text js-grid-text-2" style="left: 20.0286%; visibility: hidden;">141</span><span class="irs-grid-pol small" style="left: 26.704816404387213%"></span><span class="irs-grid-pol small" style="left: 23.36671435383881%"></span><span class="irs-grid-pol" style="left: 30.042918454935613%"></span><span class="irs-grid-text js-grid-text-3" style="left: 30.0429%; visibility: hidden;">211</span><span class="irs-grid-pol small" style="left: 36.71912255603242%"></span><span class="irs-grid-pol small" style="left: 33.38102050548402%"></span><span class="irs-grid-pol" style="left: 40.05722460658082%"></span><span class="irs-grid-text js-grid-text-4" style="left: 40.05722460658082%">281</span><span class="irs-grid-pol small" style="left: 46.73342870767762%"></span><span class="irs-grid-pol small" style="left: 43.39532665712922%"></span><span class="irs-grid-pol" style="left: 50.07153075822602%"></span><span class="irs-grid-text js-grid-text-5" style="left: 50.0715%; visibility: hidden;">351</span><span class="irs-grid-pol small" style="left: 56.747734859322826%"></span><span class="irs-grid-pol small" style="left: 53.40963280877442%"></span><span class="irs-grid-pol" style="left: 60.085836909871226%"></span><span class="irs-grid-text js-grid-text-6" style="left: 60.0858%; visibility: hidden;">421</span><span class="irs-grid-pol small" style="left: 66.76204101096803%"></span><span class="irs-grid-pol small" style="left: 63.423938960419626%"></span><span class="irs-grid-pol" style="left: 70.10014306151643%"></span><span class="irs-grid-text js-grid-text-7" style="left: 70.1001%; visibility: hidden;">491</span><span class="irs-grid-pol small" style="left: 76.77634716261323%"></span><span class="irs-grid-pol small" style="left: 73.43824511206483%"></span><span class="irs-grid-pol" style="left: 80.11444921316163%"></span><span class="irs-grid-text js-grid-text-8" style="left: 80.11444921316163%">561</span><span class="irs-grid-pol small" style="left: 86.79065331425844%"></span><span class="irs-grid-pol small" style="left: 83.45255126371003%"></span><span class="irs-grid-pol" style="left: 90.12875536480684%"></span><span class="irs-grid-text js-grid-text-9" style="left: 90.1288%; visibility: hidden;">631</span><span class="irs-grid-pol small" style="left: 96.70958512160227%"></span><span class="irs-grid-pol small" style="left: 93.41917024320456%"></span><span class="irs-grid-pol" style="left: 100%"></span><span class="irs-grid-text js-grid-text-10" style="left: 100%; visibility: hidden;">700</span></span><span class="irs-bar"></span><span class="irs-bar-edge"></span><span class="irs-shadow shadow-single"></span><span class="irs-slider single"></span></span><input type="text" id="range_align" name="range_align" class="irs-hidden-input" tabindex="-1" readonly="">
+            <small>
+              <strong>right boundary</strong>
+            </small>
+          
+          <span class="help-block">
+            <small>automatically set at breaksite - 10bp</small>
+          </span><br>
+          <span class="help-block">
+            <span style="color: black">
+              <strong>Decomposition window (bp)</strong>
+            </span>
+          </span>
+          <span class="help-block">
+            <small>
+              The sequence segment used for decomposition.<br>
+              Default is maximum window possible
+            </small>
+          </span>
+            <span class="irs js-irs-1  irs-with-grid"><span class="irs"><span class="irs-line" tabindex="0"><span class="irs-line-left"></span><span class="irs-line-mid"></span><span class="irs-line-right"></span></span><span class="irs-min">1</span><span class="irs-max">700</span><span class="irs-from">0</span><span class="irs-to">0</span><span class="irs-single">0</span></span><span class="irs-grid"><span class="irs-grid-pol" style="left: 0%"></span><span class="irs-grid-text js-grid-text-0" style="left: 0%">1</span><span class="irs-grid-pol small" style="left: 6.676204101096802%"></span><span class="irs-grid-pol small" style="left: 3.338102050548401%"></span><span class="irs-grid-pol" style="left: 10.014306151645204%"></span><span class="irs-grid-text js-grid-text-1" style="left: 10.0143%; visibility: hidden;">71</span><span class="irs-grid-pol small" style="left: 16.69051025274201%"></span><span class="irs-grid-pol small" style="left: 13.352408202193605%"></span><span class="irs-grid-pol" style="left: 20.02861230329041%"></span><span class="irs-grid-text js-grid-text-2" style="left: 20.0286%; visibility: hidden;">141</span><span class="irs-grid-pol small" style="left: 26.704816404387213%"></span><span class="irs-grid-pol small" style="left: 23.36671435383881%"></span><span class="irs-grid-pol" style="left: 30.042918454935613%"></span><span class="irs-grid-text js-grid-text-3" style="left: 30.0429%; visibility: hidden;">211</span><span class="irs-grid-pol small" style="left: 36.71912255603242%"></span><span class="irs-grid-pol small" style="left: 33.38102050548402%"></span><span class="irs-grid-pol" style="left: 40.05722460658082%"></span><span class="irs-grid-text js-grid-text-4" style="left: 40.05722460658082%">281</span><span class="irs-grid-pol small" style="left: 46.73342870767762%"></span><span class="irs-grid-pol small" style="left: 43.39532665712922%"></span><span class="irs-grid-pol" style="left: 50.07153075822602%"></span><span class="irs-grid-text js-grid-text-5" style="left: 50.0715%; visibility: hidden;">351</span><span class="irs-grid-pol small" style="left: 56.747734859322826%"></span><span class="irs-grid-pol small" style="left: 53.40963280877442%"></span><span class="irs-grid-pol" style="left: 60.085836909871226%"></span><span class="irs-grid-text js-grid-text-6" style="left: 60.0858%; visibility: hidden;">421</span><span class="irs-grid-pol small" style="left: 66.76204101096803%"></span><span class="irs-grid-pol small" style="left: 63.423938960419626%"></span><span class="irs-grid-pol" style="left: 70.10014306151643%"></span><span class="irs-grid-text js-grid-text-7" style="left: 70.1001%; visibility: hidden;">491</span><span class="irs-grid-pol small" style="left: 76.77634716261323%"></span><span class="irs-grid-pol small" style="left: 73.43824511206483%"></span><span class="irs-grid-pol" style="left: 80.11444921316163%"></span><span class="irs-grid-text js-grid-text-8" style="left: 80.11444921316163%">561</span><span class="irs-grid-pol small" style="left: 86.79065331425844%"></span><span class="irs-grid-pol small" style="left: 83.45255126371003%"></span><span class="irs-grid-pol" style="left: 90.12875536480684%"></span><span class="irs-grid-text js-grid-text-9" style="left: 90.1288%; visibility: hidden;">631</span><span class="irs-grid-pol small" style="left: 96.70958512160227%"></span><span class="irs-grid-pol small" style="left: 93.41917024320456%"></span><span class="irs-grid-pol" style="left: 100%"></span><span class="irs-grid-text js-grid-text-10" style="left: 100%; visibility: hidden;">700</span></span><span class="irs-bar" style="cursor: ew-resize;"></span><span class="irs-shadow shadow-from"></span><span class="irs-shadow shadow-to"></span><span class="irs-slider from"></span><span class="irs-slider to type_last"></span></span><input type="text" id="range_decom" name="range_decom" class="irs-hidden-input" tabindex="-1" readonly=""><br>
+          <span class="help-block">
+            <span style="color: black">
+              <strong>Indel size range</strong>
+            </span>
+          </span>
+          <span class="help-block">
+            <small>Maximum size of insertions and deletions modeled in decomposition</small>
+          </span>
+          <span class="irs js-irs-2  irs-with-grid"><span class="irs"><span class="irs-line" tabindex="0"><span class="irs-line-left"></span><span class="irs-line-mid"></span><span class="irs-line-right"></span></span><span class="irs-min">2</span><span class="irs-max">50</span><span class="irs-from" style="visibility: hidden;">0</span><span class="irs-to" style="visibility: hidden;">0</span><span class="irs-single">0</span></span><span class="irs-grid"><span class="irs-grid-pol" style="left: 0%"></span><span class="irs-grid-text js-grid-text-0" style="left: 0%">2</span><span class="irs-grid-pol small" style="left: 6.944444444444445%"></span><span class="irs-grid-pol small" style="left: 3.4722222222222223%"></span><span class="irs-grid-pol" style="left: 10.416666666666668%"></span><span class="irs-grid-text js-grid-text-1" style="left: 10.4167%; visibility: hidden;">7</span><span class="irs-grid-pol small" style="left: 17.361111111111114%"></span><span class="irs-grid-pol small" style="left: 13.88888888888889%"></span><span class="irs-grid-pol" style="left: 20.833333333333336%"></span><span class="irs-grid-text js-grid-text-2" style="left: 20.8333%; visibility: hidden;">12</span><span class="irs-grid-pol small" style="left: 27.777777777777782%"></span><span class="irs-grid-pol small" style="left: 24.305555555555557%"></span><span class="irs-grid-pol" style="left: 31.250000000000004%"></span><span class="irs-grid-text js-grid-text-3" style="left: 31.25%; visibility: hidden;">17</span><span class="irs-grid-pol small" style="left: 38.19444444444445%"></span><span class="irs-grid-pol small" style="left: 34.72222222222223%"></span><span class="irs-grid-pol" style="left: 41.66666666666667%"></span><span class="irs-grid-text js-grid-text-4" style="left: 41.66666666666667%">22</span><span class="irs-grid-pol small" style="left: 48.61111111111112%"></span><span class="irs-grid-pol small" style="left: 45.13888888888889%"></span><span class="irs-grid-pol" style="left: 52.08333333333334%"></span><span class="irs-grid-text js-grid-text-5" style="left: 52.0833%; visibility: hidden;">27</span><span class="irs-grid-pol small" style="left: 59.027777777777786%"></span><span class="irs-grid-pol small" style="left: 55.555555555555564%"></span><span class="irs-grid-pol" style="left: 62.50000000000001%"></span><span class="irs-grid-text js-grid-text-6" style="left: 62.5%; visibility: hidden;">32</span><span class="irs-grid-pol small" style="left: 69.44444444444446%"></span><span class="irs-grid-pol small" style="left: 65.97222222222223%"></span><span class="irs-grid-pol" style="left: 72.91666666666667%"></span><span class="irs-grid-text js-grid-text-7" style="left: 72.9167%; visibility: hidden;">37</span><span class="irs-grid-pol small" style="left: 79.86111111111111%"></span><span class="irs-grid-pol small" style="left: 76.3888888888889%"></span><span class="irs-grid-pol" style="left: 83.33333333333334%"></span><span class="irs-grid-text js-grid-text-8" style="left: 83.33333333333334%">42</span><span class="irs-grid-pol small" style="left: 90.27777777777779%"></span><span class="irs-grid-pol small" style="left: 86.80555555555557%"></span><span class="irs-grid-pol" style="left: 93.75000000000001%"></span><span class="irs-grid-text js-grid-text-9" style="left: 93.75%; visibility: hidden;">47</span><span class="irs-grid-pol small" style="left: 97.91666666666667%"></span><span class="irs-grid-pol small" style="left: 95.83333333333334%"></span><span class="irs-grid-pol" style="left: 100%"></span><span class="irs-grid-text js-grid-text-10" style="left: 100%; visibility: hidden;">50</span></span><span class="irs-bar" style="cursor: ew-resize;"></span><span class="irs-bar-edge"></span><span class="irs-shadow shadow-single"></span><span class="irs-slider single"></span></span><input type="text" id="maxshift" value="10" name="maxshift" class="irs-hidden-input" tabindex="-1" readonly=""><br>
+          <span class="help-block">
+            <span style="color: black">
+              <strong>P-value threshold</strong>
+            </span>
+          </span>
+          <span class="help-block">
+            <small>Significance cutoff for decomposition</small>
+          </span>
+            <label for="p.threshold"></label>
+            <input id="p_threshold" name="p_threshold" type="number" class="form-control" value="0.001" step="0.001"><br>
+        </div><br>
+        <div>
+          <a href="https://tide.deskgen.com/#" id="update_view" class="btn btn-primary">Update View</a>
+        </div>
+        <hr>
+        <small>
+          <p>By clicking Update View, you agree with the TIDE Terms of Use (RECENTLY UPDATED!).</p>
+          <p>Please read the terms of use carefully in the About page.</p>
+        </small>
+        <hr>
+        <small>
+          Created by
+          <a href="http://research.nki.nl/vansteensellab" target="_blank">Bas van Steensel lab</a>
+        </small><br>
+        <small>
+          Hosted and developed by
+          <a href="http://www.desktopgenetics.com/" target="_blank">Desktop Genetics</a>
+        </small><br>
+        <small>TIDE version 2.0.1</small><br>
+        <small>TIDE supports Firefox6, Chrome4, Safari6, IE10 or higher</small><br><br>
+        <a href="http://www.nki.nl/">
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/NKIlogo.png" alt="NKI logo" width="30%">
+        </a>
+        <a href="http://www.desktopgenetics.com/">
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/deskgen.png" alt="Desktop Genetics logo" hspace="20px" width="15%">
+        </a>
+      </form>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-sm-8">
+
+      <!-- Navigation Bar -->
+      <ul class="nav nav-tabs" id="maintabset">
+        <li class="">
+          <a href="https://tide.deskgen.com/#tab-1" data-toggle="tab" data-value="Welcome" aria-expanded="false">Welcome</a>
+        </li>
+        
+          <li>
+            <a href="https://tide.deskgen.com/my-projects" target="_blank" class="btn btn-primary">My TIDE</a>
+          </li>
+        
+        <li class="">
+          <a href="https://tide.deskgen.com/#instructions" data-toggle="tab" data-value="Instructions" aria-expanded="false">Instructions</a>
+        </li>
+        <li class="active">
+          <a href="https://tide.deskgen.com/#tab-2" data-toggle="tab" data-value="Decomposition" aria-expanded="true">Decomposition</a>
+        </li>
+        <li>
+          <a href="https://tide.deskgen.com/#tab-3" data-toggle="tab" data-value="+1 insertion">+1 insertion</a>
+        </li>
+        <li class="">
+          <a href="https://tide.deskgen.com/#tab-4" data-toggle="tab" data-value="Troubleshooting" aria-expanded="false">Troubleshooting</a>
+        </li>
+        <li class="">
+          <a href="https://tide.deskgen.com/#about" data-toggle="tab" data-value="About" aria-expanded="false">About</a>
+        </li>
+        <li>
+          <a href="https://www.deskgen.com/guidebook/" target="_blank" data-value="DESKGEN">DESKGEN design</a>
+        </li>
+        
+        <li style="display:none">
+          <a href="https://tide.deskgen.com/#tab-5" class="btn btn-primary" data-toggle="tab" data-value="Sign up">Sign up</a>
+        </li>
+        
+          <li>
+            <a href="https://tide.deskgen.com/#" id="logout">Log out</a>
+          </li>
+        
+      </ul>
+
+      <!-- Tab Contents -->
+      <div class="tab-content">
+
+        <!-- Welcome -->
+        <div class="tab-pane" data-value="Welcome" id="tab-1">
+          <h2>
+            <b><i>TIDE: Easy quantitative assessment of genome editing by sequence trace decomposition</i></b> </h2>
+          <br>
+          <p> The most widely used and cited bioinformatics tool for rapid and reliable assessment of genome editing experiments.
+          <br>
+
+          </p><h3>Welcome</h3>
+          <p> Welcome to the TIDE webtool, now hosted, maintained and supported by Desktop Genetics.</p>
+          <p>TIDE is a web tool which rapidly and reliably assesses genome editing of a target locus by CRISPR-Cas9.</p>
+          <p>Based on the quantitative sequence trace data from two standard capillary (Sanger) sequencing reactions,  TIDE quantifies editing efficacy and identifies the predominant types of insertions and deletions (indels) in the DNA of a targeted cell pool.</p>
+          <p>See
+            <cite>
+              <a href="http://nar.oxfordjournals.org/content/42/22/e168" target="_blank">Brinkman et al. 2014 Nucl. Acids Res.
+              </a>
+            </cite> for a detailed explanation and examples.
+          </p>
+
+          <hr>
+
+          <h3>Purpose</h3>
+          <li><b>What it does:</b> TIDE estimates the frequency of insertions and deletions (indels) in a pool of cells transfected with [Cas9 + sgRNA]. </li>
+          <li><b>When to use:</b> Quantification of insertions and deletions following editing (e.g. Knock-Outs). For template-mediated editing (e.g. Knock-Ins), use the  <a href="https://tider.deskgen.com/"> TIDER</a> web tool.</li>
+
+          <hr>
+
+          <h3>Overview</h3>
+          <p>TIDE provides rapid and reliable assessment of genome editing efficiencies. It quantifies the rates of non-homologous end-joining mediated repair ("NHEJ") in an edited sample by decomposing the sequence trace data from three simple Sanger reactions.
+            As a result, TIDE quantifies indel rates providing you with an accurate understanding of your editing outcomes.</p>
+
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/tide-overview.png" class="img.unframed" align="left" alt="tide-overview" height="auto" width="90%">
+          <br clear="all">
+
+          <p>The input to TIDE is Sanger sequencing data; one control and one edited sample.</p>
+          <p>The output of TIDE is a comprehensive profile of all insertions and deletions (INDELs) in the edited sample, mediated by NHEJ, and the editing efficiency of the nuclease.</p>
+
+          <hr>
+
+          <h3>Use of TIDE</h3>
+          <p>The TIDE Software is being provided as a free web service for research, educational, instructional and non-commercial purposes only.</p>
+          <p>By submitting jobs to TIDE you agree to the TIDE Terms of Use. More information can be found in the "About" page. The TIDE Terms of Use were recently update. Please read through them carefully.</p>
+          <p>If you wish to acquire a license to TIDE, please contact us by completing this <a href="https://deskgen.typeform.com/to/HxDqpL">request form</a>.</p>
+
+          <hr>
+
+        </div>
+      <!-- Welcome END -->
+
+
+        <!-- Instructions -->
+        <div class="tab-pane" data-value="Instructions" id="instructions">
+
+          <h2>Instructions</h2>
+          <h3>1. Protocol:</h3>
+          <p>
+              For TIDE, 2 PCR amplicons (all from the same primer set) are needed:
+              </p><ol>
+                <li>Control (DNA from wild-type cell. e.g. control cells transfected without Cas9 or sgRNA)</li>
+                <li>Test sample (DNA from a pool of cells treated with Cas9, sgRNA and donor template)</li>
+              </ol>
+            <p></p>
+
+
+            <h4> Generate control and test sample DNA </h4>
+            <p>
+
+            </p><ul>
+              <li>Design your PCR primers. We advise that you  take a ~700 bp stretch of DNA  inclusive of the target locus.
+                   The projected cut site should ideally be located ~200 bp downstream from the sequencing start site.
+                   The region upstream of the cut site is used to align the sequencing data of the test sample with that of the control sample.
+               </li>
+               <li>Amplify a fragment enclosing the designed editing site by standard PCR.</li>
+
+             </ul>
+
+             <img src="./posD5_STK3_2_A;STK3_R_0_files/tide-protocol-1.png" class="img.unframed" align="left" alt="tide protocol 1" height="auto" width="45%">
+             <br clear="all">
+
+
+
+
+
+            <br>
+             <table border="1">
+              <tbody><tr>
+                <th>Amount</th>
+                <th>Sample</th>
+              </tr>
+              <tr>
+                <td>21-x µL</td>
+                <td>H2O</td>
+              </tr>
+              <tr>
+                <td>2 µL</td>
+                <td>primer a (10 µM stock)</td>
+              </tr>
+                <tr>
+                <td>2 µL</td>
+                <td>primer b (10 µM stock)</td>
+              </tr>
+                <tr>
+                <td>x µL</td>
+                <td>genomic DNA (~50ng)</td>
+              </tr>
+                <tr>
+                <td>25 µL</td>
+                <td>2x pre-mix of buffer, Taq polymerase and dNTPs (e.g. BioLine MyTaq, BIO-25044)</td>
+              </tr>
+            </tbody></table>
+
+            <br>
+            PCR program:
+             <table border="1">
+              <tbody><tr>
+                <th>Step</th>
+                <th>Temperature</th>
+                <th>Time, min:sec</th>
+                <th>Number of cycles</th>
+              </tr>
+              <tr>
+                <td>Initial denaturation</td>
+                <td>95 °C</td>
+                <td>1:00</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Denaturation</td>
+                <td>95 °C</td>
+                <td>0:15</td>
+                <td></td>
+              </tr>
+                <tr>
+                <td>Annealing</td>
+                <td>58 °C</td>
+                <td>0:15</td>
+                <td>25</td>
+              </tr>
+                <tr>
+                <td>Extension</td>
+                <td>72 °C</td>
+                <td>0:10</td>
+                <td></td>
+              </tr>
+                <tr>
+                <td></td>
+                <td>4 °C</td>
+                <td>hold</td>
+                <td></td>
+              </tr>
+            </tbody></table>
+
+            
+            <p></p>
+
+            <br>
+            <hr>
+
+          <h3>2. Upload Data:</h3>
+
+          <p> Enter a DNA character string ('5-'3) representing the used guide RNA sequence immediately upstream of the PAM sequence for the Cas9 nucleases, and downstream for the Cpf1 nucleases (PAM not included).
+            Numbers and other invalid (non-IUPAC) DNA characters will be automatically removed.
+          </p>
+
+          Supported nucleases:
+           <table border="1">
+            <tbody><tr>
+              <th>Nuclease</th>
+              <th>Length (nt)</th>
+              <th>Cut Site</th>
+            </tr>
+            <tr>
+              <td>SpCas9</td>
+              <td>20</td>
+              <td>-3, -3</td>
+            </tr>
+            <tr>
+              <td>SaCas9</td>
+              <td>22</td>
+              <td>-3, -3</td>
+            </tr>
+              <tr>
+              <td>St1Cas9</td>
+              <td>20</td>
+              <td>-2, -2</td>
+            </tr>
+              <tr>
+              <td>NmCas9</td>
+              <td>20</td>
+              <td>-3, -3</td>
+            </tr>
+              <tr>
+              <td>AsCpf1</td>
+              <td>20</td>
+              <td>18, 23</td>
+            </tr>
+              <tr>
+              <td>LbCpf1</td>
+              <td>20</td>
+              <td>18, 23</td>
+            </tr>
+              <tr>
+              <td>FnCpf1</td>
+              <td>23</td>
+              <td>18, 23</td>
+            </tr>
+          </tbody></table>
+          <br>
+
+          <p> Next, upload the chromatogram sequence files of respectively the control sample (i.e. transfected without Cas9 or without the guide RNA) and the test sample (i.e. treated with both Cas9 and the guide RNA).
+          </p>
+
+          <strong>Currently, TIDE Standard and TIDE Pro support ABIF (.ab1) files only. <a href="https://www.deskgen.com/landing/tide-premium.html" target="_blank">TIDE Premium</a> allows for both ABIF and SCF (.scf) files. </strong>
+          <p></p>
+
+          <hr>
+
+          <h3>3. Enter Parameters for Analysis:</h3>
+
+          <p>The following parameters have default settings but can be adjusted if necessary in the panel to the left by checking the 'Advanced Settings' box.
+          </p>
+
+
+          <h4>Alignment window</h4>
+          <p>These settings determine the window in which the control and test sequences are aligned to determine any offset between the two reads. There is usually no need to deviate from the default settings except when sequencing long repetitive sequences.
+
+          </p><p>
+          <strong>left boundary:</strong>
+          By default, this is set to 100. This is because base-calling at the start of a Sanger sequence read is often of poor quality.
+          <br>
+          <strong>right boundary:</strong>
+          This is automatically set at cut site (-10 bp).
+          </p>
+
+          <p></p>
+
+          <h4>Decomposition window</h4>
+          <p>These settings determine the sequence segment used for decomposition. The default setting is the largest window possible for uploaded sequences:
+
+          </p><p>
+          <strong>left boundary:</strong>
+          max indel size +5 bp downstream of the cut site. <br>
+
+          <strong>right boundary:</strong>
+          max indel size +5 bp before the end of the shortest sequence read.
+          </p>
+
+          The decomposition window can be adjusted if part of the sequence read is of low quality or contains repetitive sequences.
+          <p></p>
+
+          <h4>Indel size range</h4>
+          <p>Set the maximum size of deletions and insertions to be modeled. The default value is 10.</p>
+
+          <h4>P-value threshold</h4>
+          <p>Significance cutoff. Any value between 0 and 1 is accepted. Default is p&lt;0.001.</p>
+          <hr>
+
+          <h3>4. Results:</h3>
+          <p>Once the data are uploaded and parameters are set, submit the data by clicking on the "Update View" button and the plots will appear in the two tabs: "Decomposition” and "+1 insertion". If the settings are incorrect or too stringent, warnings will be displayed in the "Decomposition" tab.
+          </p>
+
+          <p>
+          <strong> Quality measures</strong>: Results depend on the quality of the sequence reads.</p>
+          <p>As a rule of thumb, we recommend to aim for an average aberrant sequence signal strength before the cut site of &lt;10% (both control and test sample), and an R<sub>squared</sub> value of &gt;0.9 for the decomposition result. Sequencing the opposite strand is recommended to confirm results.
+          </p>
+
+          <hr>
+        </div>
+        <!-- Instructions END -->
+
+        <!-- About -->
+        <div class="tab-pane" data-value="About" id="about">
+
+          <h2>About</h2>
+
+          <br>
+
+          <p>TIDE is a bioinformatics tool to assist scientists carrying out genome editing experiments. This tool uses the world's first and most widely cited algorithm to reliably and rapidly assess the efficiency of NHEJ-mediated repair of genome edited cells.</p>
+
+          <br>
+
+          <hr>
+
+          <h3>Citation and Privacy</h3>
+          <p>If you use this software for data analysis in a publication, please cite
+            <cite>
+              <a href="http://nar.oxfordjournals.org/content/42/22/e168">Brinkman et al.,  Nucl. Acids Res. (2014)</a>
+            </cite>.
+            Your uploaded data are only used for the duration of the analysis session and are not stored or used for any other purpose.
+            Any data you share, upload or save (e.g. via "Save Experiment") will never be shared or sold without your explicit written consent.
+            Desktop Genetics will not use your data for any commercial purpose without your explicit written consent.
+            Anonymous usage analytics are collected via third party tools in order to improve user experience.
+            For more information on what data is collected, please click <a href="https://www.deskgen.com/landing/legal.html" target="_blank">here</a>. </p>
+          <br>
+          <hr>
+
+          <h3>TIDE Terms of Use</h3>
+          <p><strong>NEW! Please read carefully</strong></p>
+
+          <p>Limited Copyright License for Research Use by Non-Profit and Government Institutions</p>
+
+          <p>"<strong>Code</strong>" means the TIDE source code; and</p>
+          <p>"<strong>Software</strong>" means the code made available as web service by Desktop Genetics at https://tide.deskgen.com.</p>
+
+          <p>BY USING THE SOFTWARE OR DOWNLOADING THE CODE ACCOMPANYING THIS LICENSE, YOU (AND YOUR EMPLOYEES IF ANY) ARE CONSENTING TO BE BOUND BY ALL OF THE TERMS OF THIS LICENSE.</p>
+          <p>IF YOU DO NOT AGREE TO THE TERMS OF THIS LICENCE, WE WILL NOT LICENSE USE OF THE CODE OR THE SOFTWARE TO YOU.</p>
+          <p>The Software and Code are being provided as a free a service for research, educational and non-commercial purposes only.</p>
+          <p>By using the Software or downloading the Code you agree to the terms and conditions below.</p>
+          <li>You are an actively enrolled student, post-doctoral researcher, or faculty member at a degree-granting educational institution or accredited government or not-for-profit research institution; and You are hereby granted a non-exclusive, non-transferable license to use the Code and/or Software solely for educational, instructional, and/or non-commercial research purposes.</li>
+          <li>You understand that all results produced using the Code or Software may only be used for non-commercial research and/or academic purposes.</li>
+          <li>You understand that to obtain any right to use the Code or Software for commercial purposes, or in the context of industrially sponsored research, You must enter into an appropriate, separate and direct license agreement with Desktop Genetics (click <a href="https://deskgen.typeform.com/to/HxDqpL">here</a> to enquire).</li>
+          <li>You will not redistribute unmodified versions of the Code or Software.</li>
+          <li>You will redistribute modifications, if any, under the same terms as this license and with prior written approval from Desktop Genetics.</li>
+          <li>You must credit the authors of the Code: Eva K Brinkman, Tao Chen, Mario Amendola, Jos Jonkers Bas van Steensel and cite "Easy quantitative assessment of genome editing by sequence trace decomposition", Nucleic Acids Research, 2014, https://doi.org/10.1093/nar/gku936; and</li>
+          <li>You must credit the authors of the Software: Desktop Genetics and cite "TIDE: Easy quantitative assessment of genome editing experiments by sequence trace decomposition, https://www.tide.deskgen.com".</li>
+          <li>You understand that neither the names of Desktop Genetics or the authors of the Code or Software may be used to endorse or promote products derived from the Code or Software without specific prior written permission.</li>
+          <li>You acknowledge that all intellectual property rights in the Software and the Code anywhere in the world belong to Desktop Genetics, that rights in the Software and Code are licensed to you (not sold) and that you have no rights in or to the Software or Code other than the right to use them in accordance with the terms of this Licence.</li>
+          <li>You acknowledge that the Software or Code have not been developed to meet your individual requirements and that it is therefore your responsibility to ensure that the facilities and functions of the Software or Code meet your requirements.</li>
+          <li>This Licence, its subject matter and its formation (and any non-contractual disputes or claims) are governed by English law. You agree to the exclusive jurisdiction of the courts of England and Wales.</li>
+          <br>
+          <p>"Copyright 2018. Desktop Genetics. All Rights Reserved."</p>
+
+          <br>
+          <hr>
+
+          <h3>Contact</h3>
+          <p>This web tool was developed by Desktop Genetics, in collaboration with the <a href="http://research.nki.nl/vansteensellab/contact.htm"> Bas van Steensel lab</a>.</p>
+          <p>Special thanks to Eva Brinkman, Bas van Steensel from NKI, and Mira Davidson from Desktop Genetics.</p>
+          <p>For more information and to report bugs, please contact
+            <a href="https://www.deskgen.com/landing/contact.html"> Desktop Genetics</a>.
+          </p>
+
+          <br><br>
+          <hr>
+        </div>
+        <!-- About END -->
+
+
+        <!-- Decomposition
+        ==================================================
+
+        Includes indel spectrum and quality control
+        -->
+
+        <div class="tab-pane active" data-value="Decomposition" id="tab-2">
+        <p id="decomposition"><!-- Decomposition -->
+
+<!-- Charts -->
+
+<!-- Indel Spectrum -->
+<h4>Indel Spectrum</h4><br>
+<small>
+  <span id="total-eff" style="float:left">total eff. = 79.8 %</span>
+  <span id="r-squared" style="margin-left:700px; white-space:nowrap">R² = 0.88</span>
+</small><br>
+
+<label for="IndelSpectrum"><center>posA5_BUB1B_2_A;BUB1B_R_0.ab1</center>
+<canvas id="IndelSpectrum" width="1760" height="660" style="display: block; height: 300px; width: 800px;"></canvas>
+
+<script>
+
+// x-axis
+var indels = [
+                  parseFloat("-10"),
+              
+                  parseFloat("-9"),
+              
+                  parseFloat("-8"),
+              
+                  parseFloat("-7"),
+              
+                  parseFloat("-6"),
+              
+                  parseFloat("-5"),
+              
+                  parseFloat("-4"),
+              
+                  parseFloat("-3"),
+              
+                  parseFloat("-2"),
+              
+                  parseFloat("-1"),
+              
+                  parseFloat("0"),
+              
+                  parseFloat("1"),
+              
+                  parseFloat("2"),
+              
+                  parseFloat("3"),
+              
+                  parseFloat("4"),
+              
+                  parseFloat("5"),
+              
+                  parseFloat("6"),
+              
+                  parseFloat("7"),
+              
+                  parseFloat("8"),
+              
+                  parseFloat("9"),
+              
+                  parseFloat("10"),
+              ];
+
+// y-axis
+var pvgood = [
+                  "0",
+              
+                  "3.3",
+              
+                  "0",
+              
+                  "38.6",
+              
+                  "0",
+              
+                  "0",
+              
+                  "4.3",
+              
+                  "0",
+              
+                  "0",
+              
+                  "12.3",
+              
+                  "8.4",
+              
+                  "12.8",
+              
+                  "0",
+              
+                  "0",
+              
+                  "0",
+              
+                  "0",
+              
+                  "0",
+              
+                  "0",
+              
+                  "0",
+              
+                  "0",
+              
+                  "0",
+              ];
+var pvbad = [
+                  "2.3",
+              
+                  "0",
+              
+                  "2.5",
+              
+                  "0",
+              
+                  "1.2",
+              
+                  "0.0",
+              
+                  "0",
+              
+                  "1.3",
+              
+                  "1.1",
+              
+                  "0",
+              
+                  "0",
+              
+                  "0",
+              
+                  "0.2",
+              
+                  "0.0",
+              
+                  "0.0",
+              
+                  "0.0",
+              
+                  "0.0",
+              
+                  "0.0",
+              
+                  "0.0",
+              
+                  "0.0",
+              
+                  "0.0",
+              ];
+var colors = [
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "rgba(233,46,101,0.5)",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              
+                  "#ea2c64",
+              ];
+
+var p_threshold = 0.001
+
+var data = {
+    labels: indels,
+    datasets: [
+      {
+        backgroundColor: colors,
+        data: pvgood,
+        label: "p < " + p_threshold
+      },
+      {
+        backgroundColor: "black",
+        data: pvbad,
+        label: "p ≥ " + p_threshold
+      }
+    ]
+  }
+
+var options = {
+responsive: false,
+events: true,
+hover: {
+  animationDuration: 0
+    }, // return the percentage values above bars
+    animation: {
+        onComplete: function () {
+            var chartInstance = this.chart,
+                ctx = chartInstance.ctx;
+            ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+
+            this.data.datasets.forEach(function (dataset, i) {
+                var meta = chartInstance.controller.getDatasetMeta(i);
+                meta.data.forEach(function (bar, index) {
+                    if (dataset.data[index] == 0.0) {
+                      dataset.data[index] = ''
+                    }
+                    else if (dataset.data == pvbad) {
+                      dataset.data[index] = ''
+                    }
+                    var data = dataset.data[index];
+                    ctx.fillText(data, bar._model.x, bar._model.y - 5);
+                });
+            });
+        }
+    },
+legend: {
+  labels: {
+    boxWidth: 12,
+    fontColor: "black",
+  },
+  display: true,
+  position: "right"
+},
+title: {
+  display: false,
+  fontSize: 15,
+  fontColor: "black",
+  text: 'sample: \n control: \n guide:'
+},
+scales: {
+    xAxes: [{
+                stacked: true,
+                ticks: {
+                autoSkip: false,
+                callback: function( tick, index, ticks ){
+                if( tick % 5 == 0) {
+                  return tick; }
+                else {
+                  return null; }
+                },
+                fontColor: "black"
+                },
+                gridLines: {
+                    color: "black",
+                    display: false
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: '<--deletion     insertion-->',
+                    fontColor: "black"
+                }
+            }],
+    yAxes: [{
+                stacked: true,
+                ticks: {
+                stepSize: 20,
+                max: 100,
+                fontColor: "black",
+                },
+                gridLines: {
+                    color: "black",
+                    display:false
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: '% of sequences',
+                    fontColor: "black",
+                },
+            }]
+    }
+}
+
+var ctx = document.getElementById("IndelSpectrum");
+ctx.height = 300;
+var IndelSpectrum = new Chart(ctx, {
+  type: 'bar',
+  data: data,
+  options: options
+});
+
+</script>
+</label>
+
+<!-- Quality Control -->
+<h4>Quality control - Aberrant sequence signal</h4><br><br>
+
+<canvas id="QualityControl" width="1760" height="660" style="display: block; height: 300px; width: 800px;"></canvas>
+
+<script>
+
+  // x-axis
+  var alignment_window = [
+                    parseFloat("100"),
+                
+                    parseFloat("101"),
+                
+                    parseFloat("102"),
+                
+                    parseFloat("103"),
+                
+                    parseFloat("104"),
+                
+                    parseFloat("105"),
+                
+                    parseFloat("106"),
+                
+                    parseFloat("107"),
+                
+                    parseFloat("108"),
+                
+                    parseFloat("109"),
+                
+                    parseFloat("110"),
+                
+                    parseFloat("111"),
+                
+                    parseFloat("112"),
+                
+                    parseFloat("113"),
+                
+                    parseFloat("114"),
+                
+                    parseFloat("115"),
+                
+                    parseFloat("116"),
+                
+                    parseFloat("117"),
+                
+                    parseFloat("118"),
+                
+                    parseFloat("119"),
+                
+                    parseFloat("120"),
+                
+                    parseFloat("121"),
+                
+                    parseFloat("122"),
+                
+                    parseFloat("123"),
+                
+                    parseFloat("124"),
+                
+                    parseFloat("125"),
+                
+                    parseFloat("126"),
+                
+                    parseFloat("127"),
+                
+                    parseFloat("128"),
+                
+                    parseFloat("129"),
+                
+                    parseFloat("130"),
+                
+                    parseFloat("131"),
+                
+                    parseFloat("132"),
+                
+                    parseFloat("133"),
+                
+                    parseFloat("134"),
+                
+                    parseFloat("135"),
+                
+                    parseFloat("136"),
+                
+                    parseFloat("137"),
+                
+                    parseFloat("138"),
+                
+                    parseFloat("139"),
+                
+                    parseFloat("140"),
+                
+                    parseFloat("141"),
+                
+                    parseFloat("142"),
+                
+                    parseFloat("143"),
+                
+                    parseFloat("144"),
+                
+                    parseFloat("145"),
+                
+                    parseFloat("146"),
+                
+                    parseFloat("147"),
+                
+                    parseFloat("148"),
+                
+                    parseFloat("149"),
+                
+                    parseFloat("150"),
+                
+                    parseFloat("151"),
+                
+                    parseFloat("152"),
+                
+                    parseFloat("153"),
+                
+                    parseFloat("154"),
+                
+                    parseFloat("155"),
+                
+                    parseFloat("156"),
+                
+                    parseFloat("157"),
+                
+                    parseFloat("158"),
+                
+                    parseFloat("159"),
+                
+                    parseFloat("160"),
+                
+                    parseFloat("161"),
+                
+                    parseFloat("162"),
+                
+                    parseFloat("163"),
+                
+                    parseFloat("164"),
+                
+                    parseFloat("165"),
+                
+                    parseFloat("166"),
+                
+                    parseFloat("167"),
+                
+                    parseFloat("168"),
+                
+                    parseFloat("169"),
+                
+                    parseFloat("170"),
+                
+                    parseFloat("171"),
+                
+                    parseFloat("172"),
+                
+                    parseFloat("173"),
+                
+                    parseFloat("174"),
+                
+                    parseFloat("175"),
+                
+                    parseFloat("176"),
+                
+                    parseFloat("177"),
+                
+                    parseFloat("178"),
+                
+                    parseFloat("179"),
+                
+                    parseFloat("180"),
+                
+                    parseFloat("181"),
+                
+                    parseFloat("182"),
+                
+                    parseFloat("183"),
+                
+                    parseFloat("184"),
+                
+                    parseFloat("185"),
+                
+                    parseFloat("186"),
+                
+                    parseFloat("187"),
+                
+                    parseFloat("188"),
+                
+                    parseFloat("189"),
+                
+                    parseFloat("190"),
+                
+                    parseFloat("191"),
+                
+                    parseFloat("192"),
+                
+                    parseFloat("193"),
+                
+                    parseFloat("194"),
+                
+                    parseFloat("195"),
+                
+                    parseFloat("196"),
+                
+                    parseFloat("197"),
+                
+                    parseFloat("198"),
+                
+                    parseFloat("199"),
+                
+                    parseFloat("200"),
+                
+                    parseFloat("201"),
+                
+                    parseFloat("202"),
+                
+                    parseFloat("203"),
+                
+                    parseFloat("204"),
+                
+                    parseFloat("205"),
+                
+                    parseFloat("206"),
+                
+                    parseFloat("207"),
+                
+                    parseFloat("208"),
+                
+                    parseFloat("209"),
+                
+                    parseFloat("210"),
+                
+                    parseFloat("211"),
+                
+                    parseFloat("212"),
+                
+                    parseFloat("213"),
+                
+                    parseFloat("214"),
+                
+                    parseFloat("215"),
+                
+                    parseFloat("216"),
+                
+                    parseFloat("217"),
+                
+                    parseFloat("218"),
+                
+                    parseFloat("219"),
+                
+                    parseFloat("220"),
+                
+                    parseFloat("221"),
+                
+                    parseFloat("222"),
+                
+                    parseFloat("223"),
+                
+                    parseFloat("224"),
+                
+                    parseFloat("225"),
+                
+                    parseFloat("226"),
+                
+                    parseFloat("227"),
+                
+                    parseFloat("228"),
+                
+                    parseFloat("229"),
+                
+                    parseFloat("230"),
+                
+                    parseFloat("231"),
+                
+                    parseFloat("232"),
+                
+                    parseFloat("233"),
+                
+                    parseFloat("234"),
+                
+                    parseFloat("235"),
+                
+                    parseFloat("236"),
+                
+                    parseFloat("237"),
+                
+                    parseFloat("238"),
+                
+                    parseFloat("239"),
+                
+                    parseFloat("240"),
+                
+                    parseFloat("241"),
+                
+                    parseFloat("242"),
+                
+                    parseFloat("243"),
+                
+                    parseFloat("244"),
+                
+                    parseFloat("245"),
+                
+                    parseFloat("246"),
+                
+                    parseFloat("247"),
+                
+                    parseFloat("248"),
+                
+                    parseFloat("249"),
+                
+                    parseFloat("250"),
+                
+                    parseFloat("251"),
+                
+                    parseFloat("252"),
+                
+                    parseFloat("253"),
+                
+                    parseFloat("254"),
+                
+                    parseFloat("255"),
+                
+                    parseFloat("256"),
+                
+                    parseFloat("257"),
+                
+                    parseFloat("258"),
+                
+                    parseFloat("259"),
+                
+                    parseFloat("260"),
+                
+                    parseFloat("261"),
+                
+                    parseFloat("262"),
+                
+                    parseFloat("263"),
+                
+                    parseFloat("264"),
+                
+                    parseFloat("265"),
+                
+                    parseFloat("266"),
+                
+                    parseFloat("267"),
+                
+                    parseFloat("268"),
+                
+                    parseFloat("269"),
+                
+                    parseFloat("270"),
+                
+                    parseFloat("271"),
+                
+                    parseFloat("272"),
+                
+                    parseFloat("273"),
+                
+                    parseFloat("274"),
+                
+                    parseFloat("275"),
+                
+                    parseFloat("276"),
+                
+                    parseFloat("277"),
+                
+                    parseFloat("278"),
+                
+                    parseFloat("279"),
+                
+                    parseFloat("280"),
+                
+                    parseFloat("281"),
+                
+                    parseFloat("282"),
+                
+                    parseFloat("283"),
+                
+                    parseFloat("284"),
+                
+                    parseFloat("285"),
+                
+                    parseFloat("286"),
+                
+                    parseFloat("287"),
+                
+                    parseFloat("288"),
+                
+                    parseFloat("289"),
+                
+                    parseFloat("290"),
+                
+                    parseFloat("291"),
+                
+                    parseFloat("292"),
+                
+                    parseFloat("293"),
+                
+                    parseFloat("294"),
+                
+                    parseFloat("295"),
+                
+                    parseFloat("296"),
+                
+                    parseFloat("297"),
+                
+                    parseFloat("298"),
+                
+                    parseFloat("299"),
+                
+                    parseFloat("300"),
+                
+                    parseFloat("301"),
+                
+                    parseFloat("302"),
+                
+                    parseFloat("303"),
+                
+                    parseFloat("304"),
+                
+                    parseFloat("305"),
+                
+                    parseFloat("306"),
+                
+                    parseFloat("307"),
+                
+                    parseFloat("308"),
+                
+                    parseFloat("309"),
+                
+                    parseFloat("310"),
+                
+                    parseFloat("311"),
+                
+                    parseFloat("312"),
+                
+                    parseFloat("313"),
+                
+                    parseFloat("314"),
+                
+                    parseFloat("315"),
+                
+                    parseFloat("316"),
+                
+                    parseFloat("317"),
+                
+                    parseFloat("318"),
+                
+                    parseFloat("319"),
+                
+                    parseFloat("320"),
+                
+                    parseFloat("321"),
+                
+                    parseFloat("322"),
+                
+                    parseFloat("323"),
+                
+                    parseFloat("324"),
+                
+                    parseFloat("325"),
+                
+                    parseFloat("326"),
+                
+                    parseFloat("327"),
+                
+                    parseFloat("328"),
+                
+                    parseFloat("329"),
+                
+                    parseFloat("330"),
+                
+                    parseFloat("331"),
+                
+                    parseFloat("332"),
+                
+                    parseFloat("333"),
+                
+                    parseFloat("334"),
+                
+                    parseFloat("335"),
+                
+                    parseFloat("336"),
+                
+                    parseFloat("337"),
+                
+                    parseFloat("338"),
+                
+                    parseFloat("339"),
+                
+                    parseFloat("340"),
+                
+                    parseFloat("341"),
+                
+                    parseFloat("342"),
+                
+                    parseFloat("343"),
+                
+                    parseFloat("344"),
+                
+                    parseFloat("345"),
+                
+                    parseFloat("346"),
+                
+                    parseFloat("347"),
+                
+                    parseFloat("348"),
+                
+                    parseFloat("349"),
+                
+                    parseFloat("350"),
+                
+                    parseFloat("351"),
+                
+                    parseFloat("352"),
+                
+                    parseFloat("353"),
+                
+                    parseFloat("354"),
+                
+                    parseFloat("355"),
+                
+                    parseFloat("356"),
+                
+                    parseFloat("357"),
+                
+                    parseFloat("358"),
+                
+                    parseFloat("359"),
+                
+                    parseFloat("360"),
+                
+                    parseFloat("361"),
+                
+                    parseFloat("362"),
+                
+                    parseFloat("363"),
+                
+                    parseFloat("364"),
+                
+                    parseFloat("365"),
+                
+                    parseFloat("366"),
+                
+                    parseFloat("367"),
+                
+                    parseFloat("368"),
+                
+                    parseFloat("369"),
+                
+                    parseFloat("370"),
+                
+                    parseFloat("371"),
+                
+                    parseFloat("372"),
+                
+                    parseFloat("373"),
+                
+                    parseFloat("374"),
+                
+                    parseFloat("375"),
+                
+                    parseFloat("376"),
+                
+                    parseFloat("377"),
+                
+                    parseFloat("378"),
+                
+                    parseFloat("379"),
+                
+                    parseFloat("380"),
+                
+                    parseFloat("381"),
+                
+                    parseFloat("382"),
+                
+                    parseFloat("383"),
+                
+                    parseFloat("384"),
+                
+                    parseFloat("385"),
+                
+                    parseFloat("386"),
+                
+                    parseFloat("387"),
+                
+                    parseFloat("388"),
+                
+                    parseFloat("389"),
+                
+                    parseFloat("390"),
+                
+                    parseFloat("391"),
+                
+                    parseFloat("392"),
+                
+                    parseFloat("393"),
+                
+                    parseFloat("394"),
+                
+                    parseFloat("395"),
+                
+                    parseFloat("396"),
+                
+                    parseFloat("397"),
+                
+                    parseFloat("398"),
+                
+                    parseFloat("399"),
+                
+                    parseFloat("400"),
+                
+                    parseFloat("401"),
+                
+                    parseFloat("402"),
+                
+                    parseFloat("403"),
+                
+                    parseFloat("404"),
+                
+                    parseFloat("405"),
+                
+                    parseFloat("406"),
+                
+                    parseFloat("407"),
+                
+                    parseFloat("408"),
+                
+                    parseFloat("409"),
+                
+                    parseFloat("410"),
+                
+                    parseFloat("411"),
+                
+                    parseFloat("412"),
+                
+                    parseFloat("413"),
+                
+                    parseFloat("414"),
+                
+                    parseFloat("415"),
+                
+                    parseFloat("416"),
+                
+                    parseFloat("417"),
+                
+                    parseFloat("418"),
+                
+                    parseFloat("419"),
+                
+                    parseFloat("420"),
+                
+                    parseFloat("421"),
+                
+                    parseFloat("422"),
+                
+                    parseFloat("423"),
+                
+                    parseFloat("424"),
+                
+                    parseFloat("425"),
+                
+                    parseFloat("426"),
+                
+                    parseFloat("427"),
+                
+                    parseFloat("428"),
+                
+                    parseFloat("429"),
+                
+                    parseFloat("430"),
+                
+                    parseFloat("431"),
+                
+                    parseFloat("432"),
+                
+                    parseFloat("433"),
+                
+                    parseFloat("434"),
+                
+                    parseFloat("435"),
+                
+                    parseFloat("436"),
+                
+                    parseFloat("437"),
+                
+                    parseFloat("438"),
+                
+                    parseFloat("439"),
+                
+                    parseFloat("440"),
+                
+                    parseFloat("441"),
+                
+                    parseFloat("442"),
+                
+                    parseFloat("443"),
+                
+                    parseFloat("444"),
+                
+                    parseFloat("445"),
+                
+                    parseFloat("446"),
+                
+                    parseFloat("447"),
+                
+                    parseFloat("448"),
+                
+                    parseFloat("449"),
+                
+                    parseFloat("450"),
+                
+                    parseFloat("451"),
+                
+                    parseFloat("452"),
+                
+                    parseFloat("453"),
+                
+                    parseFloat("454"),
+                
+                    parseFloat("455"),
+                
+                    parseFloat("456"),
+                
+                    parseFloat("457"),
+                
+                    parseFloat("458"),
+                
+                    parseFloat("459"),
+                
+                    parseFloat("460"),
+                
+                    parseFloat("461"),
+                
+                    parseFloat("462"),
+                
+                    parseFloat("463"),
+                
+                    parseFloat("464"),
+                
+                    parseFloat("465"),
+                
+                    parseFloat("466"),
+                
+                    parseFloat("467"),
+                
+                    parseFloat("468"),
+                
+                    parseFloat("469"),
+                
+                    parseFloat("470"),
+                
+                    parseFloat("471"),
+                
+                    parseFloat("472"),
+                
+                    parseFloat("473"),
+                
+                    parseFloat("474"),
+                
+                    parseFloat("475"),
+                
+                    parseFloat("476"),
+                
+                    parseFloat("477"),
+                
+                    parseFloat("478"),
+                
+                    parseFloat("479"),
+                
+                    parseFloat("480"),
+                
+                    parseFloat("481"),
+                
+                    parseFloat("482"),
+                
+                    parseFloat("483"),
+                
+                    parseFloat("484"),
+                
+                    parseFloat("485"),
+                
+                    parseFloat("486"),
+                
+                    parseFloat("487"),
+                
+                    parseFloat("488"),
+                
+                    parseFloat("489"),
+                
+                    parseFloat("490"),
+                
+                    parseFloat("491"),
+                
+                    parseFloat("492"),
+                
+                    parseFloat("493"),
+                
+                    parseFloat("494"),
+                
+                    parseFloat("495"),
+                
+                    parseFloat("496"),
+                
+                    parseFloat("497"),
+                
+                    parseFloat("498"),
+                
+                    parseFloat("499"),
+                
+                    parseFloat("500"),
+                
+                    parseFloat("501"),
+                
+                    parseFloat("502"),
+                
+                    parseFloat("503"),
+                
+                    parseFloat("504"),
+                
+                    parseFloat("505"),
+                
+                    parseFloat("506"),
+                
+                    parseFloat("507"),
+                
+                    parseFloat("508"),
+                
+                    parseFloat("509"),
+                
+                    parseFloat("510"),
+                
+                    parseFloat("511"),
+                
+                    parseFloat("512"),
+                
+                    parseFloat("513"),
+                
+                    parseFloat("514"),
+                
+                    parseFloat("515"),
+                
+                    parseFloat("516"),
+                
+                    parseFloat("517"),
+                
+                    parseFloat("518"),
+                
+                    parseFloat("519"),
+                
+                    parseFloat("520"),
+                
+                    parseFloat("521"),
+                
+                    parseFloat("522"),
+                
+                    parseFloat("523"),
+                
+                    parseFloat("524"),
+                
+                    parseFloat("525"),
+                
+                    parseFloat("526"),
+                
+                    parseFloat("527"),
+                
+                    parseFloat("528"),
+                
+                    parseFloat("529"),
+                
+                    parseFloat("530"),
+                
+                    parseFloat("531"),
+                
+                    parseFloat("532"),
+                
+                    parseFloat("533"),
+                
+                    parseFloat("534"),
+                
+                    parseFloat("535"),
+                
+                    parseFloat("536"),
+                
+                    parseFloat("537"),
+                
+                    parseFloat("538"),
+                
+                    parseFloat("539"),
+                
+                    parseFloat("540"),
+                
+                    parseFloat("541"),
+                
+                    parseFloat("542"),
+                
+                    parseFloat("543"),
+                
+                    parseFloat("544"),
+                
+                    parseFloat("545"),
+                
+                    parseFloat("546"),
+                
+                    parseFloat("547"),
+                
+                    parseFloat("548"),
+                
+                    parseFloat("549"),
+                
+                    parseFloat("550"),
+                
+                    parseFloat("551"),
+                
+                    parseFloat("552"),
+                
+                    parseFloat("553"),
+                
+                    parseFloat("554"),
+                
+                    parseFloat("555"),
+                
+                    parseFloat("556"),
+                
+                    parseFloat("557"),
+                
+                    parseFloat("558"),
+                
+                    parseFloat("559"),
+                
+                    parseFloat("560"),
+                
+                    parseFloat("561"),
+                
+                    parseFloat("562"),
+                
+                    parseFloat("563"),
+                
+                    parseFloat("564"),
+                
+                    parseFloat("565"),
+                
+                    parseFloat("566"),
+                
+                    parseFloat("567"),
+                
+                    parseFloat("568"),
+                
+                    parseFloat("569"),
+                
+                    parseFloat("570"),
+                
+                    parseFloat("571"),
+                
+                    parseFloat("572"),
+                
+                    parseFloat("573"),
+                
+                    parseFloat("574"),
+                
+                    parseFloat("575"),
+                
+                    parseFloat("576"),
+                
+                    parseFloat("577"),
+                
+                    parseFloat("578"),
+                
+                    parseFloat("579"),
+                
+                    parseFloat("580"),
+                
+                    parseFloat("581"),
+                
+                    parseFloat("582"),
+                
+                    parseFloat("583"),
+                
+                    parseFloat("584"),
+                
+                    parseFloat("585"),
+                
+                    parseFloat("586"),
+                
+                    parseFloat("587"),
+                
+                    parseFloat("588"),
+                
+                    parseFloat("589"),
+                
+                    parseFloat("590"),
+                
+                    parseFloat("591"),
+                
+                    parseFloat("592"),
+                
+                    parseFloat("593"),
+                
+                    parseFloat("594"),
+                
+                    parseFloat("595"),
+                
+                    parseFloat("596"),
+                
+                    parseFloat("597"),
+                
+                    parseFloat("598"),
+                
+                    parseFloat("599"),
+                
+                    parseFloat("600"),
+                
+                    parseFloat("601"),
+                
+                    parseFloat("602"),
+                
+                    parseFloat("603"),
+                
+                    parseFloat("604"),
+                
+                    parseFloat("605"),
+                
+                    parseFloat("606"),
+                
+                    parseFloat("607"),
+                
+                    parseFloat("608"),
+                
+                    parseFloat("609"),
+                
+                    parseFloat("610"),
+                
+                    parseFloat("611"),
+                
+                    parseFloat("612"),
+                
+                    parseFloat("613"),
+                
+                    parseFloat("614"),
+                
+                    parseFloat("615"),
+                
+                    parseFloat("616"),
+                
+                    parseFloat("617"),
+                
+                    parseFloat("618"),
+                
+                    parseFloat("619"),
+                
+                    parseFloat("620"),
+                
+                    parseFloat("621"),
+                
+                    parseFloat("622"),
+                
+                    parseFloat("623"),
+                
+                    parseFloat("624"),
+                
+                    parseFloat("625"),
+                
+                    parseFloat("626"),
+                
+                    parseFloat("627"),
+                
+                    parseFloat("628"),
+                ];
+
+  // y-axis
+  var control = [
+                    "3.75939849624",
+                
+                    "5.72792362768",
+                
+                    "8.44645550528",
+                
+                    "4.88721804511",
+                
+                    "13.201320132",
+                
+                    "7.74111675127",
+                
+                    "3.43891402715",
+                
+                    "4.4578313253",
+                
+                    "5.51181102362",
+                
+                    "4.80769230769",
+                
+                    "4.34782608696",
+                
+                    "4.81026189204",
+                
+                    "9.52902519168",
+                
+                    "5.3242981607",
+                
+                    "4.49897750511",
+                
+                    "4.81036077706",
+                
+                    "3.29581993569",
+                
+                    "6.17647058824",
+                
+                    "5.0139275766",
+                
+                    "9.44444444444",
+                
+                    "4.02892561983",
+                
+                    "3.8049940547",
+                
+                    "4.08163265306",
+                
+                    "3.79523389232",
+                
+                    "0.325379609544",
+                
+                    "4.98812351544",
+                
+                    "4.35356200528",
+                
+                    "8.03212851406",
+                
+                    "4.6658259773",
+                
+                    "1.66112956811",
+                
+                    "12.1751025992",
+                
+                    "8.70069605568",
+                
+                    "10.1838755304",
+                
+                    "9.3137254902",
+                
+                    "3.29768270945",
+                
+                    "4.2049934297",
+                
+                    "2.53863134658",
+                
+                    "3.13549832027",
+                
+                    "7.0826306914",
+                
+                    "4.56692913386",
+                
+                    "2.26720647773",
+                
+                    "2.41779497099",
+                
+                    "6.42673521851",
+                
+                    "3.64203954214",
+                
+                    "1.50214592275",
+                
+                    "4.98687664042",
+                
+                    "5.52699228792",
+                
+                    "10.3975535168",
+                
+                    "4.06976744186",
+                
+                    "2.3942537909",
+                
+                    "7.51391465677",
+                
+                    "4.50261780105",
+                
+                    "14.9677419355",
+                
+                    "11.7333333333",
+                
+                    "7.73480662983",
+                
+                    "4.64169381107",
+                
+                    "3.21665089877",
+                
+                    "7.96019900498",
+                
+                    "12.676056338",
+                
+                    "9.68109339408",
+                
+                    "6.91489361702",
+                
+                    "4.46428571429",
+                
+                    "3.359462486",
+                
+                    "4.98839907193",
+                
+                    "1.93236714976",
+                
+                    "8.81174899866",
+                
+                    "3.93518518519",
+                
+                    "3.02049622438",
+                
+                    "11.6915422886",
+                
+                    "7.06836616454",
+                
+                    "3.4925526451",
+                
+                    "8.54605993341",
+                
+                    "5.9866962306",
+                
+                    "4.26884650318",
+                
+                    "6.57734470158",
+                
+                    "9.83379501385",
+                
+                    "7.65432098765",
+                
+                    "1.10599078341",
+                
+                    "0.107411385607",
+                
+                    "4.08299866131",
+                
+                    "4.6783625731",
+                
+                    "0.445930880713",
+                
+                    "1.02857142857",
+                
+                    "4.44078947368",
+                
+                    "5.19584332534",
+                
+                    "10.8581436077",
+                
+                    "2.64150943396",
+                
+                    "1.83574879227",
+                
+                    "5.45808966862",
+                
+                    "7.42320819113",
+                
+                    "4.34285714286",
+                
+                    "6.27218934911",
+                
+                    "7.09117221418",
+                
+                    "6.14152202937",
+                
+                    "7.51043115438",
+                
+                    "7.06713780919",
+                
+                    "8.43373493976",
+                
+                    "2.92326431181",
+                
+                    "8.34532374101",
+                
+                    "7.36",
+                
+                    "3.24858757062",
+                
+                    "2.98651252408",
+                
+                    "2.55905511811",
+                
+                    "5.70719602978",
+                
+                    "3.66197183099",
+                
+                    "5.46296296296",
+                
+                    "2.17186024551",
+                
+                    "4.3204320432",
+                
+                    "3.30578512397",
+                
+                    "4.25752855659",
+                
+                    "3.13825275657",
+                
+                    "4.13436692506",
+                
+                    "3.84615384615",
+                
+                    "6.46687697161",
+                
+                    "5.76701268743",
+                
+                    "2.91262135922",
+                
+                    "3.74280230326",
+                
+                    "9.21985815603",
+                
+                    "7.82608695652",
+                
+                    "7.68348623853",
+                
+                    "6.44391408115",
+                
+                    "10.2678571429",
+                
+                    "2.84360189573",
+                
+                    "5.74886535552",
+                
+                    "6.81081081081",
+                
+                    "8.91428571429",
+                
+                    "10.6256206554",
+                
+                    "8.0",
+                
+                    "7.42481203008",
+                
+                    "11.6152450091",
+                
+                    "5.50055005501",
+                
+                    "6.87318489835",
+                
+                    "7.48768472906",
+                
+                    "8.16513761468",
+                
+                    "7.93825799338",
+                
+                    "2.36578707916",
+                
+                    "9.42126514132",
+                
+                    "4.45945945946",
+                
+                    "4.37317784257",
+                
+                    "4.78187919463",
+                
+                    "8.82352941176",
+                
+                    "9.22897196262",
+                
+                    "5.0916496945",
+                
+                    "4.21804023361",
+                
+                    "5.04871567759",
+                
+                    "3.09988518944",
+                
+                    "5.01567398119",
+                
+                    "8.7358684481",
+                
+                    "6.74778761062",
+                
+                    "5.53602811951",
+                
+                    "3.76068376068",
+                
+                    "4.19243986254",
+                
+                    "7.92792792793",
+                
+                    "6.53669724771",
+                
+                    "13.4146341463",
+                
+                    "3.60501567398",
+                
+                    "7.0",
+                
+                    "3.35463258786",
+                
+                    "6.37254901961",
+                
+                    "6.55172413793",
+                
+                    "11.0262008734",
+                
+                    "12.8364389234",
+                
+                    "6.59824046921",
+                
+                    "13.8050043141",
+                
+                    "4.91195551437",
+                
+                    "10.4534005038",
+                
+                    "5.04587155963",
+                
+                    "11.2211221122",
+                
+                    "10.1851851852",
+                
+                    "18.3636363636",
+                
+                    "10.4238258877",
+                
+                    "6.23836126629",
+                
+                    "7.85241248817",
+                
+                    "7.09269662921",
+                
+                    "6.05326876513",
+                
+                    "11.8644067797",
+                
+                    "6.0",
+                
+                    "7.59330759331",
+                
+                    "8.8",
+                
+                    "5.17482517483",
+                
+                    "8.02752293578",
+                
+                    "8.82740447958",
+                
+                    "8.22942643392",
+                
+                    "9.6875",
+                
+                    "5.29801324503",
+                
+                    "9.81308411215",
+                
+                    "7.50436300175",
+                
+                    "7.84114052953",
+                
+                    "15.3333333333",
+                
+                    "5.16458569807",
+                
+                    "7.1953010279",
+                
+                    "3.79436964504",
+                
+                    "3.76411543287",
+                
+                    "3.47826086957",
+                
+                    "8.07947019868",
+                
+                    "10.0263852243",
+                
+                    "8.13507290867",
+                
+                    "4.97685185185",
+                
+                    "11.7647058824",
+                
+                    "10.4325699746",
+                
+                    "2.9053420806",
+                
+                    "5.82010582011",
+                
+                    "9.07911802853",
+                
+                    "6.61434977578",
+                
+                    "9.95623632385",
+                
+                    "7.09426627794",
+                
+                    "6.95825049702",
+                
+                    "9.34699103713",
+                
+                    "3.07328605201",
+                
+                    "4.4776119403",
+                
+                    "2.82258064516",
+                
+                    "9.16030534351",
+                
+                    "6.65054413543",
+                
+                    "4.82954545455",
+                
+                    "4.64601769912",
+                
+                    "7.91268758527",
+                
+                    "10.3401360544",
+                
+                    "8.66310160428",
+                
+                    "5.35714285714",
+                
+                    "9.43134535368",
+                
+                    "10.1694915254",
+                
+                    "4.73292765382",
+                
+                    "7.39130434783",
+                
+                    "1.99501246883",
+                
+                    "4.10764872521",
+                
+                    "8.27664399093",
+                
+                    "5.672823219",
+                
+                    "7.32044198895",
+                
+                    "1.97238658777",
+                
+                    "11.8912797282",
+                
+                    "3.44062153163",
+                
+                    "9.5154185022",
+                
+                    "3.93794749403",
+                
+                    "6.25",
+                
+                    "5.92515592516",
+                
+                    "4.20454545455",
+                
+                    "7.80885780886",
+                
+                    "8.74384236453",
+                
+                    "3.91061452514",
+                
+                    "7.44827586207",
+                
+                    "7.79220779221",
+                
+                    "4.35706695005",
+                
+                    "10.407239819",
+                
+                    "4.0192926045",
+                
+                    "2.2869022869",
+                
+                    "4.90463215259",
+                
+                    "6.75496688742",
+                
+                    "9.57446808511",
+                
+                    "10.9118086697",
+                
+                    "10.8958837772",
+                
+                    "9.1030789826",
+                
+                    "5.05050505051",
+                
+                    "8.12772133527",
+                
+                    "3.50356294537",
+                
+                    "7.45428973277",
+                
+                    "5.30120481928",
+                
+                    "9.19540229885",
+                
+                    "8.50546780073",
+                
+                    "2.73684210526",
+                
+                    "8.27586206897",
+                
+                    "6.55021834061",
+                
+                    "10.8173076923",
+                
+                    "10.6060606061",
+                
+                    "2.63459335624",
+                
+                    "8.55614973262",
+                
+                    "6.36451301832",
+                
+                    "9.88235294118",
+                
+                    "7.44810744811",
+                
+                    "8.01104972376",
+                
+                    "13.2127955494",
+                
+                    "8.79237288136",
+                
+                    "14.4876325088",
+                
+                    "13.3825079031",
+                
+                    "8.15811606392",
+                
+                    "9.66429298067",
+                
+                    "5.6640625",
+                
+                    "8.07522123894",
+                
+                    "7.8431372549",
+                
+                    "9.71223021583",
+                
+                    "7.52688172043",
+                
+                    "9.5623987034",
+                
+                    "4.20353982301",
+                
+                    "4.42571127503",
+                
+                    "8.70113493064",
+                
+                    "9.453197405",
+                
+                    "9.98851894374",
+                
+                    "7.2",
+                
+                    "4.26195426195",
+                
+                    "8.33333333333",
+                
+                    "10.0299401198",
+                
+                    "6.89029918404",
+                
+                    "11.3970588235",
+                
+                    "12.833545108",
+                
+                    "4.54943132108",
+                
+                    "21.5885947047",
+                
+                    "6.46929824561",
+                
+                    "10.3291713961",
+                
+                    "9.42028985507",
+                
+                    "5.7344854674",
+                
+                    "10.2470265325",
+                
+                    "5.74712643678",
+                
+                    "7.66002098636",
+                
+                    "14.4859813084",
+                
+                    "8.7852494577",
+                
+                    "5.65068493151",
+                
+                    "10.8265424913",
+                
+                    "5.17023959647",
+                
+                    "6.96864111498",
+                
+                    "3.22128851541",
+                
+                    "7.57211538462",
+                
+                    "13.3874239351",
+                
+                    "2.6796589525",
+                
+                    "11.3613101331",
+                
+                    "6.88124306326",
+                
+                    "4.92813141684",
+                
+                    "20.4498977505",
+                
+                    "3.96739130435",
+                
+                    "9.33014354067",
+                
+                    "6.33946830266",
+                
+                    "5.66948130277",
+                
+                    "5.0",
+                
+                    "6.81233933162",
+                
+                    "7.58091993186",
+                
+                    "5.50070521862",
+                
+                    "7.31070496084",
+                
+                    "3.35570469799",
+                
+                    "7.0826306914",
+                
+                    "8.18438381938",
+                
+                    "3.96578538103",
+                
+                    "5.41813898704",
+                
+                    "2.19341974078",
+                
+                    "3.8784067086",
+                
+                    "6.16365568544",
+                
+                    "9.48905109489",
+                
+                    "10.8225108225",
+                
+                    "5.06493506494",
+                
+                    "6.56934306569",
+                
+                    "8.34272829763",
+                
+                    "8.76963350785",
+                
+                    "6.7880794702",
+                
+                    "7.29559748428",
+                
+                    "9.12659470069",
+                
+                    "7.57363253857",
+                
+                    "11.6301239276",
+                
+                    "4.66165413534",
+                
+                    "14.4908616188",
+                
+                    "4.38596491228",
+                
+                    "4.17853751187",
+                
+                    "8.89787664307",
+                
+                    "6.39534883721",
+                
+                    "6.97384806974",
+                
+                    "1.41509433962",
+                
+                    "3.58527131783",
+                
+                    "7.61589403974",
+                
+                    "6.07028753994",
+                
+                    "9.39759036145",
+                
+                    "6.06060606061",
+                
+                    "8.59564164649",
+                
+                    "4.35203094778",
+                
+                    "5.28905289053",
+                
+                    "12.2706422018",
+                
+                    "7.08661417323",
+                
+                    "11.6797900262",
+                
+                    "3.23144104803",
+                
+                    "6.30722278739",
+                
+                    "4.54148471616",
+                
+                    "7.00308959835",
+                
+                    "44.8079658606",
+                
+                    "10.1570680628",
+                
+                    "6.93140794224",
+                
+                    "7.13375796178",
+                
+                    "5.43893129771",
+                
+                    "3.51473922902",
+                
+                    "3.25358851675",
+                
+                    "5.59910414334",
+                
+                    "2.13836477987",
+                
+                    "6.00814663951",
+                
+                    "10.780669145",
+                
+                    "8.44390832328",
+                
+                    "4.8906048906",
+                
+                    "7.6813655761",
+                
+                    "14.5427286357",
+                
+                    "14.4028103044",
+                
+                    "5.67970204842",
+                
+                    "6.07424071991",
+                
+                    "14.6589259797",
+                
+                    "9.20716112532",
+                
+                    "8.49858356941",
+                
+                    "13.5099337748",
+                
+                    "4.33436532508",
+                
+                    "5.93220338983",
+                
+                    "4.25208807897",
+                
+                    "9.21861281826",
+                
+                    "10.1159114858",
+                
+                    "6.29787234043",
+                
+                    "7.94844253491",
+                
+                    "8.90868596882",
+                
+                    "3.66459627329",
+                
+                    "10.4993597951",
+                
+                    "2.61233019854",
+                
+                    "5.672823219",
+                
+                    "8.91920251836",
+                
+                    "7.63440860215",
+                
+                    "0.862998921251",
+                
+                    "4.94880546075",
+                
+                    "3.65853658537",
+                
+                    "7.13422007255",
+                
+                    "2.61437908497",
+                
+                    "9.61538461538",
+                
+                    "6.91489361702",
+                
+                    "3.79098360656",
+                
+                    "8.42787682334",
+                
+                    "3.45177664975",
+                
+                    "7.57439134355",
+                
+                    "3.85438972163",
+                
+                    "4.31738623104",
+                
+                    "9.12364945978",
+                
+                    "5.65832426551",
+                
+                    "2.55639097744",
+                
+                    "10.1635514019",
+                
+                    "4.3219076006",
+                
+                    "12.1181262729",
+                
+                    "6.64100096246",
+                
+                    "7.48440748441",
+                
+                    "7.68398268398",
+                
+                    "11.0169491525",
+                
+                    "6.25",
+                
+                    "2.68456375839",
+                
+                    "9.55483170467",
+                
+                    "7.40740740741",
+                
+                    "5.23297491039",
+                
+                    "8.04498269896",
+                
+                    "6.28445424476",
+                
+                    "3.59223300971",
+                
+                    "7.52269779507",
+                
+                    "28.8888888889",
+                
+                    "4.7191011236",
+                
+                    "6.43153526971",
+                
+                    "5.99033816425",
+                
+                    "5.03355704698",
+                
+                    "10.4540654699",
+                
+                    "12.1477162293",
+                
+                    "8.56741573034",
+                
+                    "1.78173719376",
+                
+                    "5.90687977762",
+                
+                    "2.73536895674",
+                
+                    "6.10599078341",
+                
+                    "10.0418410042",
+                
+                    "9.6926713948",
+                
+                    "5.0454086781",
+                
+                    "9.70464135021",
+                
+                    "7.30538922156",
+                
+                    "5.41624874624",
+                
+                    "5.15297906602",
+                
+                    "5.13950073421",
+                
+                    "6.87622789784",
+                
+                    "12.5396825397",
+                
+                    "4.25815036593",
+                
+                    "7.43455497382",
+                
+                    "12.2905027933",
+                
+                    "4.57142857143",
+                
+                    "3.27137546468",
+                
+                    "7.00460829493",
+                
+                    "4.73251028807",
+                
+                    "8.79732739421",
+                
+                    "12.9958960328",
+                
+                    "8.42992623815",
+                
+                    "6.61696178938",
+                
+                    "14.0388768898",
+                
+                    "13.7440758294",
+                
+                    "3.61377752682",
+                
+                    "5.7273768614",
+                
+                    "12.0865139949",
+                
+                    "14.5584725537",
+                
+                    "9.69560315671",
+                
+                    "12.4390243902",
+                
+                    "22.3420647149",
+                
+                    "12.9326047359",
+                
+                    "3.67027677497",
+                
+                    "12.1606948969",
+                
+                    "6.74157303371",
+                
+                    "10.3092783505",
+                
+                    "10.9452736318",
+                
+                    "16.0830090791",
+                
+                    "1.08695652174",
+                
+                    "2.87929125138",
+                
+                    "11.8690313779",
+                
+                    "7.8231292517",
+                
+                    "12.1739130435",
+                
+                    "8.68347338936",
+                
+                    "4.00667779633",
+                
+                    "10.2611940299",
+                
+                    "14.2222222222",
+                
+                    "5.48327137546",
+                
+                    "14.0625",
+                
+                    "6.160867085",
+                
+                    "11.970074813",
+                
+                    "3.83631713555",
+                
+                    "2.8665028665",
+                
+                    "7.52508361204",
+                
+                    "8.60759493671",
+                
+                    "6.44910644911",
+                
+                    "4.27927927928",
+                
+                    "5.60747663551",
+                
+                    "9.04593639576",
+                
+                    "4.92610837438",
+                
+                    "6.37096774194",
+                
+                    "6.91454664057",
+                
+                    "9.8125",
+                
+                    "10.9467455621",
+                
+                    "13.994374121",
+                
+                    "24.8143564356",
+                
+                    "10.9826589595",
+                
+                    "30.7518796992",
+                
+                    "15.0364963504",
+                
+                    "41.6032953105",
+                
+                    "40.5092592593",
+                
+                    "55.7752341311",
+                
+                    "44.8275862069",
+                
+                    "51.5",
+                
+                    "35.4471544715",
+                
+                    "20.2290076336",
+                
+                    "13.9198218263",
+                
+                    "14.2568250758",
+                
+                    "31.1567164179",
+                
+                    "39.0521327014",
+                
+                    "33.4519572954",
+                
+                    "54.9206349206",
+                ];
+  var sample = [
+                    "0.0",
+                
+                    "0.0860298606871",
+                
+                    "3.66116781311",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.19323856141",
+                
+                    "1.46902869992",
+                
+                    "0.663487781159",
+                
+                    "1.86561446522",
+                
+                    "1.58689201393",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.79438638496",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "2.66801312421",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.03914390535",
+                
+                    "2.9153611312",
+                
+                    "1.27585858747",
+                
+                    "0.824803932583",
+                
+                    "0.934436835488",
+                
+                    "4.23686553409",
+                
+                    "2.51868115745",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "2.13961612556",
+                
+                    "1.54254362295",
+                
+                    "1.13269703739",
+                
+                    "1.16928680063",
+                
+                    "2.87538139228",
+                
+                    "6.2503649474",
+                
+                    "0.497156542643",
+                
+                    "2.575928009",
+                
+                    "2.09025290188",
+                
+                    "7.04491553423",
+                
+                    "0.0288068034155",
+                
+                    "2.96173404276",
+                
+                    "3.4884378814",
+                
+                    "5.27255732184",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.201864540615",
+                
+                    "4.18647890923",
+                
+                    "0.0",
+                
+                    "4.00114969088",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "8.94685857282",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.762271737309",
+                
+                    "0.0",
+                
+                    "3.05415007944",
+                
+                    "0.463893369214",
+                
+                    "5.15210151509",
+                
+                    "0.0",
+                
+                    "7.04404330146",
+                
+                    "3.22950377562",
+                
+                    "0.0",
+                
+                    "0.00453916734018",
+                
+                    "0.0",
+                
+                    "1.41017639044",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "4.4711333142",
+                
+                    "0.80450285849",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "3.18515681759",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "3.86906372554",
+                
+                    "3.97711685357",
+                
+                    "1.88832445037",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.354745247686",
+                
+                    "4.71531093798",
+                
+                    "0.690192429033",
+                
+                    "0.0",
+                
+                    "1.42415554457",
+                
+                    "0.734936541624",
+                
+                    "0.0",
+                
+                    "0.0196154113858",
+                
+                    "4.07412277371",
+                
+                    "1.14095467636",
+                
+                    "3.77476986134",
+                
+                    "9.0118457693",
+                
+                    "2.31750046649",
+                
+                    "4.73912536443",
+                
+                    "4.08637575456",
+                
+                    "2.38458122592",
+                
+                    "6.43908959432",
+                
+                    "2.18429595543",
+                
+                    "0.873175561304",
+                
+                    "3.82996632997",
+                
+                    "0.0",
+                
+                    "2.03019407486",
+                
+                    "3.94443591936",
+                
+                    "0.0",
+                
+                    "0.479558004095",
+                
+                    "1.5559315824",
+                
+                    "3.40679266337",
+                
+                    "4.50178399705",
+                
+                    "0.0",
+                
+                    "4.01536405554",
+                
+                    "3.32600071276",
+                
+                    "3.24070966732",
+                
+                    "6.03401667042",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "3.32661290323",
+                
+                    "2.11039668884",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.29213768229",
+                
+                    "0.287693240698",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "4.10431939094",
+                
+                    "1.70438930894",
+                
+                    "3.55198546186",
+                
+                    "1.35555004286",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.411196605309",
+                
+                    "2.30215820721",
+                
+                    "0.0",
+                
+                    "5.38848690359",
+                
+                    "2.40334378265",
+                
+                    "0.0",
+                
+                    "2.61240196284",
+                
+                    "1.76255007954",
+                
+                    "3.87538447652",
+                
+                    "1.73241562879",
+                
+                    "0.822072072072",
+                
+                    "2.74600317423",
+                
+                    "0.0",
+                
+                    "0.958961506133",
+                
+                    "0.278481012658",
+                
+                    "1.9006226674",
+                
+                    "0.0",
+                
+                    "1.31197179916",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.80631793535",
+                
+                    "0.0",
+                
+                    "1.07331152063",
+                
+                    "0.539976979665",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.99164209272",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.239921368954",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "2.55832794464",
+                
+                    "0.0",
+                
+                    "0.620636998255",
+                
+                    "0.0",
+                
+                    "1.33333333333",
+                
+                    "0.0",
+                
+                    "1.40258256998",
+                
+                    "1.69191464423",
+                
+                    "0.706472802421",
+                
+                    "0.575793184489",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "2.16600529101",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "3.64275816192",
+                
+                    "1.66603096363",
+                
+                    "0.0",
+                
+                    "1.20877947592",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "3.00406201429",
+                
+                    "0.0",
+                
+                    "2.15723092954",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.14060379919",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.30236305048",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.425369696777",
+                
+                    "3.88674117661",
+                
+                    "0.0",
+                
+                    "1.15448601795",
+                
+                    "0.0",
+                
+                    "0.921824989075",
+                
+                    "0.0",
+                
+                    "3.80575527996",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.900326259147",
+                
+                    "0.0",
+                
+                    "0.576586951758",
+                
+                    "0.608650970595",
+                
+                    "3.27951106992",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.91274446594",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.315789473684",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.32468266186",
+                
+                    "4.49868055459",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "2.03890848614",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.969083227148",
+                
+                    "0.0",
+                
+                    "0.20628035268",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.318468559951",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.14576857913",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.336370084674",
+                
+                    "0.0",
+                
+                    "1.53079133137",
+                
+                    "0.0",
+                
+                    "2.32674937363",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.98700771417",
+                
+                    "0.0",
+                
+                    "0.661614079594",
+                
+                    "2.87101388231",
+                
+                    "1.65754026602",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.918057663126",
+                
+                    "1.28425157747",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.82621371436",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.619819457029",
+                
+                    "0.0",
+                
+                    "1.0365820472",
+                
+                    "2.45617294376",
+                
+                    "0.0",
+                
+                    "2.21597063912",
+                
+                    "0.0",
+                
+                    "2.10806507416",
+                
+                    "1.54744616591",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.378571569226",
+                
+                    "0.0",
+                
+                    "0.522563621624",
+                
+                    "0.0",
+                
+                    "1.23656497666",
+                
+                    "0.0",
+                
+                    "1.38465065335",
+                
+                    "0.10470559251",
+                
+                    "2.03808552859",
+                
+                    "2.90899846399",
+                
+                    "0.811425578371",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.542432195976",
+                
+                    "0.0549439284909",
+                
+                    "0.542092281108",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.52227848469",
+                
+                    "1.22773536896",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.771552227319",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "1.57905115397",
+                
+                    "1.27363528468",
+                
+                    "0.0",
+                
+                    "2.49234626384",
+                
+                    "0.0",
+                
+                    "0.0",
+                
+                    "4.01376966604",
+                
+                    "5.27658781896",
+                
+                    "28.5735021724",
+                
+                    "66.4570628574",
+                
+                    "72.5677466851",
+                
+                    "67.7592122671",
+                
+                    "63.5298183347",
+                
+                    "54.5013479806",
+                
+                    "57.2394111824",
+                
+                    "78.3243994858",
+                
+                    "82.7238264981",
+                
+                    "75.8265191747",
+                
+                    "62.0557278438",
+                
+                    "73.3315004888",
+                
+                    "71.3148802122",
+                
+                    "55.2721890144",
+                
+                    "78.3568271742",
+                
+                    "39.2252269321",
+                
+                    "83.2379328543",
+                
+                    "85.3177610567",
+                
+                    "79.9091734051",
+                
+                    "71.0749681361",
+                
+                    "16.3596585874",
+                
+                    "64.4788146099",
+                
+                    "63.239940904",
+                
+                    "70.0586537566",
+                
+                    "20.5163166514",
+                
+                    "74.7424083789",
+                
+                    "38.8748452677",
+                
+                    "79.767768044",
+                
+                    "76.0605149882",
+                
+                    "75.8778573818",
+                
+                    "29.0672077301",
+                
+                    "84.1282298068",
+                
+                    "71.101958053",
+                
+                    "67.9759725733",
+                
+                    "46.1064008702",
+                
+                    "69.5812655087",
+                
+                    "74.3628500347",
+                
+                    "47.0015408444",
+                
+                    "84.1691248771",
+                
+                    "69.91817382",
+                
+                    "68.4670548818",
+                
+                    "44.4522844586",
+                
+                    "77.4277459598",
+                
+                    "71.5243745356",
+                
+                    "60.3159863288",
+                
+                    "53.8438378283",
+                
+                    "78.8691328817",
+                
+                    "83.1005709267",
+                
+                    "64.1769692688",
+                
+                    "51.8233225495",
+                
+                    "71.0949388305",
+                
+                    "21.8852591668",
+                
+                    "74.7437473719",
+                
+                    "78.6436820201",
+                
+                    "64.3060511616",
+                
+                    "0.0",
+                
+                    "15.8815975452",
+                
+                    "75.6264775414",
+                
+                    "57.2545320451",
+                
+                    "20.8613963856",
+                
+                    "67.5603989678",
+                
+                    "73.1468353659",
+                
+                    "77.6922092185",
+                
+                    "62.6382770436",
+                
+                    "66.8180396181",
+                
+                    "85.3781890624",
+                
+                    "65.8273197195",
+                
+                    "29.3813654242",
+                
+                    "70.8106480244",
+                
+                    "55.1326124075",
+                
+                    "42.8643177507",
+                
+                    "23.5815785884",
+                
+                    "71.4724397771",
+                
+                    "27.294333968",
+                
+                    "40.5319194353",
+                
+                    "68.0640976662",
+                
+                    "66.3705158493",
+                
+                    "25.4124621043",
+                
+                    "74.9825596846",
+                
+                    "67.2577821062",
+                
+                    "82.6341019154",
+                
+                    "73.4990715907",
+                
+                    "25.9977267511",
+                
+                    "77.6734306035",
+                
+                    "70.8571894182",
+                
+                    "28.1050291748",
+                
+                    "70.0922835858",
+                
+                    "24.1255468909",
+                
+                    "53.5043023207",
+                
+                    "65.2247191011",
+                
+                    "69.2892023874",
+                
+                    "81.1383235816",
+                
+                    "21.900348728",
+                
+                    "57.3125894487",
+                
+                    "22.3444679024",
+                
+                    "77.9794534706",
+                
+                    "58.378327059",
+                
+                    "68.3894672382",
+                
+                    "80.7699028164",
+                
+                    "63.8741169057",
+                
+                    "48.1480348712",
+                
+                    "82.7760120332",
+                
+                    "31.6578022825",
+                
+                    "85.1348244147",
+                
+                    "86.5800590727",
+                
+                    "9.05265245976",
+                
+                    "39.4690049933",
+                
+                    "6.54825540322",
+                
+                    "14.128663158",
+                
+                    "81.827654929",
+                
+                    "58.1072706304",
+                
+                    "40.4338815756",
+                
+                    "23.7665992639",
+                
+                    "63.8378512656",
+                
+                    "66.168655797",
+                
+                    "46.2976539589",
+                
+                    "57.0986112542",
+                
+                    "80.4715059791",
+                
+                    "65.2460729327",
+                
+                    "41.8971795808",
+                
+                    "50.4822994435",
+                
+                    "79.1460964053",
+                
+                    "38.3635625796",
+                
+                    "38.2234528452",
+                
+                    "29.1171276901",
+                
+                    "41.049382716",
+                
+                    "6.58840223252",
+                
+                    "9.564305685",
+                
+                    "0.0",
+                
+                    "64.5528455285",
+                
+                    "52.7787044487",
+                
+                    "47.3982297497",
+                
+                    "79.6098415908",
+                
+                    "67.8700475724",
+                
+                    "4.89691188457",
+                
+                    "43.0464654176",
+                
+                    "24.5399459922",
+                ];
+
+  var breaksite = 492
+  var forward_breaksite = 492
+  var reverse_breaksite = 492
+  var rg1 = 507
+  var rg2 = 613
+
+  // display the lowest cut site to cover all possible indels upon staggered cut
+  if (forward_breaksite == reverse_breaksite) {
+      var content = 'expected cut at ' + forward_breaksite + 'bp'
+      var indicator = forward_breaksite
+  }
+  else if (forward_breaksite < reverse_breaksite) {
+      var content = 'expected cuts at ' + forward_breaksite + 'bp' + ', ' + reverse_breaksite + 'bp' + ' ┷┯'
+      var indicator = forward_breaksite
+  }
+  else if (forward_breaksite > reverse_breaksite) {
+      var content = 'expected cuts at ' + reverse_breaksite + 'bp' + ', ' + forward_breaksite + 'bp' + ' ┯┷'
+      var indicator = reverse_breaksite
+  }
+
+  // extract data
+  var data = {
+      labels: alignment_window,
+      datasets: [
+        {
+          backgroundColor: "#1e1e1e",
+          borderColor: "#1e1e1e",
+          data: control,
+          label: "control sample"
+        },
+        {
+          backgroundColor: "#1d8f4a",
+          borderColor: "#1d8f4a",
+          data: sample,
+          label: "test sample"
+        }
+      ]
+    }
+
+  // set options
+  var options = {
+  responsive: false,
+  events: true,
+  hover: {
+    animationDuration: 0
+  },
+  legend: {
+    labels: {
+      boxWidth: 12,
+      fontColor: "black",
+    },
+    display: true,
+    position: "right"
+  },
+  annotation: {
+        drawTime: 'afterDatasetsDraw',
+        annotations: [{
+          type: 'line',
+          mode: 'vertical',
+          scaleID: 'x-axis-0',
+          value: indicator,
+          borderColor: '#00abd6',
+          borderWidth: 2,
+          label: {
+            enabled: true,
+            content: content,
+            backgroundColor: 'white',
+            fontColor: "#00abd6",
+          }
+        },
+        {
+        type: 'box',
+        drawTime: 'beforeDatasetsDraw',
+        xScaleID: 'x-axis-0',
+        xMin: rg1,
+        xMax: rg2,
+        backgroundColor: '#f4f4f4',
+        borderColor: '#ffffff',
+     },{
+          type: 'line',
+          mode: 'vertical',
+          scaleID: 'x-axis-0',
+          value: Math.round((rg2 + rg1)/2),
+          borderColor: 'transparent',
+          borderWidth: 2,
+          label: {
+            enabled: true,
+            position: "top",
+            content: 'region for decomposition',
+            backgroundColor: 'transparent',
+            fontColor: "#7c7c7c",
+          }
+        }]
+      },
+  scales: {
+      xAxes: [{
+                  categoryPercentage: 1.0,
+                  barPercentage: 1.0,
+                  stacked: true,
+                  ticks: {
+                  autoSkip: false,
+                  callback: function( tick, index, ticks ){
+                  if( tick % 100 == 0) {
+                    return tick; }
+                  else {
+                    return null; }
+                  },
+                  display: true,
+                  fontColor: "black"
+                  },
+                  gridLines: {
+                      color: "black",
+                      display: false
+                  },
+                  scaleLabel: {
+                      display: true,
+                      labelString: 'basepair',
+                      fontColor: "black"
+                  }
+              }],
+      yAxes: [{
+                  stacked: true,
+                  ticks: {
+                  max: 100,
+                  stepSize: 20,
+                  fontColor: "black",
+                  },
+                  gridLines: {
+                      color: "black",
+                      display:false
+                  },
+                  scaleLabel: {
+                      display: true,
+                      labelString: '% of aberrant sequences',
+                      fontColor: "black",
+                  },
+              }]
+      }
+  }
+
+  var ctx = document.getElementById("QualityControl");
+  ctx.height = 300;
+
+  var QualityControl = new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: options
+  });
+
+</script>
+
+<!-- Additional Information-->
+<h4>Remarks</h4>
+
+
+  
+
+
+Default settings:<br>
+alignment window (bp) = 100 - 482<br>
+decomposition window (bp) = 507 - 613<br>
+indel size = 10<br>
+p threshold = 0.001<br>
+
+<!-- Alignment Information-->
+<h4>Alignment</h4>
+
+local pairwise alignment score: 384.0<br><br>
+<pre>  ctrl align: TCCTAATTTGAGGCTTTGGCTATTTTTAATCTACATTTCATTCTTTTAATTTCCATTTATATCTTCTTAATGCTGCATTTGTTTGAGTTGACCAAACGCAAGTCTGTTTCTTTCATTCATAAGAAAAATAGCTACTCATTATATGTTAACTTGACTATTTTAAGTCTGTAGTTGAAGCAATAAAGCTAAGATATAATTCATTACCTTTTAAAATTGTTACTTGTTTACTTTGATTTTTTAATCATTTAAATAGTGTTTTAAACTAGAAAAGACTATCCACAGAAAACTCATAGTAGACTTTTAATCTTATAGTTACGATGTTTGATAGGAAAAAAATAATGTCTTGGTTTCTTTTAGGTCTTATGGAAATGTATTTAAAGCAAT
+  edit align:  TCCTAATTTGAGGCTTTGGCTATTTTTAATCTACATTTCATTCTTTTAATTTCCATTTATATCTTCTTAATGCTGCATTTGTTTGAGTTGACCAAACGCAAGTCTGTTTCTTTCATTCATAAGAAAAATAGCTACTCATTATATGTTAACTTGACTATTTTAAGTCTGTAGTTGAAGCAATAAAGCTAAGATATAATTCATTACCTTTTAAAATTGTTACTTGTTTACTTTGATTTTTTAATCATTTAAATAGTGTTTTAAACTAGAAAAGACTATCCACAGAAAACTCATAGTAGACTTTTAATCTTATAGTTACGATGTTTGATAGGAAAAAAATAATGTCTTGGTTTCTTTTAGGTCTTATGGAAATGTATTTAAAGCAAT
+</pre>
+
+<h4>Checklist quality control</h4>
+<span class="help-block">
+  <p>
+    Check the following criteria to determine the quality of your data (use the Aberrant sequence signal plot)
+    </p><ul>
+      <li>Is there a considerable divergent signal between control and test sample after the breaksite?</li>
+      Sequences of good quality show:
+      <ul>
+        <li>in the control sample (black) a low and equally distributed aberrant sequence signal</li>
+        <li>in the test sample (green) a low signal before the breaksite and a higher signal downstream of the breaksite</li>
+      </ul>
+      <br>
+      <li>
+        Is the breaksite at expected location?
+        <br>
+        The aberrant sequence signal should increase around the expected cut site (blue dotted line)
+      </li>
+      <br>
+      <li>
+        Does the decomposition window covers a representative sequence?
+        <br>
+        For optimal decomposition, the window is set maximal (default), adjust boundaries when the sequence trace is locally of poor quality
+      </li>
+    </ul>
+    If the plot does not meet these criteria, visit the troubleshooting page to see how you can improve your results.
+  <p></p>
+</span>
+
+<h4>Quantification Indel Frequencies</h4>
+overall efficiency = 79.8 %<br><br>
+
+<!-- Decomposition Summary Table -->
+<div>
+  <table border="0" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>percentage</th>
+      <th>pvalue</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>-10</th>
+      <td>2.3</td>
+      <td>0.0083</td>
+    </tr>
+    <tr>
+      <th>-9</th>
+      <td>3.3</td>
+      <td>0.00016</td>
+    </tr>
+    <tr>
+      <th>-8</th>
+      <td>2.5</td>
+      <td>0.0045</td>
+    </tr>
+    <tr>
+      <th>-7</th>
+      <td>38.6</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>-6</th>
+      <td>1.2</td>
+      <td>0.18</td>
+    </tr>
+    <tr>
+      <th>-5</th>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>-4</th>
+      <td>4.3</td>
+      <td>1.2e-06</td>
+    </tr>
+    <tr>
+      <th>-3</th>
+      <td>1.3</td>
+      <td>0.14</td>
+    </tr>
+    <tr>
+      <th>-2</th>
+      <td>1.1</td>
+      <td>0.23</td>
+    </tr>
+    <tr>
+      <th>-1</th>
+      <td>12.3</td>
+      <td>2.1e-43</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>8.4</td>
+      <td>2.8e-21</td>
+    </tr>
+    <tr>
+      <th>+1</th>
+      <td>12.8</td>
+      <td>8.4e-46</td>
+    </tr>
+    <tr>
+      <th>+2</th>
+      <td>0.2</td>
+      <td>0.78</td>
+    </tr>
+    <tr>
+      <th>+3</th>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>+4</th>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>+5</th>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>+6</th>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>+7</th>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>+8</th>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>+9</th>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>+10</th>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<!-- Space after Summary Table to ensure last line is shown-->
+<br>
+<br>
+
+
+<!-- Save Experiment Button -->
+<footer id="save" class="header navbar-fixed-bottom" align="right">
+      <button type="button" class="btn btn-info" id="openmodal">Save Experiment</button>
+</footer>
+
+
+<!-- Modals -->
+<!-- Save Experiment Modal -->
+<div id="savemodal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    
+      <!-- Allow Save Experiment -->
+      <div class="modal-content well">
+        <form id="save-project" method="post">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">×</button>
+          <h2 class="modal-title"><center>Save Experiment</center></h2>
+        </div><br>
+        <div class="modal-body well">
+            <div id="title-error-handler" class="form-group">
+              <h5><b>Title</b></h5>
+              <input id="newtitle" type="text" name="newtitle" class="form-control inputchange" placeholder="Title" required="">
+              <div id="save-error" class="text text-danger"></div>
+            </div>
+            <h5><b>Genome</b></h5>
+            <div class="btn-group bootstrap-select form-control"><button type="button" class="btn dropdown-toggle btn-default" data-toggle="dropdown" role="button" data-id="genomes" title="Homo sapiens (GRCh38.81)"><span class="filter-option pull-left">Homo sapiens (GRCh38.81)</span>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu open" role="combobox"><div class="bs-searchbox"><input type="text" class="form-control" autocomplete="off" role="textbox" aria-label="Search"></div><ul class="dropdown-menu inner" role="listbox" aria-expanded="false"><li data-original-index="0"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Anopheles gambiae (AgamP4)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="1"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Arabidopsis thaliana (TAIR10.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="2"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Bos taurus (UMD3.1.88)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="3"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Caenorhabditis elegans (WBcel235.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="4"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Candida albicans (GCA_000182965.2.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="5"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Candida glabrata (GCA_000002545.2.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="6"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Danio rerio (GRCz10.81)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="7"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Drosophila melanogaster (PDGP6.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="8"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Escherichia coli BL21 (DE3) (GCA_000022665.2.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="9"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Escherichia coli K-12 DH10B (GCA_000019425.1.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="10"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Escherichia coli K-12 MG1655 (GCA_000005845.2.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="11"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Gallus gallus (Gallus_gallus-5.0.86)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="12" class="selected"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="true"><span class="text">Homo sapiens (GRCh38.81)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="13"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Hordeum vulgare (082214v1.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="14"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Mus musculus (GRCm38.81)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="15"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Oryza sativa (IRGSP-1.0.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="16"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Penicillium roqueforti FM164 (PROQFM164_20130607.31)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="17"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Physcomitrella patens (ASM242v1.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="18"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Plasmodium falciparum (ASM276v1)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="19"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Rattus norvegicus (Rnor_6.0.81)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="20"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Rhodococcus jostii RHA1 (ASM1456v1.31)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="21"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Saccharomyces cerevisiae (R64-1-1.80)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="22"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Schizosaccharomyces pombe (ASM294v2.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="23"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Synechocystis sp. PCC 6803 (ASM972v1.31)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="24"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Triticum aestivum (IWGSC1.0+popseq.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="25"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Zea mays (AGPv3.28)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="26"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Other<small class="text-muted">You can always add this to your Description.</small></span><span class="glyphicon glyphicon-ok check-mark"></span></a></li></ul></div><select id="genomes" name="genomes" class="form-control selectpicker" data-live-search="true" tabindex="-98">
+              <option value="Anopheles gambiae (AgamP4)">Anopheles gambiae (AgamP4)</option>
+              <option value="Arabidopsis thaliana (TAIR10.28)">Arabidopsis thaliana (TAIR10.28)</option>
+              <option value="Bos taurus (UMD3.1.88)">Bos taurus (UMD3.1.88)</option>
+              <option value="Caenorhabditis elegans (WBcel235.28)">Caenorhabditis elegans (WBcel235.28)</option>
+              <option value="Candida albicans (GCA_000182965.2.28)">Candida albicans (GCA_000182965.2.28)</option>
+              <option value="Candida glabrata (GCA_000002545.2.28)">Candida glabrata (GCA_000002545.2.28)</option>
+              <option value="Danio rerio (GRCz10.81)">Danio rerio (GRCz10.81)</option>
+              <option value="Drosophila melanogaster (PDGP6.28)">Drosophila melanogaster (PDGP6.28)</option>
+              <option value="Escherichia coli BL21 (DE3) (GCA_000022665.2.28)">Escherichia coli BL21 (DE3) (GCA_000022665.2.28)</option>
+              <option value="Escherichia coli K-12 DH10B (GCA_000019425.1.28)">Escherichia coli K-12 DH10B (GCA_000019425.1.28)</option>
+              <option value="Escherichia coli K-12 MG1655 (GCA_000005845.2.28)">Escherichia coli K-12 MG1655 (GCA_000005845.2.28)</option>
+              <option value="Gallus gallus (Gallus_gallus-5.0.86)">Gallus gallus (Gallus_gallus-5.0.86)</option>
+              <option value="Homo sapiens (GRCh38.81)" selected="">Homo sapiens (GRCh38.81)</option>
+              <option value="Hordeum vulgare (082214v1.28)">Hordeum vulgare (082214v1.28)</option>
+              <option value="Mus musculus (GRCm38.81)">Mus musculus (GRCm38.81)</option>
+              <option value="Oryza sativa (IRGSP-1.0.28)">Oryza sativa (IRGSP-1.0.28)</option>
+              <option value="Penicillium roqueforti FM164 (PROQFM164_20130607.31)">Penicillium roqueforti FM164 (PROQFM164_20130607.31)</option>
+              <option value="Physcomitrella patens (ASM242v1.28)">Physcomitrella patens (ASM242v1.28)</option>
+              <option value="Plasmodium falciparum (ASM276v1)">Plasmodium falciparum (ASM276v1)</option>
+              <option value="Rattus norvegicus (Rnor_6.0.81)">Rattus norvegicus (Rnor_6.0.81)</option>
+              <option value="Rhodococcus jostii RHA1 (ASM1456v1.31)">Rhodococcus jostii RHA1 (ASM1456v1.31)</option>
+              <option value="Saccharomyces cerevisiae (R64-1-1.80)">Saccharomyces cerevisiae (R64-1-1.80)</option>
+              <option value="Schizosaccharomyces pombe (ASM294v2.28)">Schizosaccharomyces pombe (ASM294v2.28)</option>
+              <option value="Synechocystis sp. PCC 6803 (ASM972v1.31)">Synechocystis sp. PCC 6803 (ASM972v1.31)</option>
+              <option value="Triticum aestivum (IWGSC1.0+popseq.28)">Triticum aestivum (IWGSC1.0+popseq.28)</option>
+              <option value="Zea mays (AGPv3.28)">Zea mays (AGPv3.28)</option>
+              <option value="Other" data-subtext="You can always add this to your Description.">Other</option>
+            </select></div>
+            <div class="form-group">
+              <h5><b>Cell Line</b></h5>
+              <input id="cell-line" type="text" name="cell-line" class="form-control" placeholder="Enter cell line name (e.g. A375)">
+            </div>
+            <div class="form-group">
+              <h5><b>Gene</b></h5>
+              <input id="gene" type="text" name="gene" class="form-control" placeholder="Enter gene name (e.g. BRCA2)">
+            </div>
+            <h5><b>Delivery Method</b></h5>
+            <div class="btn-group bootstrap-select form-control"><button type="button" class="btn dropdown-toggle btn-default" data-toggle="dropdown" role="button" data-id="delivery" title="Cloned Plasmid"><span class="filter-option pull-left">Cloned Plasmid</span>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu open" role="combobox"><ul class="dropdown-menu inner" role="listbox" aria-expanded="false"><li data-original-index="0" class="selected"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="true"><span class="text">Cloned Plasmid</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="1"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Ribonucleoprotein (RNP)</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="2"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Synthetic RNA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="3"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Lentivirus</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="4"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Adenovirus</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="5"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Other<small class="text-muted">You can always add this to your Description.</small></span><span class="glyphicon glyphicon-ok check-mark"></span></a></li></ul></div><select id="delivery" name="delivery" class="form-control selectpicker" tabindex="-98">
+              <option value="Cloned Plasmid">Cloned Plasmid</option>
+              <option value="Ribonucleoprotein (RNP)">Ribonucleoprotein (RNP)</option>
+              <option value="Synthetic RNA">Synthetic RNA</option>
+              <option value="Lentivirus">Lentivirus</option>
+              <option value="Adenovirus">Adenovirus</option>
+              <option value="Other" data-subtext="You can always add this to your Description.">Other</option>
+            </select></div>
+            <h5><b>Experimental Intent</b></h5>
+            <div class="btn-group bootstrap-select form-control"><button type="button" class="btn dropdown-toggle btn-default" data-toggle="dropdown" role="button" data-id="intent" title="On-Target"><span class="filter-option pull-left">On-Target</span>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu open" role="combobox"><ul class="dropdown-menu inner" role="listbox" aria-expanded="false"><li data-original-index="0" class="selected"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="true"><span class="text">On-Target</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="1"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Off-Target</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="2"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Control</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li><li data-original-index="3"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">Other<small class="text-muted">You can always add this to your Description.</small></span><span class="glyphicon glyphicon-ok check-mark"></span></a></li></ul></div><select id="intent" name="intent" class="form-control selectpicker" tabindex="-98">
+              <option value="On-Target">On-Target</option>
+              <option value="Off-Target">Off-Target</option>
+              <option value="Control">Control</option>
+              <option value="Other" data-subtext="You can always add this to your Description.">Other</option>
+            </select></div>
+            <div class="form-group">
+              <h5><b>Description</b></h5>
+              <textarea id="description" name="description" class="form-control" rows="4" placeholder="Describe your experiment for future reference." value=""></textarea>
+            </div>
+          </div>
+          <div style="text-align: center;padding-bottom:10px;">
+            <span>
+              <small>
+                Saved data will be kept private, confidential and secure. It will not be sold or shared.<br> You remain the owner of your data.
+              </small>
+            </span>
+          </div>
+          <div class="modal-footer">
+            <a id="savedata" class="btn btn-primary">Save Experiment</a>
+          </div>
+        </form>
+      </div>
+    
+  </div>
+</div>
+
+<!-- Error Modal -->
+<div id="errormodal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h4 class="modal-title help-block"><center>Woops!</center></h4>
+      </div>
+      <div class="modal-body">
+        <h6><center>It looks like you have changed your data. Please update the view and try again.</center></h6>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="./posD5_STK3_2_A;STK3_R_0_files/save.js"></script>
+
+<script>
+$(document).ready(function() {
+   $('.selectpicker').selectpicker();
+});
+</script></p>
+        <p class="no_upload" style="display: none;">A plot will be shown here when the valid sequencing files and guide string have been uploaded.</p>
+        </div>
+
+        <!-- +1 Insertion
+        ==================================================
+
+        Includes +1 insertion
+        -->
+
+        <div class="tab-pane" data-value="+1 insertion" id="tab-3">
+        <p id="insertion"><!-- Insertion -->
+
+<!-- Header -->
+
+
+  <h4>
+    Inserted nucleotide probability (%)
+    
+  </h4>
+
+  <!-- Charts -->
+
+  <!-- +1 Insertion -->
+  <canvas id="Insertion" width="440" height="770" style="display: block; height: 350px; width: 200px;"></canvas> 
+
+  <script>
+
+    // x-axis
+    var insertions = [
+                      "0",
+                  
+                      "1",
+                  ];
+
+    // y-axis
+    var A = [
+                      "90.5",
+                  
+                      "33.9",
+                  ];
+    var C = [
+                      "0.0",
+                  
+                      "0.0",
+                  ];
+    var G = [
+                      "9.5",
+                  
+                      "38.4",
+                  ];
+    var T = [
+                      "0.0",
+                  
+                      "27.7",
+                  ];
+
+    // define data
+    var data = {
+        labels: insertions,
+        datasets: [      
+          { 
+            backgroundColor: "#1d8f4a", // green
+            borderColor: "black",
+            borderWidth: 0.5,
+            data: A,
+            label: "A"
+          },
+          { 
+            backgroundColor: "#00bae9", // blue
+            borderColor: "black",
+            borderWidth: 0.5,
+            data: C,
+            label: "C"
+          },
+          { 
+            backgroundColor: "#1e1e1e", // black
+            borderColor: "black",
+            borderWidth: 0.5,
+            data: G,
+            label: "G"
+          },
+          { 
+            backgroundColor: "#ea2c64", // red
+            borderColor: "black",
+            borderWidth: 0.5,
+            data: T,
+            label: "T"
+          },
+        ]
+      }
+
+    // set options
+    var options = {
+    responsive: false,
+    barThickness: 0.1,
+    legend: {
+      reverse: true,
+      labels: {
+        boxWidth: 12,
+        fontColor: "black",
+      },
+      display: true,
+      position: "right"
+    },
+    scales: {
+        xAxes: [{
+                    ticks: {
+                      display: true
+                    },
+                    stacked: true,
+                    gridLines: {
+                        color: "grey",
+                        display: false
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'insertion',
+                        fontColor: "black"
+                    }
+                }],
+        yAxes: [{
+                    ticks: {
+                      max: 100,
+                      stepSize: 20,
+                      color: "black"
+                    },
+                    stacked: true,
+                    gridLines: {
+                        color: "black",
+                        display: false
+                    },
+                }]
+        }
+    }
+
+    var ctx = document.getElementById("Insertion");
+    ctx.height = 350
+    ctx.width = 200
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: data,
+      options: options
+    });
+
+  </script>
+
+  <div class="table-parent">
+    <div>
+      <span>
+        <!-- Insertion table -->
+        <table id="example" class="display nowrap" cellspacing="0" width="10%">
+          </table><table border="0" class="dataframe table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>A</th>
+      <th>C</th>
+      <th>G</th>
+      <th>T</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>90.5</td>
+      <td>0.0</td>
+      <td>9.5</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>33.9</td>
+      <td>0.0</td>
+      <td>38.4</td>
+      <td>27.7</td>
+    </tr>
+  </tbody>
+</table>
+        
+      </span>
+    </div>
+    <div>
+      <span>
+        <!-- Info -->
+        
+          <h5><a data-toggle="tooltip-right" class="default-tooltip" title="" data-original-title="The original base at base position 0 (derived from the control sequence) is &quot;A&quot;. Please note that point mutations are not taken into account when calculating the genome editing efficiency.">ⓘ</a></h5>
+        
+      </span>
+    </div>
+  </div>
+
+
+
+<!-- Tooltips -->
+<script>
+$('a[data-toggle="tooltip-bottom"]').tooltip({
+    animated: 'fade',
+    placement: 'bottom',
+});
+$('a[data-toggle="tooltip-right"]').tooltip({
+    animated: 'fade',
+    placement: 'right',
+});
+</script></p>
+        <p class="no_upload" style="display: none;">The prediction of the +1 inserted nucleotide will be shown here when the valid sequencing files and guide string have been uploaded.</p>
+        </div>
+
+        <!-- FAQ -->
+        <div class="tab-pane" data-value="FAQ &amp; Troubleshooting" id="tab-4">
+          <h2>FAQ</h2>
+          <ul>
+          <li><a href="https://tide.deskgen.com/#question1">What is the minimal sequence length you need? </a> </li>
+          <li><a href="https://tide.deskgen.com/#question2">What happens if the sequence is shorter than 700 bp? </a></li>
+          <li><a href="https://tide.deskgen.com/#question3">Does the cut site really need to be 200 bp away from the primers? </a></li>
+          <li><a href="https://tide.deskgen.com/#question4">How is the overall efficiency calculated?  </a></li>
+          <li><a href="https://tide.deskgen.com/#question5">What do the different indel bars indicate when cell pool was sequenced? </a></li>
+          <li><a href="https://tide.deskgen.com/#question6">What do the different indel bars indicate when cell clone was sequenced?</a></li>
+          <li><a href="https://tide.deskgen.com/#question7">Can we get the sequence of different indels? </a></li>
+          </ul>
+
+          <h2>Troubleshooting</h2>
+          <ul>
+          <li><a href="https://tide.deskgen.com/#trouble3">Incorrectly annotated nucleotides</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble4">Low R-squared value</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble5">Forward and reverse indel spectra are not identical</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble6">No guide RNA match because there is a mismatch in the control sequence</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble7">Error boundaries of decomposed region are not acceptable</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble8">Poor alignment</a></li>
+          </ul>
+
+          <h3>FAQ</h3>
+
+          <h4 id="question1"> What is the minimum sequence length you need?</h4>
+          <p>The requirements of sequence length are flexible. This region upstream of the cut site is used to align the sequencing data of the test sample with that of the control sample. The region behind the cut site is used for a decomposition to determine the various indels in the pool of cells. In general, with a bigger stretch of sequence trace, a better estimation can be performed by TIDE. We advise that users sequence a stretch of DNA ~700 bp inclusive of the designed editing site. The predicted cut site should ideally be located ~200 bp downstream from the sequencing start site.
+          </p>
+
+
+          <h4 id="question2"> What happens if the sequence is shorter than 700 bp? </h4>
+          <p>TIDE should work with shorter sequences if the quality of the sequence reads is high. In that case, the start of sequence read (alignment window) might have to be set lower than the default setting of 100. Often with shorter sequences, the cut site is too close to the start of the sequence read in the default settings (see figure). The alignment window can be changed in <i>Advanced Settings</i>.
+
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/short_seq.png" class="img.unframed" align="left" alt="short sequence" height="auto" width="100%">
+          <br clear="all">
+
+          </p>
+
+
+          <h4 id="question3"> Does the cut site really need to be 200 bp away from the primers?</h4>
+          <p>TIDE should work with sequences with a cut site closer to or further than 200 bp from the start of the sequence trace if the quality of the sequence reads is high. In the case where the cut site is closer to beginning, the start of sequence read (alignment window) should be set lower than the default setting of 100. The cut site is too close to the start of the sequence read in the default setting to perform an alignment (see figure). The alignment window can be changed under <i>Advanced Settings</i>.<br>
+          If the cut site is further from the beginning, the decomposition window will become smaller. Note, selecting a larger stretch of nucleotides often makes the estimation of the indels more reliable. The minimal decomposition window spans from two times the size of the indel and has to be at least 5 bp from either the guide target site or the end of the sequence.
+
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/short_seq.png" class="img.unframed" align="left" alt="short sequence" height="auto" width="100%">
+          <br clear="all">
+
+          </p>
+
+          <h4 id="question4"> How is overall cutting efficiency calculated?</h4>
+          <p>The overall efficiency doesn't need to add up to 100% because there is also noise in the data.
+          The overall efficiency is calculated as R<sub>squared</sub> less the percent  of wild type (zero indels). For example if the R2 value is 0.95, it tells that 95% of the variance can be explained by the model; the remainder 5% is noise or large indels.
+          </p>
+
+
+          <h4 id="question5"> What do the different indel bars indicate when the cell pool is sequenced?</h4>
+          <p>The different indel bars represent the insertion and deletions in the population. You can’t tell for an individual cell what the specific indels for each allele are. To determine allele-specific information you have to isolate a cell clone and the perform TIDE analysis.</p>
+
+          <h4 id="question6"> What do the different indel bars indicate when the cell clone is sequenced?</h4>
+          <p>The different indel bars represent the insertion and deletions detected in the alleles in a cell clone. With a diploid cell, you should get a percentage of ~50% per indel.</p>
+
+          <h4 id="question7"> Can we get the sequence of different indels?</h4>
+          <p>The sequences of specific indels cannot be deduced from the sequence trace. We tested this option, but Sanger sequencing is not sensitive enough to give reliable results on this. To know the precise sequence of these mutations, you can use <a href="https://dtgseq.deskgen.com/" target="_blank">next-generation sequencing</a>
+             or sequence the DNA of individual mutated clones.</p>
+
+          <h3>Troubleshooting</h3>
+
+          <h4 id="trouble3">Incorrectly annotated nucleotides</h4>
+          <p>Sometimes the quality of the peaks in chromatogram looks fine, but the file displays some unannotated or incorrectly annotated nucleotides. These will interfere with the indel spectra (see figure). TIDE generates a warning when the spacing between the nucleotides in the chromatogram of the sequence trace is inconsistent. Inconsistent spacing is often an indication for unannotated or incorrectly annotated nucleotides. In this case, the sequence file cannot be used for a reliable TIDE analysis. If possible, try to set the right boundary of the decomposition window lower. If the warning remains, carefully investigate your chromatogram.
+          <br>
+          <img align="right" src="./posD5_STK3_2_A;STK3_R_0_files/unannotatedseq.png" class="img.unframed" alt="wrongly unannotated nucleotide(s)" height="auto" width="90%">
+          <br clear="all">
+
+
+          </p>
+
+
+          <h4 id="trouble4">Low R-squared value</h4>
+          <p>
+          A low R<sub>squared</sub> can be the result of optimized settings or poor sequence quality.<br><br>
+
+          <i>Settings</i> <br>
+          By default, the decomposition window is set to its maximum size and the Indel size range is set to 10. The settings can be adjusted in advanced settings.
+
+          </p><ul>
+            <li>Large indels are present in the sample. By default the decomposition is calculated with a maximal indel size of 10. When larger indels are present, they will cannot be modeled, which will result in a low R<sub>squared</sub>. Try to increase the Indel size range to test if this improves the fit (see figure Indel size range)</li>
+            <li>Poor local quality of the sequence trace. Often the end of the sequence is of low quality. This can be observed in the quality plot that shows a high aberrant sequence signal at the end of the sequence trace (see figure Poor quality sequence end). This compromises the decomposition of the sequence trace. Adjust the boundaries of the decomposition window in such a way that it will not overlap with the region that is of low quality.</li>
+            <li>Repetitive regions in the sequence trace. These regions can be observed in the quality plot as a sudden stretch without aberrant nucleotides (see figure Repetitive region). This region might interfere with the decomposition of the sequence trace. Adjust the boundaries of the decomposition window in such a way that it will not overlap with the repetitive sequence part.</li>
+          </ul>
+
+          <i>Poor sequence quality</i> <br>
+          Poor sequence quality can be observed in chromatogram (see figure Poor sequence quality). There is more noise present in the data with results in a lower R<sub>squared</sub>.
+          <br><br>
+
+          <b>Figure:</b> Indel size range<br>
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/lowr_maxshift.png" class="img.unframed" align="left" alt="maxshift" height="auto" width="85%">
+          <br clear="all">
+
+          <b>Figure:</b> Poor quality sequence end<br>
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/poor_quality_end.png" class="img.unframed" align="left" alt="poor local quality" height="auto" width="100%">
+          <br clear="all">
+
+          <b>Figure:</b> Repetitive region<br>
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/repetative_seq.png" class="img.unframed" align="left" alt="repetitive region" height="auto" width="95%">
+          <br clear="all">
+
+          <b>Figure:</b> Poor sequence quality
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/poor_seq_quality.png" class="img.unframed" align="left" alt="poor sequence quality" height="auto" width="100%">
+          <br clear="all">
+
+          <p></p>
+
+          <h4 id="trouble5">Forward and reverse indel spectra are not identical</h4>
+          <p>
+          If the forward and reverse indel spectra don't match, one of the results is not reliable. Often there is a misannotation in one of the sequence files (see “Incorrectly annotated nucleotides”).
+          </p>
+
+          <h4 id="trouble6">No guide RNA match because there is a mismatch in the control sequence</h4>
+          <p>Sometimes a mismatch occurs in the control sequence at the location of the guide RNA. This will stop the TIDE analysis. In this case, change the guide into identical IUPAC nucleotides as the control sequence.<br>
+          For example<br><br>
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/no_sgRNA.png" class="img.unframed" align="left" alt="no sgRNA" height="auto" width="75%">
+          <br clear="all">
+
+          </p>
+
+          <h4 id="trouble7">Error boundaries of decomposed region are not acceptable</h4>
+          <p>
+          This error means that the decomposition cannot be performed with the current settings. This can result from unoptimized settings  or when the cut site is too close to the beginning or end of the sequence. If possible, try to set the decomposition boundaries further apart, use a smaller indel size or use a smaller alignment window.<br>
+          If that doesn't help, you might have to resequence your sample to perform TIDE analysis. It can also help to sequence the opposite strand for confirmation of results. We advise that you sequence a stretch of DNA ~700 bp inclusive of the target locus. The projected cut site should ideally be located ~200 bp downstream of the sequencing start site.
+          </p>
+
+          <h4 id="trouble8">Poor alignment</h4>
+          <p>When the beginning of the sequence is of poor quality, the alignment function may not work as intended. This can be observed in the quality plot if a highly aberrant sequence signal stretches over the whole length of the sequence trace (see figure). Normally, the aberrant sequence signal should only increase around the expected cut site (blue dotted line). If you observe, poor alignment, try to shift the start of sequence read (alignment window) higher or lower. The alignment window can be changed in Advanced Settings.
+
+          <img src="./posD5_STK3_2_A;STK3_R_0_files/poor_alignment.png" class="img.unframed" align="left" alt="poor alignment" height="auto" width="105%">
+          <br clear="all">
+
+          </p>
+
+          <br><br>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    mixpanel.track("tide-webtool", {});
+    </script>
+
+    <!-- Scripts
+    ================================================== -->
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/jquery.min.js"></script>
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/bootstrap.min.js"></script>
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/html5shiv.min.js"></script>
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/respond.min.js"></script>
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/bootstrap-select.js"></script>
+
+    <!-- Loading Bar -->
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/pace.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/Chart.min.js"></script>
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/chartjs-plugin-annotation.min.js"></script>
+
+    <!-- Sliders -->
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/ion.rangeSlider.js"></script>
+
+    <!-- Event handlers -->
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/sidebar.js"></script>
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/auth.js"></script>
+    <script src="./posD5_STK3_2_A;STK3_R_0_files/views.js"></script>
+
+  
+
+</div></body></html>

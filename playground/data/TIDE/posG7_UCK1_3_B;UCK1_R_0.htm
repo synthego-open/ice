@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<!-- saved from url=(0025)https://tide.deskgen.com/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Bootstrap -->
+    <link href="./posG7_UCK1_3_B;UCK1_R_0_files/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="./posG7_UCK1_3_B;UCK1_R_0_files/bootstrap-select.css">
+
+    <!-- Sliders -->
+    <link rel="stylesheet" href="./posG7_UCK1_3_B;UCK1_R_0_files/ion.rangeSlider.css">
+    <link rel="stylesheet" href="./posG7_UCK1_3_B;UCK1_R_0_files/ion.rangeSlider.skinShiny.css">
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" type="text/css" href="./posG7_UCK1_3_B;UCK1_R_0_files/styleupdates.css">
+
+    <title>TIDE | Web tool</title>
+    <link rel="shortcut icon" href="https://tide.deskgen.com/static/favicon.ico">
+
+    <!-- Analytics change tracking number based on domain -->
+    <script type="text/javascript" async="" src="./posG7_UCK1_3_B;UCK1_R_0_files/mixpanel-2-latest.min.js"></script><script type="text/javascript">
+    // assume the user is on production
+    var GoogleAnalyticsTrackingNumber = 'UA-39875030-1'
+    var MixpanelTrackingNumber = '787a506ef2d6e33074d4607d5a35ca5e'
+
+    var full = window.location.host
+    var parts = full.split('.')
+    var subdomain = parts[0]
+
+    if (subdomain.substring(0, 9) == 'localhost' || subdomain == 'showroom') {
+        GoogleAnalyticsTrackingNumber = 'UA-39875030-8'
+        MixpanelTrackingNumber = 'efb8c5fdaa74bb361ea95797871a3eec'
+    }
+    </script>
+    <!-- Google Analytics -->
+    <script>
+    window.ga = window.ga || function() {
+        (ga.q = ga.q || []).push(arguments)
+    };
+    ga.l = +new Date;
+    ga('create', GoogleAnalyticsTrackingNumber, 'auto');
+    ga('send', 'pageview');
+    </script>
+    <script async="" src="./posG7_UCK1_3_B;UCK1_R_0_files/analytics.js"></script>
+    <!-- End Google Analytics -->
+    <!-- start Mixpanel -->
+    <script type="text/javascript">
+    (function(e, a) {
+        if (!a.__SV) {
+            var b = window;
+            try {
+                var c, l, i, j = b.location,
+                    g = j.hash;
+                c = function(a, b) { return (l = a.match(RegExp(b + "=([^&]*)"))) ? l[1] : null };
+                g && c(g, "state") && (i = JSON.parse(decodeURIComponent(c(g, "state"))), "mpeditor" === i.action && (b.sessionStorage.setItem("_mpcehash", g), history.replaceState(i.desiredHash || "", e.title, j.pathname + j.search)))
+            } catch (m) {}
+            var k, h;
+            window.mixpanel = a;
+            a._i = [];
+            a.init = function(b, c, f) {
+                function e(b, a) {
+                    var c = a.split(".");
+                    2 == c.length && (b = b[c[0]], a = c[1]);
+                    b[a] = function() {
+                        b.push([a].concat(Array.prototype.slice.call(arguments,
+                            0)))
+                    }
+                }
+                var d = a;
+                "undefined" !== typeof f ? d = a[f] = [] : f = "mixpanel";
+                d.people = d.people || [];
+                d.toString = function(b) {
+                    var a = "mixpanel";
+                    "mixpanel" !== f && (a += "." + f);
+                    b || (a += " (stub)");
+                    return a
+                };
+                d.people.toString = function() { return d.toString(1) + ".people (stub)" };
+                k = "disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+                for (h = 0; h < k.length; h++) e(d, k[h]);
+                a._i.push([b, c, f])
+            };
+            a.__SV = 1.2;
+            b = e.createElement("script");
+            b.type = "text/javascript";
+            b.async = !0;
+            b.src = "undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL ? MIXPANEL_CUSTOM_LIB_URL : "file:" === e.location.protocol && "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//) ? "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js" : "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";
+            c = e.getElementsByTagName("script")[0];
+            c.parentNode.insertBefore(b, c)
+        }
+    })(document, window.mixpanel || []);
+    mixpanel.init(MixpanelTrackingNumber);
+    </script>
+    <!-- end Mixpanel -->
+
+  </head>
+
+  <body class="                                                                                                                                                                                                                                                    pace-done"><div class="pace  pace-inactive"><div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+  <div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div></div>
+
+    <!-- Sidebar -->
+    <div class="col-sm-4">
+      <form class="well" id="upload-data" method="post" enctype="multipart/form-data">
+        <a href="https://tide.deskgen.com/"><img src="./posG7_UCK1_3_B;UCK1_R_0_files/headerMain.png" alt="TIDE" width="100%" class="unframed"></a>
+        <h2>TIDE: Tracking of Indels by DEcomposition</h2>
+        <hr>
+        <h4>Upload Data:</h4>
+        <h5><b>Title plot (e.g. sample name)</b></h5>
+        <input id="title" type="text" name="title" class="form-control inputchange" placeholder="Title" value="Sample">
+         <!-- Enable all nucleases if user is logged in -->
+          <h5><b>Nuclease</b></h5>
+          <select class="form-control" id="nuclease" name="nuclease">
+              <option value="SpCas9">SpCas9</option>
+              <option value="SaCas9">SaCas9</option>
+              <option value="St1Cas9">St1Cas9</option>
+              <option value="NmCas9">NmCas9</option>
+              <option value="AsCpf1">AsCpf1</option>
+              <option value="FnCpf1">FnCpf1</option>
+              <option value="LbCpf1">LbCpf1</option>
+          </select><br>
+        
+        <label>Guide sequence</label>
+        <span class="help-block">
+          <small>Paste your guide sequence (from '5 to '3). Do not include the PAM.</small>
+        </span>
+        <input type="text" class="form-control" id="guide" name="guide" placeholder="CATGCCGAGAGTGATCCCGG"><br>
+        <label>Control Sample Chromatogram (.ab1)</label>
+        <div class="input-group">
+          <label class="input-group-btn">
+              <span class="btn btn-default">
+                  Browse... <input id="control" name="control" type="file" style="display: none;">
+              </span>
+          </label>
+          <input type="text" class="form-control" readonly="">
+        </div><br>
+        <label>Test Sample Chromatogram (.ab1)</label>
+        <div class="input-group">
+          <label class="input-group-btn">
+              <span class="btn btn-default">
+                  Browse... <input id="sample" name="sample" type="file" style="display: none;">
+              </span>
+          </label>
+          <input type="text" class="form-control" readonly="">
+        </div><br>
+        <div class="checkbox">
+          <label>
+           <input type="checkbox" name="example" value="checked"><b>Load Example Data</b>
+          </label>
+        </div>
+        <hr>
+        <h4>Parameters</h4>
+        <span class="help-block">
+          <small>All parameters have default settings but can be adjusted by checking the 'advance settings' box. </small>
+        </span>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" name="advanced" onclick="showSettings(&#39;settings&#39;)">Advanced settings
+            </label>
+          </div>
+        <div id="settings" style="display:none"><br>
+          <span class="help-block">
+            <span style="color:black">
+              <strong>Alignment window (bp)</strong>
+            </span>
+          </span>
+          <span class="help-block">
+            <small>The sequence segment used to align the control and test sample</small>
+          </span>
+          <span class="help-block">
+            <small>
+              <strong>left boundary</strong>
+            </small>
+          </span>
+            <span class="irs js-irs-0  irs-with-grid"><span class="irs"><span class="irs-line" tabindex="0"><span class="irs-line-left"></span><span class="irs-line-mid"></span><span class="irs-line-right"></span></span><span class="irs-min">1</span><span class="irs-max">700</span><span class="irs-from" style="visibility: hidden;">0</span><span class="irs-to" style="visibility: hidden;">0</span><span class="irs-single">0</span></span><span class="irs-grid"><span class="irs-grid-pol" style="left: 0%"></span><span class="irs-grid-text js-grid-text-0" style="left: 0%">1</span><span class="irs-grid-pol small" style="left: 6.676204101096802%"></span><span class="irs-grid-pol small" style="left: 3.338102050548401%"></span><span class="irs-grid-pol" style="left: 10.014306151645204%"></span><span class="irs-grid-text js-grid-text-1" style="left: 10.0143%; visibility: hidden;">71</span><span class="irs-grid-pol small" style="left: 16.69051025274201%"></span><span class="irs-grid-pol small" style="left: 13.352408202193605%"></span><span class="irs-grid-pol" style="left: 20.02861230329041%"></span><span class="irs-grid-text js-grid-text-2" style="left: 20.0286%; visibility: hidden;">141</span><span class="irs-grid-pol small" style="left: 26.704816404387213%"></span><span class="irs-grid-pol small" style="left: 23.36671435383881%"></span><span class="irs-grid-pol" style="left: 30.042918454935613%"></span><span class="irs-grid-text js-grid-text-3" style="left: 30.0429%; visibility: hidden;">211</span><span class="irs-grid-pol small" style="left: 36.71912255603242%"></span><span class="irs-grid-pol small" style="left: 33.38102050548402%"></span><span class="irs-grid-pol" style="left: 40.05722460658082%"></span><span class="irs-grid-text js-grid-text-4" style="left: 40.05722460658082%">281</span><span class="irs-grid-pol small" style="left: 46.73342870767762%"></span><span class="irs-grid-pol small" style="left: 43.39532665712922%"></span><span class="irs-grid-pol" style="left: 50.07153075822602%"></span><span class="irs-grid-text js-grid-text-5" style="left: 50.0715%; visibility: hidden;">351</span><span class="irs-grid-pol small" style="left: 56.747734859322826%"></span><span class="irs-grid-pol small" style="left: 53.40963280877442%"></span><span class="irs-grid-pol" style="left: 60.085836909871226%"></span><span class="irs-grid-text js-grid-text-6" style="left: 60.0858%; visibility: hidden;">421</span><span class="irs-grid-pol small" style="left: 66.76204101096803%"></span><span class="irs-grid-pol small" style="left: 63.423938960419626%"></span><span class="irs-grid-pol" style="left: 70.10014306151643%"></span><span class="irs-grid-text js-grid-text-7" style="left: 70.1001%; visibility: hidden;">491</span><span class="irs-grid-pol small" style="left: 76.77634716261323%"></span><span class="irs-grid-pol small" style="left: 73.43824511206483%"></span><span class="irs-grid-pol" style="left: 80.11444921316163%"></span><span class="irs-grid-text js-grid-text-8" style="left: 80.11444921316163%">561</span><span class="irs-grid-pol small" style="left: 86.79065331425844%"></span><span class="irs-grid-pol small" style="left: 83.45255126371003%"></span><span class="irs-grid-pol" style="left: 90.12875536480684%"></span><span class="irs-grid-text js-grid-text-9" style="left: 90.1288%; visibility: hidden;">631</span><span class="irs-grid-pol small" style="left: 96.70958512160227%"></span><span class="irs-grid-pol small" style="left: 93.41917024320456%"></span><span class="irs-grid-pol" style="left: 100%"></span><span class="irs-grid-text js-grid-text-10" style="left: 100%; visibility: hidden;">700</span></span><span class="irs-bar"></span><span class="irs-bar-edge"></span><span class="irs-shadow shadow-single"></span><span class="irs-slider single"></span></span><input type="text" id="range_align" name="range_align" class="irs-hidden-input" tabindex="-1" readonly="">
+            <small>
+              <strong>right boundary</strong>
+            </small>
+          
+          <span class="help-block">
+            <small>automatically set at breaksite - 10bp</small>
+          </span><br>
+          <span class="help-block">
+            <span style="color: black">
+              <strong>Decomposition window (bp)</strong>
+            </span>
+          </span>
+          <span class="help-block">
+            <small>
+              The sequence segment used for decomposition.<br>
+              Default is maximum window possible
+            </small>
+          </span>
+            <span class="irs js-irs-1  irs-with-grid"><span class="irs"><span class="irs-line" tabindex="0"><span class="irs-line-left"></span><span class="irs-line-mid"></span><span class="irs-line-right"></span></span><span class="irs-min">1</span><span class="irs-max">700</span><span class="irs-from">0</span><span class="irs-to">0</span><span class="irs-single">0</span></span><span class="irs-grid"><span class="irs-grid-pol" style="left: 0%"></span><span class="irs-grid-text js-grid-text-0" style="left: 0%">1</span><span class="irs-grid-pol small" style="left: 6.676204101096802%"></span><span class="irs-grid-pol small" style="left: 3.338102050548401%"></span><span class="irs-grid-pol" style="left: 10.014306151645204%"></span><span class="irs-grid-text js-grid-text-1" style="left: 10.0143%; visibility: hidden;">71</span><span class="irs-grid-pol small" style="left: 16.69051025274201%"></span><span class="irs-grid-pol small" style="left: 13.352408202193605%"></span><span class="irs-grid-pol" style="left: 20.02861230329041%"></span><span class="irs-grid-text js-grid-text-2" style="left: 20.0286%; visibility: hidden;">141</span><span class="irs-grid-pol small" style="left: 26.704816404387213%"></span><span class="irs-grid-pol small" style="left: 23.36671435383881%"></span><span class="irs-grid-pol" style="left: 30.042918454935613%"></span><span class="irs-grid-text js-grid-text-3" style="left: 30.0429%; visibility: hidden;">211</span><span class="irs-grid-pol small" style="left: 36.71912255603242%"></span><span class="irs-grid-pol small" style="left: 33.38102050548402%"></span><span class="irs-grid-pol" style="left: 40.05722460658082%"></span><span class="irs-grid-text js-grid-text-4" style="left: 40.05722460658082%">281</span><span class="irs-grid-pol small" style="left: 46.73342870767762%"></span><span class="irs-grid-pol small" style="left: 43.39532665712922%"></span><span class="irs-grid-pol" style="left: 50.07153075822602%"></span><span class="irs-grid-text js-grid-text-5" style="left: 50.0715%; visibility: hidden;">351</span><span class="irs-grid-pol small" style="left: 56.747734859322826%"></span><span class="irs-grid-pol small" style="left: 53.40963280877442%"></span><span class="irs-grid-pol" style="left: 60.085836909871226%"></span><span class="irs-grid-text js-grid-text-6" style="left: 60.0858%; visibility: hidden;">421</span><span class="irs-grid-pol small" style="left: 66.76204101096803%"></span><span class="irs-grid-pol small" style="left: 63.423938960419626%"></span><span class="irs-grid-pol" style="left: 70.10014306151643%"></span><span class="irs-grid-text js-grid-text-7" style="left: 70.1001%; visibility: hidden;">491</span><span class="irs-grid-pol small" style="left: 76.77634716261323%"></span><span class="irs-grid-pol small" style="left: 73.43824511206483%"></span><span class="irs-grid-pol" style="left: 80.11444921316163%"></span><span class="irs-grid-text js-grid-text-8" style="left: 80.11444921316163%">561</span><span class="irs-grid-pol small" style="left: 86.79065331425844%"></span><span class="irs-grid-pol small" style="left: 83.45255126371003%"></span><span class="irs-grid-pol" style="left: 90.12875536480684%"></span><span class="irs-grid-text js-grid-text-9" style="left: 90.1288%; visibility: hidden;">631</span><span class="irs-grid-pol small" style="left: 96.70958512160227%"></span><span class="irs-grid-pol small" style="left: 93.41917024320456%"></span><span class="irs-grid-pol" style="left: 100%"></span><span class="irs-grid-text js-grid-text-10" style="left: 100%; visibility: hidden;">700</span></span><span class="irs-bar" style="cursor: ew-resize;"></span><span class="irs-shadow shadow-from"></span><span class="irs-shadow shadow-to"></span><span class="irs-slider from"></span><span class="irs-slider to type_last"></span></span><input type="text" id="range_decom" name="range_decom" class="irs-hidden-input" tabindex="-1" readonly=""><br>
+          <span class="help-block">
+            <span style="color: black">
+              <strong>Indel size range</strong>
+            </span>
+          </span>
+          <span class="help-block">
+            <small>Maximum size of insertions and deletions modeled in decomposition</small>
+          </span>
+          <span class="irs js-irs-2  irs-with-grid"><span class="irs"><span class="irs-line" tabindex="0"><span class="irs-line-left"></span><span class="irs-line-mid"></span><span class="irs-line-right"></span></span><span class="irs-min">2</span><span class="irs-max">50</span><span class="irs-from" style="visibility: hidden;">0</span><span class="irs-to" style="visibility: hidden;">0</span><span class="irs-single">0</span></span><span class="irs-grid"><span class="irs-grid-pol" style="left: 0%"></span><span class="irs-grid-text js-grid-text-0" style="left: 0%">2</span><span class="irs-grid-pol small" style="left: 6.944444444444445%"></span><span class="irs-grid-pol small" style="left: 3.4722222222222223%"></span><span class="irs-grid-pol" style="left: 10.416666666666668%"></span><span class="irs-grid-text js-grid-text-1" style="left: 10.4167%; visibility: hidden;">7</span><span class="irs-grid-pol small" style="left: 17.361111111111114%"></span><span class="irs-grid-pol small" style="left: 13.88888888888889%"></span><span class="irs-grid-pol" style="left: 20.833333333333336%"></span><span class="irs-grid-text js-grid-text-2" style="left: 20.8333%; visibility: hidden;">12</span><span class="irs-grid-pol small" style="left: 27.777777777777782%"></span><span class="irs-grid-pol small" style="left: 24.305555555555557%"></span><span class="irs-grid-pol" style="left: 31.250000000000004%"></span><span class="irs-grid-text js-grid-text-3" style="left: 31.25%; visibility: hidden;">17</span><span class="irs-grid-pol small" style="left: 38.19444444444445%"></span><span class="irs-grid-pol small" style="left: 34.72222222222223%"></span><span class="irs-grid-pol" style="left: 41.66666666666667%"></span><span class="irs-grid-text js-grid-text-4" style="left: 41.66666666666667%">22</span><span class="irs-grid-pol small" style="left: 48.61111111111112%"></span><span class="irs-grid-pol small" style="left: 45.13888888888889%"></span><span class="irs-grid-pol" style="left: 52.08333333333334%"></span><span class="irs-grid-text js-grid-text-5" style="left: 52.0833%; visibility: hidden;">27</span><span class="irs-grid-pol small" style="left: 59.027777777777786%"></span><span class="irs-grid-pol small" style="left: 55.555555555555564%"></span><span class="irs-grid-pol" style="left: 62.50000000000001%"></span><span class="irs-grid-text js-grid-text-6" style="left: 62.5%; visibility: hidden;">32</span><span class="irs-grid-pol small" style="left: 69.44444444444446%"></span><span class="irs-grid-pol small" style="left: 65.97222222222223%"></span><span class="irs-grid-pol" style="left: 72.91666666666667%"></span><span class="irs-grid-text js-grid-text-7" style="left: 72.9167%; visibility: hidden;">37</span><span class="irs-grid-pol small" style="left: 79.86111111111111%"></span><span class="irs-grid-pol small" style="left: 76.3888888888889%"></span><span class="irs-grid-pol" style="left: 83.33333333333334%"></span><span class="irs-grid-text js-grid-text-8" style="left: 83.33333333333334%">42</span><span class="irs-grid-pol small" style="left: 90.27777777777779%"></span><span class="irs-grid-pol small" style="left: 86.80555555555557%"></span><span class="irs-grid-pol" style="left: 93.75000000000001%"></span><span class="irs-grid-text js-grid-text-9" style="left: 93.75%; visibility: hidden;">47</span><span class="irs-grid-pol small" style="left: 97.91666666666667%"></span><span class="irs-grid-pol small" style="left: 95.83333333333334%"></span><span class="irs-grid-pol" style="left: 100%"></span><span class="irs-grid-text js-grid-text-10" style="left: 100%; visibility: hidden;">50</span></span><span class="irs-bar" style="cursor: ew-resize;"></span><span class="irs-bar-edge"></span><span class="irs-shadow shadow-single"></span><span class="irs-slider single"></span></span><input type="text" id="maxshift" value="10" name="maxshift" class="irs-hidden-input" tabindex="-1" readonly=""><br>
+          <span class="help-block">
+            <span style="color: black">
+              <strong>P-value threshold</strong>
+            </span>
+          </span>
+          <span class="help-block">
+            <small>Significance cutoff for decomposition</small>
+          </span>
+            <label for="p.threshold"></label>
+            <input id="p_threshold" name="p_threshold" type="number" class="form-control" value="0.001" step="0.001"><br>
+        </div><br>
+        <div>
+          <a href="https://tide.deskgen.com/#" id="update_view" class="btn btn-primary">Update View</a>
+        </div>
+        <hr>
+        <small>
+          <p>By clicking Update View, you agree with the TIDE Terms of Use (RECENTLY UPDATED!).</p>
+          <p>Please read the terms of use carefully in the About page.</p>
+        </small>
+        <hr>
+        <small>
+          Created by
+          <a href="http://research.nki.nl/vansteensellab" target="_blank">Bas van Steensel lab</a>
+        </small><br>
+        <small>
+          Hosted and developed by
+          <a href="http://www.desktopgenetics.com/" target="_blank">Desktop Genetics</a>
+        </small><br>
+        <small>TIDE version 2.0.1</small><br>
+        <small>TIDE supports Firefox6, Chrome4, Safari6, IE10 or higher</small><br><br>
+        <a href="http://www.nki.nl/">
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/NKIlogo.png" alt="NKI logo" width="30%">
+        </a>
+        <a href="http://www.desktopgenetics.com/">
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/deskgen.png" alt="Desktop Genetics logo" hspace="20px" width="15%">
+        </a>
+      </form>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-sm-8">
+
+      <!-- Navigation Bar -->
+      <ul class="nav nav-tabs" id="maintabset">
+        <li class="">
+          <a href="https://tide.deskgen.com/#tab-1" data-toggle="tab" data-value="Welcome" aria-expanded="false">Welcome</a>
+        </li>
+        
+          <li>
+            <a href="https://tide.deskgen.com/my-projects" target="_blank" class="btn btn-primary">My TIDE</a>
+          </li>
+        
+        <li class="">
+          <a href="https://tide.deskgen.com/#instructions" data-toggle="tab" data-value="Instructions" aria-expanded="false">Instructions</a>
+        </li>
+        <li class="active">
+          <a href="https://tide.deskgen.com/#tab-2" data-toggle="tab" data-value="Decomposition" aria-expanded="true">Decomposition</a>
+        </li>
+        <li>
+          <a href="https://tide.deskgen.com/#tab-3" data-toggle="tab" data-value="+1 insertion">+1 insertion</a>
+        </li>
+        <li class="">
+          <a href="https://tide.deskgen.com/#tab-4" data-toggle="tab" data-value="Troubleshooting" aria-expanded="false">Troubleshooting</a>
+        </li>
+        <li class="">
+          <a href="https://tide.deskgen.com/#about" data-toggle="tab" data-value="About" aria-expanded="false">About</a>
+        </li>
+        <li>
+          <a href="https://www.deskgen.com/guidebook/" target="_blank" data-value="DESKGEN">DESKGEN design</a>
+        </li>
+        
+        <li style="display:none">
+          <a href="https://tide.deskgen.com/#tab-5" class="btn btn-primary" data-toggle="tab" data-value="Sign up">Sign up</a>
+        </li>
+        
+          <li>
+            <a href="https://tide.deskgen.com/#" id="logout">Log out</a>
+          </li>
+        
+      </ul>
+
+      <!-- Tab Contents -->
+      <div class="tab-content">
+
+        <!-- Welcome -->
+        <div class="tab-pane" data-value="Welcome" id="tab-1">
+          <h2>
+            <b><i>TIDE: Easy quantitative assessment of genome editing by sequence trace decomposition</i></b> </h2>
+          <br>
+          <p> The most widely used and cited bioinformatics tool for rapid and reliable assessment of genome editing experiments.
+          <br>
+
+          </p><h3>Welcome</h3>
+          <p> Welcome to the TIDE webtool, now hosted, maintained and supported by Desktop Genetics.</p>
+          <p>TIDE is a web tool which rapidly and reliably assesses genome editing of a target locus by CRISPR-Cas9.</p>
+          <p>Based on the quantitative sequence trace data from two standard capillary (Sanger) sequencing reactions,  TIDE quantifies editing efficacy and identifies the predominant types of insertions and deletions (indels) in the DNA of a targeted cell pool.</p>
+          <p>See
+            <cite>
+              <a href="http://nar.oxfordjournals.org/content/42/22/e168" target="_blank">Brinkman et al. 2014 Nucl. Acids Res.
+              </a>
+            </cite> for a detailed explanation and examples.
+          </p>
+
+          <hr>
+
+          <h3>Purpose</h3>
+          <li><b>What it does:</b> TIDE estimates the frequency of insertions and deletions (indels) in a pool of cells transfected with [Cas9 + sgRNA]. </li>
+          <li><b>When to use:</b> Quantification of insertions and deletions following editing (e.g. Knock-Outs). For template-mediated editing (e.g. Knock-Ins), use the  <a href="https://tider.deskgen.com/"> TIDER</a> web tool.</li>
+
+          <hr>
+
+          <h3>Overview</h3>
+          <p>TIDE provides rapid and reliable assessment of genome editing efficiencies. It quantifies the rates of non-homologous end-joining mediated repair ("NHEJ") in an edited sample by decomposing the sequence trace data from three simple Sanger reactions.
+            As a result, TIDE quantifies indel rates providing you with an accurate understanding of your editing outcomes.</p>
+
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/tide-overview.png" class="img.unframed" align="left" alt="tide-overview" height="auto" width="90%">
+          <br clear="all">
+
+          <p>The input to TIDE is Sanger sequencing data; one control and one edited sample.</p>
+          <p>The output of TIDE is a comprehensive profile of all insertions and deletions (INDELs) in the edited sample, mediated by NHEJ, and the editing efficiency of the nuclease.</p>
+
+          <hr>
+
+          <h3>Use of TIDE</h3>
+          <p>The TIDE Software is being provided as a free web service for research, educational, instructional and non-commercial purposes only.</p>
+          <p>By submitting jobs to TIDE you agree to the TIDE Terms of Use. More information can be found in the "About" page. The TIDE Terms of Use were recently update. Please read through them carefully.</p>
+          <p>If you wish to acquire a license to TIDE, please contact us by completing this <a href="https://deskgen.typeform.com/to/HxDqpL">request form</a>.</p>
+
+          <hr>
+
+        </div>
+      <!-- Welcome END -->
+
+
+        <!-- Instructions -->
+        <div class="tab-pane" data-value="Instructions" id="instructions">
+
+          <h2>Instructions</h2>
+          <h3>1. Protocol:</h3>
+          <p>
+              For TIDE, 2 PCR amplicons (all from the same primer set) are needed:
+              </p><ol>
+                <li>Control (DNA from wild-type cell. e.g. control cells transfected without Cas9 or sgRNA)</li>
+                <li>Test sample (DNA from a pool of cells treated with Cas9, sgRNA and donor template)</li>
+              </ol>
+            <p></p>
+
+
+            <h4> Generate control and test sample DNA </h4>
+            <p>
+
+            </p><ul>
+              <li>Design your PCR primers. We advise that you  take a ~700 bp stretch of DNA  inclusive of the target locus.
+                   The projected cut site should ideally be located ~200 bp downstream from the sequencing start site.
+                   The region upstream of the cut site is used to align the sequencing data of the test sample with that of the control sample.
+               </li>
+               <li>Amplify a fragment enclosing the designed editing site by standard PCR.</li>
+
+             </ul>
+
+             <img src="./posG7_UCK1_3_B;UCK1_R_0_files/tide-protocol-1.png" class="img.unframed" align="left" alt="tide protocol 1" height="auto" width="45%">
+             <br clear="all">
+
+
+
+
+
+            <br>
+             <table border="1">
+              <tbody><tr>
+                <th>Amount</th>
+                <th>Sample</th>
+              </tr>
+              <tr>
+                <td>21-x µL</td>
+                <td>H2O</td>
+              </tr>
+              <tr>
+                <td>2 µL</td>
+                <td>primer a (10 µM stock)</td>
+              </tr>
+                <tr>
+                <td>2 µL</td>
+                <td>primer b (10 µM stock)</td>
+              </tr>
+                <tr>
+                <td>x µL</td>
+                <td>genomic DNA (~50ng)</td>
+              </tr>
+                <tr>
+                <td>25 µL</td>
+                <td>2x pre-mix of buffer, Taq polymerase and dNTPs (e.g. BioLine MyTaq, BIO-25044)</td>
+              </tr>
+            </tbody></table>
+
+            <br>
+            PCR program:
+             <table border="1">
+              <tbody><tr>
+                <th>Step</th>
+                <th>Temperature</th>
+                <th>Time, min:sec</th>
+                <th>Number of cycles</th>
+              </tr>
+              <tr>
+                <td>Initial denaturation</td>
+                <td>95 °C</td>
+                <td>1:00</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Denaturation</td>
+                <td>95 °C</td>
+                <td>0:15</td>
+                <td></td>
+              </tr>
+                <tr>
+                <td>Annealing</td>
+                <td>58 °C</td>
+                <td>0:15</td>
+                <td>25</td>
+              </tr>
+                <tr>
+                <td>Extension</td>
+                <td>72 °C</td>
+                <td>0:10</td>
+                <td></td>
+              </tr>
+                <tr>
+                <td></td>
+                <td>4 °C</td>
+                <td>hold</td>
+                <td></td>
+              </tr>
+            </tbody></table>
+
+            
+            <p></p>
+
+            <br>
+            <hr>
+
+          <h3>2. Upload Data:</h3>
+
+          <p> Enter a DNA character string ('5-'3) representing the used guide RNA sequence immediately upstream of the PAM sequence for the Cas9 nucleases, and downstream for the Cpf1 nucleases (PAM not included).
+            Numbers and other invalid (non-IUPAC) DNA characters will be automatically removed.
+          </p>
+
+          Supported nucleases:
+           <table border="1">
+            <tbody><tr>
+              <th>Nuclease</th>
+              <th>Length (nt)</th>
+              <th>Cut Site</th>
+            </tr>
+            <tr>
+              <td>SpCas9</td>
+              <td>20</td>
+              <td>-3, -3</td>
+            </tr>
+            <tr>
+              <td>SaCas9</td>
+              <td>22</td>
+              <td>-3, -3</td>
+            </tr>
+              <tr>
+              <td>St1Cas9</td>
+              <td>20</td>
+              <td>-2, -2</td>
+            </tr>
+              <tr>
+              <td>NmCas9</td>
+              <td>20</td>
+              <td>-3, -3</td>
+            </tr>
+              <tr>
+              <td>AsCpf1</td>
+              <td>20</td>
+              <td>18, 23</td>
+            </tr>
+              <tr>
+              <td>LbCpf1</td>
+              <td>20</td>
+              <td>18, 23</td>
+            </tr>
+              <tr>
+              <td>FnCpf1</td>
+              <td>23</td>
+              <td>18, 23</td>
+            </tr>
+          </tbody></table>
+          <br>
+
+          <p> Next, upload the chromatogram sequence files of respectively the control sample (i.e. transfected without Cas9 or without the guide RNA) and the test sample (i.e. treated with both Cas9 and the guide RNA).
+          </p>
+
+          <strong>Currently, TIDE Standard and TIDE Pro support ABIF (.ab1) files only. <a href="https://www.deskgen.com/landing/tide-premium.html" target="_blank">TIDE Premium</a> allows for both ABIF and SCF (.scf) files. </strong>
+          <p></p>
+
+          <hr>
+
+          <h3>3. Enter Parameters for Analysis:</h3>
+
+          <p>The following parameters have default settings but can be adjusted if necessary in the panel to the left by checking the 'Advanced Settings' box.
+          </p>
+
+
+          <h4>Alignment window</h4>
+          <p>These settings determine the window in which the control and test sequences are aligned to determine any offset between the two reads. There is usually no need to deviate from the default settings except when sequencing long repetitive sequences.
+
+          </p><p>
+          <strong>left boundary:</strong>
+          By default, this is set to 100. This is because base-calling at the start of a Sanger sequence read is often of poor quality.
+          <br>
+          <strong>right boundary:</strong>
+          This is automatically set at cut site (-10 bp).
+          </p>
+
+          <p></p>
+
+          <h4>Decomposition window</h4>
+          <p>These settings determine the sequence segment used for decomposition. The default setting is the largest window possible for uploaded sequences:
+
+          </p><p>
+          <strong>left boundary:</strong>
+          max indel size +5 bp downstream of the cut site. <br>
+
+          <strong>right boundary:</strong>
+          max indel size +5 bp before the end of the shortest sequence read.
+          </p>
+
+          The decomposition window can be adjusted if part of the sequence read is of low quality or contains repetitive sequences.
+          <p></p>
+
+          <h4>Indel size range</h4>
+          <p>Set the maximum size of deletions and insertions to be modeled. The default value is 10.</p>
+
+          <h4>P-value threshold</h4>
+          <p>Significance cutoff. Any value between 0 and 1 is accepted. Default is p&lt;0.001.</p>
+          <hr>
+
+          <h3>4. Results:</h3>
+          <p>Once the data are uploaded and parameters are set, submit the data by clicking on the "Update View" button and the plots will appear in the two tabs: "Decomposition” and "+1 insertion". If the settings are incorrect or too stringent, warnings will be displayed in the "Decomposition" tab.
+          </p>
+
+          <p>
+          <strong> Quality measures</strong>: Results depend on the quality of the sequence reads.</p>
+          <p>As a rule of thumb, we recommend to aim for an average aberrant sequence signal strength before the cut site of &lt;10% (both control and test sample), and an R<sub>squared</sub> value of &gt;0.9 for the decomposition result. Sequencing the opposite strand is recommended to confirm results.
+          </p>
+
+          <hr>
+        </div>
+        <!-- Instructions END -->
+
+        <!-- About -->
+        <div class="tab-pane" data-value="About" id="about">
+
+          <h2>About</h2>
+
+          <br>
+
+          <p>TIDE is a bioinformatics tool to assist scientists carrying out genome editing experiments. This tool uses the world's first and most widely cited algorithm to reliably and rapidly assess the efficiency of NHEJ-mediated repair of genome edited cells.</p>
+
+          <br>
+
+          <hr>
+
+          <h3>Citation and Privacy</h3>
+          <p>If you use this software for data analysis in a publication, please cite
+            <cite>
+              <a href="http://nar.oxfordjournals.org/content/42/22/e168">Brinkman et al.,  Nucl. Acids Res. (2014)</a>
+            </cite>.
+            Your uploaded data are only used for the duration of the analysis session and are not stored or used for any other purpose.
+            Any data you share, upload or save (e.g. via "Save Experiment") will never be shared or sold without your explicit written consent.
+            Desktop Genetics will not use your data for any commercial purpose without your explicit written consent.
+            Anonymous usage analytics are collected via third party tools in order to improve user experience.
+            For more information on what data is collected, please click <a href="https://www.deskgen.com/landing/legal.html" target="_blank">here</a>. </p>
+          <br>
+          <hr>
+
+          <h3>TIDE Terms of Use</h3>
+          <p><strong>NEW! Please read carefully</strong></p>
+
+          <p>Limited Copyright License for Research Use by Non-Profit and Government Institutions</p>
+
+          <p>"<strong>Code</strong>" means the TIDE source code; and</p>
+          <p>"<strong>Software</strong>" means the code made available as web service by Desktop Genetics at https://tide.deskgen.com.</p>
+
+          <p>BY USING THE SOFTWARE OR DOWNLOADING THE CODE ACCOMPANYING THIS LICENSE, YOU (AND YOUR EMPLOYEES IF ANY) ARE CONSENTING TO BE BOUND BY ALL OF THE TERMS OF THIS LICENSE.</p>
+          <p>IF YOU DO NOT AGREE TO THE TERMS OF THIS LICENCE, WE WILL NOT LICENSE USE OF THE CODE OR THE SOFTWARE TO YOU.</p>
+          <p>The Software and Code are being provided as a free a service for research, educational and non-commercial purposes only.</p>
+          <p>By using the Software or downloading the Code you agree to the terms and conditions below.</p>
+          <li>You are an actively enrolled student, post-doctoral researcher, or faculty member at a degree-granting educational institution or accredited government or not-for-profit research institution; and You are hereby granted a non-exclusive, non-transferable license to use the Code and/or Software solely for educational, instructional, and/or non-commercial research purposes.</li>
+          <li>You understand that all results produced using the Code or Software may only be used for non-commercial research and/or academic purposes.</li>
+          <li>You understand that to obtain any right to use the Code or Software for commercial purposes, or in the context of industrially sponsored research, You must enter into an appropriate, separate and direct license agreement with Desktop Genetics (click <a href="https://deskgen.typeform.com/to/HxDqpL">here</a> to enquire).</li>
+          <li>You will not redistribute unmodified versions of the Code or Software.</li>
+          <li>You will redistribute modifications, if any, under the same terms as this license and with prior written approval from Desktop Genetics.</li>
+          <li>You must credit the authors of the Code: Eva K Brinkman, Tao Chen, Mario Amendola, Jos Jonkers Bas van Steensel and cite "Easy quantitative assessment of genome editing by sequence trace decomposition", Nucleic Acids Research, 2014, https://doi.org/10.1093/nar/gku936; and</li>
+          <li>You must credit the authors of the Software: Desktop Genetics and cite "TIDE: Easy quantitative assessment of genome editing experiments by sequence trace decomposition, https://www.tide.deskgen.com".</li>
+          <li>You understand that neither the names of Desktop Genetics or the authors of the Code or Software may be used to endorse or promote products derived from the Code or Software without specific prior written permission.</li>
+          <li>You acknowledge that all intellectual property rights in the Software and the Code anywhere in the world belong to Desktop Genetics, that rights in the Software and Code are licensed to you (not sold) and that you have no rights in or to the Software or Code other than the right to use them in accordance with the terms of this Licence.</li>
+          <li>You acknowledge that the Software or Code have not been developed to meet your individual requirements and that it is therefore your responsibility to ensure that the facilities and functions of the Software or Code meet your requirements.</li>
+          <li>This Licence, its subject matter and its formation (and any non-contractual disputes or claims) are governed by English law. You agree to the exclusive jurisdiction of the courts of England and Wales.</li>
+          <br>
+          <p>"Copyright 2018. Desktop Genetics. All Rights Reserved."</p>
+
+          <br>
+          <hr>
+
+          <h3>Contact</h3>
+          <p>This web tool was developed by Desktop Genetics, in collaboration with the <a href="http://research.nki.nl/vansteensellab/contact.htm"> Bas van Steensel lab</a>.</p>
+          <p>Special thanks to Eva Brinkman, Bas van Steensel from NKI, and Mira Davidson from Desktop Genetics.</p>
+          <p>For more information and to report bugs, please contact
+            <a href="https://www.deskgen.com/landing/contact.html"> Desktop Genetics</a>.
+          </p>
+
+          <br><br>
+          <hr>
+        </div>
+        <!-- About END -->
+
+
+        <!-- Decomposition
+        ==================================================
+
+        Includes indel spectrum and quality control
+        -->
+
+        <div class="tab-pane active" data-value="Decomposition" id="tab-2">
+        <p id="decomposition"><!-- Errors -->
+<h4 style="color:#ea2c64">Error</h4>
+
+<pre id="errormessage">Error:
+
+There is no good alignment found between the control and test sample.
+The alignment window is either too small, is of bad quality or the control and test sample do not match.
+
+Alignment results:
+
+Alignment score: 23.0
+Ctrl align: TTCTGTGTCTCCAGTCGACCGTGT-
+Edit align: -TCTGTGTCTCCAGTCGACCGTGTG
+
+Suggested solution:
+Use the advanced settings to change the left boundary of the alignment window.
+A lower number will allow TIDE to align a larger stretch of the control and sample sequences.</pre>
+
+<hr>
+
+<div>
+  For information on how to resovle this error, please consult the FAQ &amp; Troubleshooting page.
+  <br>
+  If you are still encountering issues, please <a href="mailto:tide@desktopgenetics.com">contact</a> us.
+  <br>
+  In order for us to resolve your query faster, please attach the input files and guide sequence, as well as a screenshot of the error you are encountering.
+</div></p>
+        <p class="no_upload" style="display: none;">A plot will be shown here when the valid sequencing files and guide string have been uploaded.</p>
+        </div>
+
+        <!-- +1 Insertion
+        ==================================================
+
+        Includes +1 insertion
+        -->
+
+        <div class="tab-pane" data-value="+1 insertion" id="tab-3">
+        <p id="insertion"><!-- Errors -->
+<h4 style="color:#ea2c64">Error</h4>
+
+<pre id="errormessage">Error:
+
+There is no good alignment found between the control and test sample.
+The alignment window is either too small, is of bad quality or the control and test sample do not match.
+
+Alignment results:
+
+Alignment score: 23.0
+Ctrl align: TTCTGTGTCTCCAGTCGACCGTGT-
+Edit align: -TCTGTGTCTCCAGTCGACCGTGTG
+
+Suggested solution:
+Use the advanced settings to change the left boundary of the alignment window.
+A lower number will allow TIDE to align a larger stretch of the control and sample sequences.</pre>
+
+<hr>
+
+<div>
+  For information on how to resovle this error, please consult the FAQ &amp; Troubleshooting page.
+  <br>
+  If you are still encountering issues, please <a href="mailto:tide@desktopgenetics.com">contact</a> us.
+  <br>
+  In order for us to resolve your query faster, please attach the input files and guide sequence, as well as a screenshot of the error you are encountering.
+</div></p>
+        <p class="no_upload" style="display: none;">The prediction of the +1 inserted nucleotide will be shown here when the valid sequencing files and guide string have been uploaded.</p>
+        </div>
+
+        <!-- FAQ -->
+        <div class="tab-pane" data-value="FAQ &amp; Troubleshooting" id="tab-4">
+          <h2>FAQ</h2>
+          <ul>
+          <li><a href="https://tide.deskgen.com/#question1">What is the minimal sequence length you need? </a> </li>
+          <li><a href="https://tide.deskgen.com/#question2">What happens if the sequence is shorter than 700 bp? </a></li>
+          <li><a href="https://tide.deskgen.com/#question3">Does the cut site really need to be 200 bp away from the primers? </a></li>
+          <li><a href="https://tide.deskgen.com/#question4">How is the overall efficiency calculated?  </a></li>
+          <li><a href="https://tide.deskgen.com/#question5">What do the different indel bars indicate when cell pool was sequenced? </a></li>
+          <li><a href="https://tide.deskgen.com/#question6">What do the different indel bars indicate when cell clone was sequenced?</a></li>
+          <li><a href="https://tide.deskgen.com/#question7">Can we get the sequence of different indels? </a></li>
+          </ul>
+
+          <h2>Troubleshooting</h2>
+          <ul>
+          <li><a href="https://tide.deskgen.com/#trouble3">Incorrectly annotated nucleotides</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble4">Low R-squared value</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble5">Forward and reverse indel spectra are not identical</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble6">No guide RNA match because there is a mismatch in the control sequence</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble7">Error boundaries of decomposed region are not acceptable</a></li>
+          <li><a href="https://tide.deskgen.com/#trouble8">Poor alignment</a></li>
+          </ul>
+
+          <h3>FAQ</h3>
+
+          <h4 id="question1"> What is the minimum sequence length you need?</h4>
+          <p>The requirements of sequence length are flexible. This region upstream of the cut site is used to align the sequencing data of the test sample with that of the control sample. The region behind the cut site is used for a decomposition to determine the various indels in the pool of cells. In general, with a bigger stretch of sequence trace, a better estimation can be performed by TIDE. We advise that users sequence a stretch of DNA ~700 bp inclusive of the designed editing site. The predicted cut site should ideally be located ~200 bp downstream from the sequencing start site.
+          </p>
+
+
+          <h4 id="question2"> What happens if the sequence is shorter than 700 bp? </h4>
+          <p>TIDE should work with shorter sequences if the quality of the sequence reads is high. In that case, the start of sequence read (alignment window) might have to be set lower than the default setting of 100. Often with shorter sequences, the cut site is too close to the start of the sequence read in the default settings (see figure). The alignment window can be changed in <i>Advanced Settings</i>.
+
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/short_seq.png" class="img.unframed" align="left" alt="short sequence" height="auto" width="100%">
+          <br clear="all">
+
+          </p>
+
+
+          <h4 id="question3"> Does the cut site really need to be 200 bp away from the primers?</h4>
+          <p>TIDE should work with sequences with a cut site closer to or further than 200 bp from the start of the sequence trace if the quality of the sequence reads is high. In the case where the cut site is closer to beginning, the start of sequence read (alignment window) should be set lower than the default setting of 100. The cut site is too close to the start of the sequence read in the default setting to perform an alignment (see figure). The alignment window can be changed under <i>Advanced Settings</i>.<br>
+          If the cut site is further from the beginning, the decomposition window will become smaller. Note, selecting a larger stretch of nucleotides often makes the estimation of the indels more reliable. The minimal decomposition window spans from two times the size of the indel and has to be at least 5 bp from either the guide target site or the end of the sequence.
+
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/short_seq.png" class="img.unframed" align="left" alt="short sequence" height="auto" width="100%">
+          <br clear="all">
+
+          </p>
+
+          <h4 id="question4"> How is overall cutting efficiency calculated?</h4>
+          <p>The overall efficiency doesn't need to add up to 100% because there is also noise in the data.
+          The overall efficiency is calculated as R<sub>squared</sub> less the percent  of wild type (zero indels). For example if the R2 value is 0.95, it tells that 95% of the variance can be explained by the model; the remainder 5% is noise or large indels.
+          </p>
+
+
+          <h4 id="question5"> What do the different indel bars indicate when the cell pool is sequenced?</h4>
+          <p>The different indel bars represent the insertion and deletions in the population. You can’t tell for an individual cell what the specific indels for each allele are. To determine allele-specific information you have to isolate a cell clone and the perform TIDE analysis.</p>
+
+          <h4 id="question6"> What do the different indel bars indicate when the cell clone is sequenced?</h4>
+          <p>The different indel bars represent the insertion and deletions detected in the alleles in a cell clone. With a diploid cell, you should get a percentage of ~50% per indel.</p>
+
+          <h4 id="question7"> Can we get the sequence of different indels?</h4>
+          <p>The sequences of specific indels cannot be deduced from the sequence trace. We tested this option, but Sanger sequencing is not sensitive enough to give reliable results on this. To know the precise sequence of these mutations, you can use <a href="https://dtgseq.deskgen.com/" target="_blank">next-generation sequencing</a>
+             or sequence the DNA of individual mutated clones.</p>
+
+          <h3>Troubleshooting</h3>
+
+          <h4 id="trouble3">Incorrectly annotated nucleotides</h4>
+          <p>Sometimes the quality of the peaks in chromatogram looks fine, but the file displays some unannotated or incorrectly annotated nucleotides. These will interfere with the indel spectra (see figure). TIDE generates a warning when the spacing between the nucleotides in the chromatogram of the sequence trace is inconsistent. Inconsistent spacing is often an indication for unannotated or incorrectly annotated nucleotides. In this case, the sequence file cannot be used for a reliable TIDE analysis. If possible, try to set the right boundary of the decomposition window lower. If the warning remains, carefully investigate your chromatogram.
+          <br>
+          <img align="right" src="./posG7_UCK1_3_B;UCK1_R_0_files/unannotatedseq.png" class="img.unframed" alt="wrongly unannotated nucleotide(s)" height="auto" width="90%">
+          <br clear="all">
+
+
+          </p>
+
+
+          <h4 id="trouble4">Low R-squared value</h4>
+          <p>
+          A low R<sub>squared</sub> can be the result of optimized settings or poor sequence quality.<br><br>
+
+          <i>Settings</i> <br>
+          By default, the decomposition window is set to its maximum size and the Indel size range is set to 10. The settings can be adjusted in advanced settings.
+
+          </p><ul>
+            <li>Large indels are present in the sample. By default the decomposition is calculated with a maximal indel size of 10. When larger indels are present, they will cannot be modeled, which will result in a low R<sub>squared</sub>. Try to increase the Indel size range to test if this improves the fit (see figure Indel size range)</li>
+            <li>Poor local quality of the sequence trace. Often the end of the sequence is of low quality. This can be observed in the quality plot that shows a high aberrant sequence signal at the end of the sequence trace (see figure Poor quality sequence end). This compromises the decomposition of the sequence trace. Adjust the boundaries of the decomposition window in such a way that it will not overlap with the region that is of low quality.</li>
+            <li>Repetitive regions in the sequence trace. These regions can be observed in the quality plot as a sudden stretch without aberrant nucleotides (see figure Repetitive region). This region might interfere with the decomposition of the sequence trace. Adjust the boundaries of the decomposition window in such a way that it will not overlap with the repetitive sequence part.</li>
+          </ul>
+
+          <i>Poor sequence quality</i> <br>
+          Poor sequence quality can be observed in chromatogram (see figure Poor sequence quality). There is more noise present in the data with results in a lower R<sub>squared</sub>.
+          <br><br>
+
+          <b>Figure:</b> Indel size range<br>
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/lowr_maxshift.png" class="img.unframed" align="left" alt="maxshift" height="auto" width="85%">
+          <br clear="all">
+
+          <b>Figure:</b> Poor quality sequence end<br>
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/poor_quality_end.png" class="img.unframed" align="left" alt="poor local quality" height="auto" width="100%">
+          <br clear="all">
+
+          <b>Figure:</b> Repetitive region<br>
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/repetative_seq.png" class="img.unframed" align="left" alt="repetitive region" height="auto" width="95%">
+          <br clear="all">
+
+          <b>Figure:</b> Poor sequence quality
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/poor_seq_quality.png" class="img.unframed" align="left" alt="poor sequence quality" height="auto" width="100%">
+          <br clear="all">
+
+          <p></p>
+
+          <h4 id="trouble5">Forward and reverse indel spectra are not identical</h4>
+          <p>
+          If the forward and reverse indel spectra don't match, one of the results is not reliable. Often there is a misannotation in one of the sequence files (see “Incorrectly annotated nucleotides”).
+          </p>
+
+          <h4 id="trouble6">No guide RNA match because there is a mismatch in the control sequence</h4>
+          <p>Sometimes a mismatch occurs in the control sequence at the location of the guide RNA. This will stop the TIDE analysis. In this case, change the guide into identical IUPAC nucleotides as the control sequence.<br>
+          For example<br><br>
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/no_sgRNA.png" class="img.unframed" align="left" alt="no sgRNA" height="auto" width="75%">
+          <br clear="all">
+
+          </p>
+
+          <h4 id="trouble7">Error boundaries of decomposed region are not acceptable</h4>
+          <p>
+          This error means that the decomposition cannot be performed with the current settings. This can result from unoptimized settings  or when the cut site is too close to the beginning or end of the sequence. If possible, try to set the decomposition boundaries further apart, use a smaller indel size or use a smaller alignment window.<br>
+          If that doesn't help, you might have to resequence your sample to perform TIDE analysis. It can also help to sequence the opposite strand for confirmation of results. We advise that you sequence a stretch of DNA ~700 bp inclusive of the target locus. The projected cut site should ideally be located ~200 bp downstream of the sequencing start site.
+          </p>
+
+          <h4 id="trouble8">Poor alignment</h4>
+          <p>When the beginning of the sequence is of poor quality, the alignment function may not work as intended. This can be observed in the quality plot if a highly aberrant sequence signal stretches over the whole length of the sequence trace (see figure). Normally, the aberrant sequence signal should only increase around the expected cut site (blue dotted line). If you observe, poor alignment, try to shift the start of sequence read (alignment window) higher or lower. The alignment window can be changed in Advanced Settings.
+
+          <img src="./posG7_UCK1_3_B;UCK1_R_0_files/poor_alignment.png" class="img.unframed" align="left" alt="poor alignment" height="auto" width="105%">
+          <br clear="all">
+
+          </p>
+
+          <br><br>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    mixpanel.track("tide-webtool", {});
+    </script>
+
+    <!-- Scripts
+    ================================================== -->
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/jquery.min.js"></script>
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/bootstrap.min.js"></script>
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/html5shiv.min.js"></script>
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/respond.min.js"></script>
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/bootstrap-select.js"></script>
+
+    <!-- Loading Bar -->
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/pace.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/Chart.min.js"></script>
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/chartjs-plugin-annotation.min.js"></script>
+
+    <!-- Sliders -->
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/ion.rangeSlider.js"></script>
+
+    <!-- Event handlers -->
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/sidebar.js"></script>
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/auth.js"></script>
+    <script src="./posG7_UCK1_3_B;UCK1_R_0_files/views.js"></script>
+
+  
+
+</div></body></html>

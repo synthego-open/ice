@@ -1,0 +1,39 @@
+
+control_aln_window                  -GCANGCATGTCATGAGTGGGAAGCGTATAAAGTGCAGATTGCCTTTGCG
+edited                              NNNNNGCATGTCATGAGTGGGAAGCGTATAAAGTGCAGATTGCCTTTGCG
+
+control_aln_window                  TCCACACAGAGTCAGGTCCTTCAGCTCGAGGTGCACGTCCCGAATGCCTG
+edited                              TCCACACAGAGTCAGGTCCTTCAGCTCGAGGTGCACGTCCCGAATGCCTG
+
+control_aln_window                  TAGACCCATAAGCCACATTGGAGGTCAGGTACTTCCGAATGCTTTTAAGA
+edited                              TAGACCCATAAGCCACATTGGAGGTCAGGTACTTCCGAATGCTTTTAAGA
+
+control_aln_window                  CTTTCCACTTCTTCCTCTTCTTCTTCAGCAGTGATGTCTTTGGGTTCAAA
+edited                              CTTTCCACTTCTTCCTCTTCTTCTTCAGCAGTGATGTCTTTGGGTTCAAA
+
+control_aln_window                  ATATACCA------------------------------------------
+edited                              ATATACCAGCTTGACCAGAGTTCCACCGATATCCAGTCCAAACCATGGAA
+
+control_aln_window                  --------------------------------------------------
+edited                              AAACTAAATGGGGAAGAAAAATAAGTCAGAACAGCTTTTTTCTGAAAATT
+
+control_aln_window                  --------------------------------------------------
+edited                              AAATTTACCCTTACCACAGTAGCAACTTATTTCAAACGCTAGGGTTTCCA
+
+control_aln_window                  --------------------------------------------------
+edited                              AAGAACATAATTCTAGGCAAAAGGGTTTTGGGGCAAAGAAATGTGATTCT
+
+control_aln_window                  --------------------------------------------------
+edited                              GTCTTGATTTAGATGCATAACTTAAAAAAAAAATACTACGGCAAAAACAA
+
+control_aln_window                  --------------------------------------------------
+edited                              AAAAAAAAAATATCAAAGTATTGAGCCAACCCAACCATCCTGTCAAACAA
+
+control_aln_window                  --------------------------------------------------
+edited                              GCGCAAACCGCATTATGAAGTGTTTTAAAAATAACAAGATGACTACTCGT
+
+control_aln_window                  -----------------------
+edited                              AAGCCTCAANNGGNAAAAAAAAN
+
+
+

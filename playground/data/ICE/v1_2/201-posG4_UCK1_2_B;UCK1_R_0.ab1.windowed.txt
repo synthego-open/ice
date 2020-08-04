@@ -1,0 +1,39 @@
+
+control_aln_window                  NNNNN-NNCGAGCATA-CCCCCAGGGGGCGGGTGGGTCAGTGTCTCCAGA
+edited                              NCNCNTNN--AGCATAACCCCCAGGGGGCGGGTGGGTCAGTGTCTCCAGA
+
+control_aln_window                  AGCCGGCCCCGTGCCTGTCACAGGACCAGCGGTTCCAGGCGGGAA-----
+edited                              AGCCGGCCCCGTGCCTGTCACAGGACCAGCGGTTCCAGGCGGGAATCCCG
+
+control_aln_window                  --------------------------------------------------
+edited                              CTTCTGTGTCTCCAGTCGACCGTGTGAAGATAAAATAGTTGAGTTGACGG
+
+control_aln_window                  --------------------------------------------------
+edited                              AAAAAAATGAAGCGGAACCGCCGCAACGTGGGGTTCCCGTGCCGAGACAG
+
+control_aln_window                  --------------------------------------------------
+edited                              GATCTGTTCTGTCCTGACCGGACAGCAGAAAGCAAAGGCCTTGACATGAC
+
+control_aln_window                  --------------------------------------------------
+edited                              AGGACAATTTTTTTTTTCCCAGCCAATCACAAGCCCAACCATATGAGGAG
+
+control_aln_window                  --------------------------------------------------
+edited                              GGGAGACCCCACTCTGGTCGGGGCCGCCCCTAATCCGCTGGGGCTGAAGG
+
+control_aln_window                  --------------------------------------------------
+edited                              TTGGGTGGAAGGGAAGCCGATCGGGTTGTGCCCCCCCCCCACCTCGCCCC
+
+control_aln_window                  --------------------------------------------------
+edited                              CCGCGCTGGAGTGGAGTGCGCTGCGAAATGAAGGGAAGTTTACTTAGTTC
+
+control_aln_window                  --------------------------------------------------
+edited                              TCTTGGCCCGGACCGTCCCNCCCCCACAGGGGCTGGAGTCAATCCCGACA
+
+control_aln_window                  --------------------------------------------------
+edited                              CGAGTTCTGTTGTGGTGAGCCCAGCCCTGCCCTGCCCCACCTNTAATATT
+
+control_aln_window                  --------------------
+edited                              ATANAAAAANAAAACANAAN
+
+
+

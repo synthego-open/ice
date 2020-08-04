@@ -1,0 +1,39 @@
+
+control_aln_window                  ----NNTNNAGAGCTGACAATCATGACCCATTTTGAGATTTCATACCAGG
+edited                              NNNNNNTNNAGAGCTGACAATCATGACCCATTTTGAGATTTCATACCAGG
+
+control_aln_window                  TTTCATGAAAATTAAACCTAAAATCAAGAAAAGAAGTTGAAAACTCAGTG
+edited                              TTTCATGAAAATTAAACCTAAAATCAAGAAAAGAAGTTGAAAACTCAGTG
+
+control_aln_window                  TGCATTAAACACCAAATTCTGGTTATAATTTACAACTGTTACTTACACTG
+edited                              TGCATTAAACACCAAATTCTGGTTATAATTTACAACTGTTACTTACACTG
+
+control_aln_window                  ACTGGATCCAGAATTTTCACTGCAGCCAGGCTCCCATCTCTCTTGTTAGT
+edited                              ACTGGATCCAGAATTTTCACTGCAGCCAGGCTCCCATCTCTCTTGTTAGT
+
+control_aln_window                  TACCTTGTAGACTTTGCCATAGGTGCCTTTACCAATGGTCTCTATAATTT
+edited                              TACCTTGTAGACTTTGCCATAGGTGCCTTTACCAATGGTCTCTATAATTT
+
+control_aln_window                  CCCAGGTGTCTGT-------------------------------------
+edited                              CCCAGGTGTCTGTGGGATCTGGAAGTGATTCAAGTCCAAGCATCATAGGA
+
+control_aln_window                  --------------------------------------------------
+edited                              TTATAGTGAAATAATCCATACAGATGTTTCCTGGTTGGGGGAAAAATTTG
+
+control_aln_window                  --------------------------------------------------
+edited                              TTATGTGCAACAGATCACAGAACTGGGGGCAGTGGACTTTTGAAACAAAA
+
+control_aln_window                  --------------------------------------------------
+edited                              AGATTTTTATTTCTTAACCAGCAACCTCATGTTACTTTTTATTTTCTTCC
+
+control_aln_window                  --------------------------------------------------
+edited                              TCTATTGTAAATAAATTTTTTGAAAAAGAACTTGGACCCTCCTTAAGAAA
+
+control_aln_window                  --------------------------------------------------
+edited                              TGGTAATAAAAGATAGAGTGGAGGAGTAACATGGNCCTAAAAAACNNANN
+
+control_aln_window                  ---
+edited                              NAN
+
+
+

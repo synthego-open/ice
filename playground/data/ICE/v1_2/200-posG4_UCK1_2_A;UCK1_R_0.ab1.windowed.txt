@@ -1,0 +1,39 @@
+
+control_aln_window                  NNNNNNNCGAGCATACCCCCAGGGGGCGGGTGGGTCAGTGTCTCCAGAAG
+edited                              NNNNCTNCGAGCATANCCCCAGGGGGCGGGTGGGTCAGTGTCTCCAGAAG
+
+control_aln_window                  CCGGCCCCGTGCCTGTCACAGGACCAGCGGTTCCAGGCGGGAA-------
+edited                              CCGGCCCCGTGCCTGTCACAGGACCAGCGGTTCCAGGCGGGAATCCCGCT
+
+control_aln_window                  --------------------------------------------------
+edited                              TCTGTGTCTCCAGTCGACCGTGTGATGAGAAGATAATGGATTTGATGGAA
+
+control_aln_window                  --------------------------------------------------
+edited                              CAAAACGAAGTGGAACAGCCGCAGCGGAAGGTGGTCATCCTGAGACAGGA
+
+control_aln_window                  --------------------------------------------------
+edited                              CATGTTCTACAATGACCTGACAGCAGAACACAAGGCCATTGCCTTGAAAG
+
+control_aln_window                  --------------------------------------------------
+edited                              GACAATTTTTTTTTGACCATCCAAGTAAATCCCCAGCCCAATGAGGAGGG
+
+control_aln_window                  --------------------------------------------------
+edited                              GAGAGCACACTCTGTTCGGGGCCGCCGCTAATCCGCTGGGCTTGGGCCCA
+
+control_aln_window                  --------------------------------------------------
+edited                              GGGTTGAATGGAAGCAGACCGGGTTGTGCTGCCCCCCCACCTCGCCACCC
+
+control_aln_window                  --------------------------------------------------
+edited                              GCCCTGCAGTGGAGTTCGCTGCAAAGTGAAGTCAAGTTAACTTTGCTGAC
+
+control_aln_window                  --------------------------------------------------
+edited                              TTCTCTGGGCCCGGACCGCCCCCACAGGAGCGTGATTGGAGCCAGACACG
+
+control_aln_window                  --------------------------------------------------
+edited                              AGTCCTGTTGTGCTGAGGCCAGCCCTGCCCTGCCCTGCCACAAATGTGAT
+
+control_aln_window                  ----------------
+edited                              ANNGAANNNCACANCA
+
+
+

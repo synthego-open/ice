@@ -1,0 +1,39 @@
+
+control_aln_window                  -----NNTNNAGAGCTGACAA-TCATGACCCATTTTGAGATTTCATACCA
+edited                              NCNNNNNNNNANAGCTGACAAATCATGACCCATTTTGAGATTTCATACCA
+
+control_aln_window                  GGTTTCATGAAAATTAAACCTAAAATCAAGAAAAGAAGTTGAAAACTCAG
+edited                              GGTTTCATGAAAATTAAACCTAAAATCAAGAAAAGAAGTTGAAAACTCAG
+
+control_aln_window                  TGTGCATTAAACACCAAATTCTGGTTATAATTTACAACTGTTACTTACAC
+edited                              TGTGCATTAAACACCAAATTCTGGTTATAATTTACAACTGTTACTTACAC
+
+control_aln_window                  TGACTGGATCCAGAATTTTCACTGCAGCCAGGCTCCCATCTCTCTTGTTA
+edited                              TGACTGGATCCAGAATTTTCACTGCAGCCAGGCTCCCATCTCTCTTGTTA
+
+control_aln_window                  GTTACCTTGTAGACTTTGCCATAGGTGCCTTTACCAATGGTCTCTATAAT
+edited                              GTTACCTTGTAGACTTTGCCATAGGTGCCTTTACCAATGGTCTCTATAAT
+
+control_aln_window                  TTCCCAGGTGTCT-------------------------------------
+edited                              TTCCCAGGTGTCTGTGGGATCTGGAAGTGATTCAAGTCCAAGCATCATAA
+
+control_aln_window                  --------------------------------------------------
+edited                              GAATATAGTGAAATAATCCATACAGATGTTTCCTGGTTGGGGGAAAAATT
+
+control_aln_window                  --------------------------------------------------
+edited                              TGTTATGTGCAAAAAAACAAAAAACTGGGGGCAGTGGAATTTTGAAACAA
+
+control_aln_window                  --------------------------------------------------
+edited                              AAAGATTTTTATTTCTTAACCAACAACCTCATGTTACTTTTTATTTTCTT
+
+control_aln_window                  --------------------------------------------------
+edited                              CCTCTATTGTAAATAAATTTTTTGAAAAAAAACTTGGACCCTCCTTAAAA
+
+control_aln_window                  --------------------------------------------------
+edited                              AATGGTAATAAAAGAAAGAGTGGAAGAATAACATGGCTCTTNAAACATAA
+
+control_aln_window                  ----
+edited                              NNAA
+
+
+

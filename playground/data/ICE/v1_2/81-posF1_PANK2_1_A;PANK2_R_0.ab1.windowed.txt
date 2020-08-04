@@ -1,0 +1,39 @@
+
+control_aln_window                  -------GCANGCATGTCATGAGTGGGAAGCGTATAAAGTGCAGATTGCC
+edited                              NNNNNNNNNCNGCATGTCATGAGTGGGAAGCGTATAAAGTGCAGATTGCC
+
+control_aln_window                  TTTGCGTCCACACAGAGTCAGGTCCTTCAGCTCGAGGTGCACGTCCCGAA
+edited                              TTTGCGTCCACACAGAGTCAGGTCCTTCAGCTCGAGGTGCACGTCCCGAA
+
+control_aln_window                  TGCCTGTAGACCCATAAGCCACATTGGAGGTCAGGTACTTCCGAATGCTT
+edited                              TGCCTGTAGACCCATAAGCCACATTGGAGGTCAGGTACTTCCGAATGCTT
+
+control_aln_window                  TTAAGACTTTCCACTTCTTCCTCTTCTTCTTCAGCAGTGATGTCTTTGGG
+edited                              TTAAGACTTTCCACTTCTTCCTCTTCTTCTTCAGCAGTGATGTCTTTGGG
+
+control_aln_window                  TTCAAAATATACCAGCTTGACCAG--------------------------
+edited                              TTCAAAATATACCAGCTTGACCAGAGTTCCACCGATATCCAGTCCAAACC
+
+control_aln_window                  --------------------------------------------------
+edited                              ATGGAAAAAACTAAGGGGGGAAAAAAAAAAATTCAAAACATTTTTTTTCT
+
+control_aln_window                  --------------------------------------------------
+edited                              GAAAATTAATTTTCCCCTTACCACAGTAACAACTTATTTCAAACGCTGGG
+
+control_aln_window                  --------------------------------------------------
+edited                              GTTTCCAAAAAACAAAATTCTGGGGAAAAGGGTTTGGGGGAAAAAAAATG
+
+control_aln_window                  --------------------------------------------------
+edited                              TGATTCTGTCTTGATTTAAATGCAAAACTTAAAAAAAAAATACTACGGAA
+
+control_aln_window                  --------------------------------------------------
+edited                              AAAAAAAAAAAAAAAAATATCAAAGTTTTGACCCCCCCCACCCTTCCTGT
+
+control_aln_window                  --------------------------------------------------
+edited                              CAAAAAAGCGAAAACCGTATTATAAAGTGTTTTAAAAAAAACAAAATGAC
+
+control_aln_window                  ------------------------------
+edited                              CCCCCGAAACCCCAAAAAGNAAAAAAAAAN
+
+
+
