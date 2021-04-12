@@ -1226,8 +1226,8 @@ class SangerAnalysis:
 
         editing_efficiency = (1.0 - unedited_percent)
 
-
-
+        # indel dict is all non zero indels
+        indel_dict={x:y for x,y in aggregated_indel.items() if y!=0}
 
         if self.debug:
             print(aggregated_indel)
@@ -1237,6 +1237,7 @@ class SangerAnalysis:
         self.results.contribs = sorted_by_contribution
         self.results.edit_eff = editing_efficiency
         self.results.hdr_percentage = hdr_percentage
+        self.results.indel_dict=indel_dict
 
     #############################
 
