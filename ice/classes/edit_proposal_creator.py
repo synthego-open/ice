@@ -148,8 +148,9 @@ class EditProposalCreator:
         ep = EditProposal()
         ep.sequence_data = proposal_bases
         ep.cutsite = cutsites[0]
-        ep.cutsite2 =cutsites[1]
-        if len(cutsites)==3:
+        if len(cutsites) >1:
+            ep.cutsite2 =cutsites[1]
+        if len(cutsites)>2:
             ep.cutsite3 = cutsites[2]
 
         ep.bases_changed = -total_deleted
