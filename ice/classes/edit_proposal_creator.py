@@ -30,7 +30,7 @@ from ice.classes.edit_proposal import EditProposal
 from ice.classes.pair_alignment import DonorAlignment, PairAlignment
 from ice.classes.proposal_base import ProposalBase
 from ice.utility.sequence import reverse_complement
-
+from Bio import pairwise2
 
 class EditProposalCreator:
     MIN_HOMOLOGY_ARM = 15
@@ -130,6 +130,42 @@ class EditProposalCreator:
                                'details': []}
             ep.trace_data = proposal_trace
         return ep
+
+
+    def allele_proposal(self,sequence,total_deleted,proposal_trace,control_sequence,cutsites):
+        proposal_bases=[]
+        for idx, base in enumerate(control_sequence):
+            if sequence[idx] == '-':
+                proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)
+            if sequence[idx]=='n':
+                proposal_base = ProposalBase('n', ProposalBase.INSERTION, idx)
+            else:
+                proposal_base = ProposalBase(sequence[idx], ProposalBase.WILD_TYPE, idx)
+
+
+            proposal_bases.append(proposal_base)
+
+        ep = EditProposal()
+        ep.sequence_data = proposal_bases
+        ep.cutsite = cutsites[0]
+        if len(cutsites) >1:
+            ep.cutsite2 =cutsites[1]
+        if len(cutsites)>2:
+            ep.cutsite3 = cutsites[2]
+
+        ep.bases_changed = -total_deleted
+
+        ep.summary = '{}:{}'.format(-total_deleted, 'allele')
+        summary_json = {}
+        summary_json['total'] = ep.bases_changed
+        summary_json['details'] = []
+
+        summary_json['details'].append({'label': 'dropout', 'value': total_deleted})
+        ep.summary_json = summary_json
+        ep.trace_data = proposal_trace
+
+        return ep
+
 
     def multiplex_proposal(self, cutsite1, cutsite2, label1, label2, cut1_del=(0, 0), cut1_ins=0, cut2_del=(0, 0),
                            cut2_ins=0, dropout=False):
@@ -289,7 +325,6 @@ class EditProposalCreator:
                 summary_json['details'].append({'label': 'dropout', 'value': cutsite1 - cutsite2})
             ep.summary_json = summary_json
             ep.trace_data = proposal_trace
-            ep.trace_data = proposal_trace
         # the intervening sequence is dropped out and no bases inserted or deleted
         else:
             if dropout:
@@ -396,3 +431,120 @@ class EditProposalCreator:
         else:
             raise Exception(
                 "Homology arms of length {} not found in control sequence".format(self.__class__.MIN_HOMOLOGY_ARM))
+
+
+    def aligned_sequence_edit_proposal(self, allele, inference_window):
+
+        proposal_bases = []
+        proposal_trace = []
+        # Translate alignments to proposals
+        ep = EditProposal()
+
+        match = 4
+        mismatch = -2
+        gapopen = -6
+        gapextend = -.1
+
+
+
+        alignment = pairwise2.align.globalms(allele, self.wt_basecalls, match, mismatch, gapopen,gapextend, penalize_end_gaps=False)[0]
+        offset = alignment[1][0:inference_window[0]].count('-')
+        deleted_bases = [i + offset for i, c in enumerate(alignment[0]) if c == '-']
+        inserted_bases = [i + offset for i, c in enumerate(alignment[1]) if c == '-']
+
+        n_deleted = 0
+        n_inserted = 0
+        #final_seq = ''
+        for idx, base in enumerate(self.wt_basecalls):
+
+            # if base is deleted
+            if idx in deleted_bases and idx in range(inference_window[0],inference_window[1]):
+                proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)
+                n_deleted += 1
+            # if base is inserted
+            elif idx in inserted_bases and idx in range(inference_window[0],inference_window[1]):
+                proposal_base = ProposalBase('n', ProposalBase.INSERTION, idx)
+                for base_index, base in enumerate(self.base_order):
+                    proposal_trace.append(0.25)
+                n_inserted += 1
+                #final_seq = final_seq + 'n'
+
+            else:
+                proposal_base = ProposalBase(base, ProposalBase.WILD_TYPE, idx)
+                for base_index, base_color in enumerate(self.base_order):
+                    proposal_trace.append(self.wt_trace[base_color][idx])
+                #final_seq = final_seq + base
+            proposal_bases.append(proposal_base)
+
+        ep.sequence_data = proposal_bases
+        ep.trace_data = proposal_trace
+        ep.bases_changed = (n_inserted - n_deleted)
+        ep.summary = '{}[{}]'.format((n_inserted - n_deleted), 'agnostic')
+        ep.summary_json = {'total': ep.bases_changed,
+                           'details': [{'label': 'agnostic', 'value': ep.bases_changed}]}
+        ep.cutsite = 0
+
+        return ep
+    
+    '''
+            # deletion case
+            if del_before > 0 or del_after > 0:
+                deleted_bases = [cutsite - i for i in range(del_before)] + [cutsite + i + 1 for i in range(del_after)]
+                for idx, base in enumerate(self.wt_basecalls):
+                    if idx in deleted_bases:
+                        proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)
+                    else:
+                        proposal_base = ProposalBase(base, ProposalBase.WILD_TYPE, idx)
+                        for base_index, base_color in enumerate(self.base_order):
+                            proposal_trace.append(self.wt_trace[base_color][idx])
+                    proposal_bases.append(proposal_base)
+                ep = EditProposal()
+                ep.sequence_data = proposal_bases
+                ep.cutsite = cutsite
+                ep.bases_changed = -(del_before + del_after)
+                ep.summary = '{}[{}]'.format(-(del_before + del_after), label)
+                ep.summary_json = {'total': ep.bases_changed,
+                                   'details': [{'label': label, 'value': ep.bases_changed}]}
+                ep.trace_data = proposal_trace
+            # insertion case
+            elif insertion > 0:
+                for idx, base in enumerate(self.wt_basecalls):
+                    if idx == cutsite:
+    
+                        proposal_bases.append(ProposalBase(base, ProposalBase.WILD_TYPE, idx))
+                        for base_index, base_color in enumerate(self.base_order):
+                            proposal_trace.append(self.wt_trace[base_color][idx])
+                        for i in range(insertion):
+    
+                            proposal_bases.append(ProposalBase('n', ProposalBase.INSERTION, idx))
+                            for base_index, base in enumerate(self.base_order):
+                                proposal_trace.append(0.25)
+                    else:
+                        proposal_bases.append(ProposalBase(base, ProposalBase.WILD_TYPE, idx))
+                        for base_index, base_color in enumerate(self.base_order):
+                            proposal_trace.append(self.wt_trace[base_color][idx])
+                ep = EditProposal()
+                ep.sequence_data = proposal_bases
+                ep.cutsite = cutsite
+                ep.bases_changed = insertion
+                ep.summary = '{}[{}]'.format(insertion, label)
+                ep.summary_json = {'total': ep.bases_changed,
+                                   'details': [{'label': label, 'value': ep.bases_changed}]}
+                ep.trace_data = proposal_trace
+            # wildtype case
+            else:
+                for idx, base in enumerate(self.wt_basecalls):
+                    proposal_base = ProposalBase(base, ProposalBase.WILD_TYPE, idx)
+                    proposal_bases.append(proposal_base)
+                    for base_index, base_color in enumerate(self.base_order):
+                        proposal_trace.append(self.wt_trace[base_color][idx])
+                ep = EditProposal(wildtype=True)
+                ep.sequence_data = proposal_bases
+                ep.cutsite = cutsite
+                ep.bases_changed = 0
+                ep.summary = '0[{}]'.format(label)
+                ep.summary_json = {'total': ep.bases_changed,
+                                   'details': []}
+                ep.trace_data = proposal_trace
+            return ep
+    '''
