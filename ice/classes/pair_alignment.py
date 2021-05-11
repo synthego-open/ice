@@ -77,7 +77,7 @@ class PairAlignment:
         my_aln = ">{}\n".format(name1) + aln[0] + "\n" + ">{}\n".format(name2) + aln[1]
         f = StringIO(my_aln)
         aln_objs = list(AlignIO.parse(f, "fasta"))
-        alignment_txt = aln_objs[0].format("clustal").split('\n', 2)[2]
+        alignment_txt = format(aln_objs[0],"clustal").split('\n', 2)[2]
         return alignment_txt
 
     def align_all(self):

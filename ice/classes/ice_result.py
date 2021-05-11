@@ -41,6 +41,7 @@ class ICEResult:
         self.r_squared = None
         self.hdr_percentage = None
         self.ko_score= None
+        self.contrib_dict=None
 
     def to_json(self, guide_targets, warnings):
 
@@ -65,6 +66,13 @@ class ICEResult:
             results['rsq'] = round(self.r_squared, 2)
         else:
             results['rsq'] = None
+
+        if self.contrib_dict is not None:
+            results['contrib_dict'] = self.contrib_dict
+        else:
+            results['contrib_dict'] = None
+
+
 
         results['hdr_pct'] = self.hdr_percentage
         results['ko_score'] = self.ko_score

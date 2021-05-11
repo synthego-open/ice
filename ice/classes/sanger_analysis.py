@@ -847,7 +847,7 @@ class SangerAnalysis:
         unedited_percent = aggregated_indel[0] + (1 - self.results.r_squared)
 
         editing_efficiency = (1.0 - unedited_percent)
-
+        contrib_dict = {x: y for x, y in aggregated_indel.items() if y != 0}
 
 
 
@@ -859,6 +859,7 @@ class SangerAnalysis:
         self.results.contribs = sorted_by_contribution
         self.results.edit_eff = editing_efficiency
         self.results.hdr_percentage = hdr_percentage
+        self.results.contrib_dict=contrib_dict
 
     #############################
 

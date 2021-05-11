@@ -5,7 +5,7 @@ import logging
 
 
 class ShiftProposals:
-    filter_len=200
+    filter_len=100
     def __init__(self,control_peaks,edited_peaks,mapping):
         self.base_order='ATCG'
         self.mapping=mapping
