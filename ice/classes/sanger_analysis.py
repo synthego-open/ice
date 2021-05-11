@@ -45,6 +45,7 @@ from ice.outputs.create_discordance_indel_files import generate_discordance_inde
 from ice.outputs.create_json import write_individual_contribs, write_contribs_json, write_all_proposals_json
 from ice.outputs.create_trace_files import generate_trace_files
 from ice.utility.sequence import RNA2DNA, reverse_complement
+from ice.classes.shift_proposals import ShiftProposals
 def round_percent(orig_array,r_squared):
     # Scale the array by 100 in order to work with np.floor
     scaled_array=np.array([x*100 for x in orig_array])
@@ -547,10 +548,88 @@ class SangerAnalysis:
                 if dropout_and_insert:
                     proposals.append(dropout_and_insert)
 
+        # Add shift proposals
+        shifter=ShiftProposals(self.control_sample.get_peak_values(),
+                                       self.edited_sample.get_peak_values(),
+                                       self.alignment.control_to_sample)
+
+        deletions=np.asarray(shifter.find_deletions())
+        print(f'deletions found : {deletions}')
+
+        # cutsites=[guide.cutsite for guide in self.guide_targets]
+        # dropout_sizes=np.diff(cutsites)
+
+        dropout_dict={}
+        for combo in combinations(self.guide_targets, 2):
+            dropout_size=combo[1].cutsite-combo[0].cutsite
+            dropout_dict[dropout_size]=combo
+        deletion_sizes = list(dropout_dict.keys())
+
+
+
+        for deletion in deletions:
+            # find the closet guide to both
+
+            nearest_index=(np.abs(np.asarray(deletion_sizes) - deletion)).argmin()
+            g1,g2=dropout_dict[deletion_sizes[nearest_index]]
+
+            deletion_delta=deletion-deletion_sizes[nearest_index]
+
+            default_dels=[0,deletion_delta]
+
+
+            sweep_range=np.arange(-10,11)
+
+            left_offset=sweep_range-default_dels[0]
+            right_offset=default_dels[1]-sweep_range
+
+            for r in np.arange(len(sweep_range)):
+                '''
+                r is how many shifts to the left  this is
+                
+                How do we deal with the shifting indels:
+                we see there are two values for each cutsite
+                cut1=(additional_deletions,0)
+                cut2=(0,additional_deletions)
+
+                for the additional deletions values, those can either be positive or negative. If they're positive, that
+                means you're deleting, if they're negative they're "insertion like" in the sense that you're moving
+                the cutsite away
+                
+                
+                '''
+
+                cut1_del=(int(left_offset[r]),0)
+                cut2_del = (0, int(right_offset[r]))
+                dropout = epc.multiplex_proposal(
+                    g1.cutsite,
+                    g2.cutsite,
+                    g1.label,
+                    g2.label,
+                    cut1_del=cut1_del, cut2_del=cut2_del,
+                    dropout=True
+                )
+                proposals.append(dropout)
+
+
+
+
+
+
+        # compute deletion sizes
+
+        # map to reference
+
+        # create
 
         #removing degenerate proposals
         seen=[]
         self.proposals = list(filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
+
+
+
+
+
 
 
     def _generate_coefficient_matrix(self):

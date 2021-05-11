@@ -30,7 +30,7 @@ from ice.classes.edit_proposal import EditProposal
 from ice.classes.pair_alignment import DonorAlignment, PairAlignment
 from ice.classes.proposal_base import ProposalBase
 from ice.utility.sequence import reverse_complement
-
+import numpy as np
 
 class EditProposalCreator:
     MIN_HOMOLOGY_ARM = 15
@@ -169,7 +169,7 @@ class EditProposalCreator:
         # for cut2 allow all deletions after
         # for cut1 deletions after, stop if cut2 reached
         # for cut2 deletions before, stop if cut1 reached
-        if cut1_del != (0, 0) and cut2_del != (0, 0):
+        if cut1_del != (0, 0) or cut2_del != (0, 0):
             # TODO, this should also handle the straight dropout case w/ no extra deletions
             if dropout:
                 # zero out deletions between cutsites because dropout logic will take these deleted bases into account
@@ -184,6 +184,12 @@ class EditProposalCreator:
             cut2 = (cutsite2, cut2_del_before, cut2_del[1])
             for cutsite, del_before, del_after in [cut1, cut2]:
                 deleted_bases += [cutsite - i for i in range(del_before)] + [cutsite + i + 1 for i in range(del_after)]
+                ## if deleted bases is positive, we shift
+                if  del_before<0 or del_after<0:
+                    for x in [cutsite - i  for i in np.arange(del_before,0)]+[cutsite + i +1 for i in np.arange(del_after, 0)]:
+                        if x in deleted_bases:
+                            deleted_bases.remove(x)
+
 
             for idx, base in enumerate(self.wt_basecalls):
                 if idx in deleted_bases:
@@ -205,7 +211,7 @@ class EditProposalCreator:
             ep.sequence_data = proposal_bases
             ep.cutsite = cutsite1
             ep.cutsite2 = cutsite2
-            total_deleted = -cut1_del[0] - cut1_del_after - cut2_del_before - cut2_del[1]
+            total_deleted = -cut1_del[0]-cut1_del[1] - cut1_del_after - cut2_del_before - cut2_del[1]-cut2_del[0]
             if dropout:
                 total_deleted += -(cutsite2 - cutsite1)
             ep.bases_changed = total_deleted
