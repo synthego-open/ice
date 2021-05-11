@@ -2,25 +2,32 @@ import numpy as np
 from scipy.signal import find_peaks
 import ruptures as rpt
 import logging
+from itertools import combinations
 
 
 class ShiftProposals:
-    filter_len=100
-    def __init__(self,control_peaks,edited_peaks,mapping):
+
+    filter_len=20
+    sweep_range= np.arange(-30, 31)
+
+    def __init__(self,
+                 control_peaks:dict,
+                 edited_peaks:dict,
+                 mapping:dict,
+                 epc=None,
+                 guide_targets=None):
+
         self.base_order='ATCG'
         self.mapping=mapping
         self.edit_array=self._remap(edited_peaks,list(mapping.values()),self.base_order)
         self.control_array=self._remap(control_peaks,list(mapping.keys()),self.base_order)
-        self.offset=self._compute_offset(list(mapping.values()),list(mapping.keys()))
+        self.epc=epc
+        self.guide_targets=guide_targets
+
+
 
     @staticmethod
-    def _compute_offset(ctrl,edit):
-        ctrl_idx = np.array(list(ctrl)).astype(np.float)
-        exp_idx= np.array(list(edit)).astype(np.float)
-        return np.nanmedian(ctrl_idx-exp_idx)
-
-    @staticmethod
-    def _remap(peaks,mapping,base_order):
+    def _remap(peaks,mapping,base_order) -> np.ndarray:
 
         peak_array = np.array([peaks[base] for base in base_order]).astype(np.float)
 
@@ -43,7 +50,7 @@ class ShiftProposals:
 
         return aligned_array
 
-    def _compute_discordance(self):
+    def _compute_discordance(self) -> None:
         discord = np.sum(abs(self.control_array - self.edit_array), axis=1).ravel()
         self.discordance=discord
 
@@ -55,10 +62,9 @@ class ShiftProposals:
             logging.warning('no discordance change points detected')
         else:
             self.changpoint=min(changepoints)
-        return self.changpoint
 
 
-    def _create_filters(self):
+    def _create_filters(self) -> None:
 
         # create filterstack from the right hand side all the way to the discordance point
         #TODO filter is protected namespace// plz fix
@@ -75,7 +81,7 @@ class ShiftProposals:
         self.filter_stack=filter_stack
 
 
-    def _compute_single_convolution(self):
+    def _compute_single_convolution(self) -> None:
         convolved = np.zeros((self.edit_array.shape[-1]))
         filter=self.filter_stack[0]
         for idx in range(self.edit_array.shape[-1]):
@@ -84,12 +90,12 @@ class ShiftProposals:
                 padded = np.zeros((4, self.filter_len))
                 padded[:, -edit_slice.shape[-1]:] = edit_slice
 
-                convolved[idx] = np.sum(filter * padded)
+                convolved[idx] = np.sum(filter * padded)/self.filter_len
             else:
-                convolved[idx] = np.sum(filter * edit_slice)
+                convolved[idx] = np.sum(filter * edit_slice)/self.filter_len
         self.single_convolution = convolved
 
-    def _compute_convolution_stack(self):
+    def _compute_convolution_stack(self) -> None:
 
         convolution_stack = {}
         for key, filter in self.filter_stack.items():
@@ -102,9 +108,9 @@ class ShiftProposals:
                     padded = np.zeros((4, self.filter_len))
                     padded[:, -edit_slice.shape[-1]:] = edit_slice
 
-                    convolved[idx] = np.sum(filter * padded)
+                    convolved[idx] = np.sum(filter * padded)/self.filter_len
                 else:
-                    convolved[idx] = np.sum(filter * edit_slice)
+                    convolved[idx] = np.sum(filter * edit_slice)/self.filter_len
             convolution_stack[key] = convolved
 
 
@@ -114,32 +120,118 @@ class ShiftProposals:
         self.convolution_stack = np.asarray(convolution_stack_array)
 
 
-
-    def find_deletions(self):
+    def _find_deletions_from_stack(self) -> np.ndarray:
         self._compute_discordance()
         self._create_filters()
-        self._compute_single_convolution()
+        self._compute_convolution_stack()
+        rolled_stack = np.roll(self.convolution_stack, self.filter_len)
 
-        peak_locs=find_peaks(self.single_convolution,prominence=25)[0]
-        edit_len=self.edit_array.shape[-1]
+        variance_stack = np.std(rolled_stack, axis=0)
+        edit_len = self.edit_array.shape[-1]
+        return edit_len-variance_stack.argsort()[-10:][::-1]
 
-        deletion_sizes=[]
-        for peak_loc in peak_locs:
-            deletion_sizes.append(edit_len - peak_loc - self.filter_len)
 
-        self.deletion_sizes=deletion_sizes
-        return deletion_sizes
 
-    def compute_change_ranges(self):
-        starts=self._compute_discordance()
-        self._create_filters()
-        self._compute_convolution()
-        deletions=self.find_deletions()
-        combinations = []
 
-        for start in starts:
-            for deletion in deletions:
-                combinations.append([start-self.offset, start-self.offset + deletion])
 
-        return combinations
 
+    def get_multiguide_proposals(self) -> list:
+        '''
+        This method generates a list of proposals based around MG dropout locations and the
+        :return:
+        '''
+
+        deletions = np.asarray(self._find_deletions_from_stack())
+
+        print(f'deletions found : {deletions}')
+
+        dropout_dict = {}
+
+        for combo in combinations(self.guide_targets, 2):
+            dropout_size = combo[1].cutsite - combo[0].cutsite
+            dropout_dict[dropout_size] = combo
+
+        deletion_sizes = list(dropout_dict.keys())
+        mg_proposals=[]
+
+        for deletion in deletions:
+            # find the closet guide to both
+
+            nearest_index = (np.abs(np.asarray(deletion_sizes) - deletion)).argmin()
+            g1, g2 = dropout_dict[deletion_sizes[nearest_index]]
+
+            deletion_delta = deletion - deletion_sizes[nearest_index]
+
+            default_dels = [0, deletion_delta]
+
+
+
+            left_offset = self.sweep_range - default_dels[0]
+            right_offset = default_dels[1] - self.sweep_range
+
+            for r in np.arange(len(self.sweep_range)):
+                '''
+                r is how many shifts to the left  this is
+
+                How do we deal with the shifting indels:
+                we see there are two values for each cutsite
+                cut1=(additional_deletions,0)
+                cut2=(0,additional_deletions)
+
+                for the additional deletions values, those can either be positive or negative. If they're positive, that
+                means you're deleting, if they're negative they're "insertion like" in the sense that you're moving
+                the cutsite away
+
+
+                '''
+                cut1_del = (int(left_offset[r]), 0)
+                cut2_del = (0, int(right_offset[r]))
+                dropout = self.epc.multiplex_proposal(
+                    g1.cutsite,
+                    g2.cutsite,
+                    g1.label,
+                    g2.label,
+                    cut1_del=cut1_del, cut2_del=cut2_del,
+                    dropout=True
+                )
+                mg_proposals.append(dropout)
+
+        return mg_proposals
+
+
+
+    def get_singleguide_proposals(self) -> list:
+        '''
+        This method generates a list of proposals based around MG dropout locations and the
+        :return:
+        '''
+
+        deletions = np.asarray(self._find_deletions_from_stack())
+
+        print(f'deletions found : {deletions}')
+
+
+        sg_proposals=[]
+
+        for deletion in deletions:
+            # find the closet guide to both
+
+            default_dels = [0, deletion]
+
+            left_offset = self.sweep_range - default_dels[0]
+            right_offset = default_dels[1] - self.sweep_range
+
+            for r in np.arange(len(self.sweep_range)):
+                '''
+                This is 
+
+                '''
+                cut1_del = (int(left_offset[r]), int(right_offset[r]))
+
+                shift_cut=self.epc.single_cut_edit_proposal(self.guide_targets[0].cutsite,
+                                             self.guide_targets[0].label,
+                                             del_before=cut1_del[0], del_after=cut1_del[1])
+
+                sg_proposals.append(shift_cut)
+
+        return sg_proposals
