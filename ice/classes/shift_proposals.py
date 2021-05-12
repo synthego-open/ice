@@ -1,8 +1,8 @@
 import numpy as np
-from scipy.signal import find_peaks
 import ruptures as rpt
 import logging
 from itertools import combinations
+np.seterr(divide='ignore')
 
 
 class ShiftProposals:
@@ -16,7 +16,8 @@ class ShiftProposals:
                  edited_peaks:dict,
                  mapping:dict,
                  epc=None,
-                 guide_targets=None):
+                 guide_targets=None,
+                 changpoint=None):
 
         self.base_order='ATCG'
         self.mapping=mapping
@@ -24,6 +25,7 @@ class ShiftProposals:
         self.control_array=self._remap(control_peaks,list(mapping.keys()),self.base_order)
         self.epc=epc
         self.guide_targets=guide_targets
+        self.changpoint=changpoint
 
 
 
@@ -45,7 +47,8 @@ class ShiftProposals:
         aligned_array = np.take(peak_array, indxs, axis=2)
 
         #normalize peaks
-        aligned_array = (aligned_array / np.sum(aligned_array, axis=1))
+        with np.errstate(divide='ignore', invalid='ignore'):
+            aligned_array = (aligned_array / np.sum(aligned_array, axis=1))
         aligned_array[np.isnan(aligned_array)]=0
 
 
@@ -125,7 +128,8 @@ class ShiftProposals:
 
 
     def _find_deletions_from_stack(self) -> np.ndarray:
-        self._compute_discordance()
+        if self.changpoint is None:
+            self._compute_discordance()
 
         if self.changpoint is not None:
             self._create_filters()

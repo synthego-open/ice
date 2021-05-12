@@ -560,7 +560,8 @@ class SangerAnalysis:
                                        self.edited_sample.get_peak_values(),
                                        self.alignment.control_to_sample,
                                         epc=epc,
-                                        guide_targets=self.guide_targets)
+                                        guide_targets=self.guide_targets,
+                                        changpoint=self.alignment_window[1])
 
         if len(self.guide_targets)>1:
 
