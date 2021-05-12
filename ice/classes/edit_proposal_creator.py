@@ -73,6 +73,12 @@ class EditProposalCreator:
         # deletion case
         if del_before > 0 or del_after > 0:
             deleted_bases = [cutsite - i for i in range(del_before)] + [cutsite + i + 1 for i in range(del_after)]
+            if del_before < 0 or del_after < 0:
+                for x in [cutsite - i for i in np.arange(del_before, 0)] + [cutsite + i + 1 for i in
+                                                                            np.arange(del_after, 0)]:
+                    if x in deleted_bases:
+                        deleted_bases.remove(x)
+
             for idx, base in enumerate(self.wt_basecalls):
                 if idx in deleted_bases:
                     proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)

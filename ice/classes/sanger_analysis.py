@@ -810,6 +810,7 @@ class SangerAnalysis:
         self.results.edit_eff = editing_efficiency
         self.results.hdr_percentage = hdr_percentage
         self.results.contrib_dict=contrib_dict
+        self.results.inference_window_length=self.inference_window_length
 
     #############################
 

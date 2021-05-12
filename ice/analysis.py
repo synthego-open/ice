@@ -153,10 +153,14 @@ def multiple_sanger_analysis(definition_file, output_dir,
     :return:
     '''
 
+    filename, file_extension = os.path.splitext(definition_file)
+    if file_extension == '.xlsx':
+        input_df = pd.read_excel(definition_file)
+    elif file_extension == '.csv':
+        input_df = pd.read_csv(definition_file)
+    else:
+        raise Exception('Unrecognized File mapping!')
 
-
-
-    input_df = pd.read_excel(definition_file)
 
     input_df = input_df.rename(columns={"Donor Sequence": "Donor", "Control": "Control File", "Experiment": "Experiment File"})
 
@@ -227,7 +231,7 @@ def multiple_sanger_analysis(definition_file, output_dir,
             donor = None
 
         if r is not None:
-            tmp = [experiment['Label'], r['ice'], r['ice_d'], r['rsq'], r['hdr_pct'],r['contrib_dict'],r['ko_score'], r['guides'],
+            tmp = [experiment['Label'], r['ice'], r['ice_d'], r['rsq'], r['hdr_pct'],r['contrib_dict'],r['inference_window_length'],r['ko_score'], r['guides'],
                    r['notes'], experiment['Experiment File'], experiment['Control File'], donor]
         else:
             tmp = [experiment['Label'], 'Failed', '', '', '', '', '', '', '', '']
@@ -239,7 +243,7 @@ def multiple_sanger_analysis(definition_file, output_dir,
         timestamp = '{:%Y-%m-%d-%H%M%S}'.format(datetime.datetime.now())
         out_file = os.path.join(output_dir, "ice.results.{}.xlsx".format(timestamp))
 
-        header = ["sample_name", "ice", 'ice_d', "r_squared", "hdr_pct","contrib_dict","ko_score", "guides", "notes",
+        header = ["sample_name", "ice", 'ice_d', "r_squared", "hdr_pct","contrib_dict","inference_window_length","ko_score", "guides", "notes",
                   "experiment_file", "control_file", "donor"]
         input_df.columns = header
         # to json

@@ -42,6 +42,7 @@ class ICEResult:
         self.hdr_percentage = None
         self.ko_score= None
         self.contrib_dict=None
+        self.inference_window_length=None
 
     def to_json(self, guide_targets, warnings):
 
@@ -72,6 +73,11 @@ class ICEResult:
         else:
             results['contrib_dict'] = None
 
+
+        if self.inference_window_length is not None:
+            results['inference_window_length'] = self.inference_window_length
+        else:
+            results['inference_window_length'] = None
 
 
         results['hdr_pct'] = self.hdr_percentage

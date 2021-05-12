@@ -7,8 +7,9 @@ from itertools import combinations
 
 class ShiftProposals:
 
-    filter_len=20
+    filter_len=50
     sweep_range= np.arange(-30, 31)
+    sg_sweep_range= np.arange(-50, 51)
 
     def __init__(self,
                  control_peaks:dict,
@@ -57,10 +58,13 @@ class ShiftProposals:
         algo = rpt.Pelt(model="rbf").fit(discord.ravel())
         changepoints = algo.predict(pen=10)
 
-        changepoints.pop(len(self.edit_array))
+
         if len(changepoints)==0:
             logging.warning('no discordance change points detected')
+            self.changpoint=None
         else:
+            if len(self.edit_array) in changepoints:
+                changepoints.pop(len(self.edit_array))
             self.changpoint=min(changepoints)
 
 
@@ -122,13 +126,17 @@ class ShiftProposals:
 
     def _find_deletions_from_stack(self) -> np.ndarray:
         self._compute_discordance()
-        self._create_filters()
-        self._compute_convolution_stack()
-        rolled_stack = np.roll(self.convolution_stack, self.filter_len)
 
-        variance_stack = np.std(rolled_stack, axis=0)
-        edit_len = self.edit_array.shape[-1]
-        return edit_len-variance_stack.argsort()[-10:][::-1]
+        if self.changpoint is not None:
+            self._create_filters()
+            self._compute_convolution_stack()
+            rolled_stack = np.roll(self.convolution_stack, self.filter_len)
+
+            variance_stack = np.std(rolled_stack, axis=0)
+            edit_len = self.edit_array.shape[-1]
+            return edit_len-variance_stack.argsort()[-10:][::-1]
+        else:
+            return []
 
 
 
@@ -208,6 +216,8 @@ class ShiftProposals:
 
         deletions = np.asarray(self._find_deletions_from_stack())
 
+        # for singleplex we only tolerate deletions greater less than 60
+        deletions=deletions[deletions<60]
         print(f'deletions found : {deletions}')
 
 
@@ -218,10 +228,10 @@ class ShiftProposals:
 
             default_dels = [0, deletion]
 
-            left_offset = self.sweep_range - default_dels[0]
-            right_offset = default_dels[1] - self.sweep_range
+            left_offset = self.sg_sweep_range - default_dels[0]
+            right_offset = default_dels[1] - self.sg_sweep_range
 
-            for r in np.arange(len(self.sweep_range)):
+            for r in np.arange(len(self.sg_sweep_range)):
                 '''
                 This is 
 
