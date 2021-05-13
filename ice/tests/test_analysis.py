@@ -344,7 +344,7 @@ def test_multiplex_three_guides(temp_dir, data_dir):
     pp(results)
 
     assert results['status'] == 'succeeded'
-    assert results['ice'] == 63
+    assert results['ice'] == 79
     assert len(results['guides']) == 3
 
 

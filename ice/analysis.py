@@ -36,7 +36,7 @@ import json
 
 from ice.classes.ice_result import ICEResult
 from ice.classes.sanger_analysis import SangerAnalysis
-from ice.utility.misc import version
+from ice.utility.misc import version,NpEncoder
 from ice.utility.sequence import is_nuc_acid
 
 from .__version__ import __version__
@@ -254,7 +254,7 @@ def multiple_sanger_analysis(definition_file, output_dir,
                 row[c] = r[idx]
             out_dict.append(row)
         with open(out_file.replace('.xlsx', '.json'), 'w') as f:
-            json.dump(out_dict, f, ensure_ascii=False)
+            json.dump(out_dict, f, ensure_ascii=False,cls=NpEncoder)
 
         with pd.ExcelWriter(out_file) as writer:
             input_df.to_excel(writer, sheet_name="Results")
@@ -263,6 +263,7 @@ def multiple_sanger_analysis(definition_file, output_dir,
             metadata = pd.DataFrame.from_dict([md])
             metadata.to_excel(writer, sheet_name='Metadata')
 
+        input_df.to_csv(out_file.replace('.xlsx', '.csv'))
         writer.save()
 
         return out_dict

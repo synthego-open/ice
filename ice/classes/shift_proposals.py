@@ -74,7 +74,6 @@ class ShiftProposals:
     def _create_filters(self) -> None:
 
         # create filterstack from the right hand side all the way to the discordance point
-        #TODO filter is protected namespace// plz fix
         filter_stack={}
         binarized_control=np.expand_dims((self.control_array == np.max(self.control_array, axis=1)).all(axis=0).astype(int),0)
         len_control=binarized_control.shape[-1]
@@ -124,7 +123,13 @@ class ShiftProposals:
         convolution_stack_array = []
         for key in convolution_stack.keys():
             convolution_stack_array.append(np.roll(convolution_stack[key], key))
+
+        convolution_stack_array_unrolled = []
+        for key in convolution_stack.keys():
+            convolution_stack_array_unrolled.append(convolution_stack[key])
+
         self.convolution_stack = np.asarray(convolution_stack_array)
+        self.convolution_stack_array_unrolled=np.asarray(convolution_stack_array_unrolled)
 
 
     def _find_deletions_from_stack(self) -> np.ndarray:
@@ -136,9 +141,9 @@ class ShiftProposals:
             self._compute_convolution_stack()
             rolled_stack = np.roll(self.convolution_stack, self.filter_len)
 
-            variance_stack = np.std(rolled_stack, axis=0)
+            variance_stack = np.max(rolled_stack, axis=0)
             edit_len = self.edit_array.shape[-1]
-            return edit_len-variance_stack.argsort()[-10:][::-1]
+            return edit_len-variance_stack.argsort()[-30:][::-1]
         else:
             return []
 
@@ -154,6 +159,7 @@ class ShiftProposals:
         '''
 
         deletions = np.asarray(self._find_deletions_from_stack())
+        deletions=deletions[deletions<200]
 
         print(f'deletions found : {deletions}')
 
@@ -208,6 +214,31 @@ class ShiftProposals:
                 )
                 mg_proposals.append(dropout)
 
+        ### add on sg proposals
+        # sg_proposals = []
+        #
+        # for i in range(len(self.guide_targets)):
+        #     for deletion in deletions:
+        #         # find the closet guide to both
+        #
+        #         default_dels = [0, deletion]
+        #
+        #         left_offset = self.sg_sweep_range - default_dels[0]
+        #         right_offset = default_dels[1] - self.sg_sweep_range
+        #
+        #         for r in np.arange(len(self.sg_sweep_range)):
+        #             '''
+        #             This is
+        #
+        #             '''
+        #             cut1_del = (int(left_offset[r]), int(right_offset[r]))
+        #
+        #             shift_cut = self.epc.single_cut_edit_proposal(self.guide_targets[i].cutsite,
+        #                                                           self.guide_targets[i].label,
+        #                                                           del_before=cut1_del[0], del_after=cut1_del[1])
+        #
+        #             sg_proposals.append(shift_cut)
+        # mg_proposals.extend(sg_proposals)
         return mg_proposals
 
 
@@ -245,6 +276,7 @@ class ShiftProposals:
                 shift_cut=self.epc.single_cut_edit_proposal(self.guide_targets[0].cutsite,
                                              self.guide_targets[0].label,
                                              del_before=cut1_del[0], del_after=cut1_del[1])
+
 
                 sg_proposals.append(shift_cut)
 

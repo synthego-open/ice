@@ -395,17 +395,16 @@ class SangerAnalysis:
         min_indel_sequence_length = 10000
 
         if len(self.guide_targets)>1:
-            MAX_BASES_AFTER_CUTSITE=0
+            MAX_BASES_AFTER_CUTSITE=10
         else:
             MAX_BASES_AFTER_CUTSITE = 100
-
         # find minimum length of all generated sequences
         for ind in self.proposals:
             if len(ind.sequence) < min_indel_sequence_length:
                 min_indel_sequence_length = len(ind.sequence)
                 #min_indel = ind.sequence
-        #[print(str(ind.bases_changed) + '__' + str(len(ind.sequence))) for ind in self.proposals]
-        #import pdb;pdb.set_trace()
+
+
         ctrl_quality_windows = self.control_sample.find_alignable_window(window_size=10, QUAL_CUTOFF=35)
 
         # we should not be doing any calculations with data from low quality regions
@@ -500,7 +499,7 @@ class SangerAnalysis:
         deletion_befores = list(range(5))
         deletion_afters = list(range(5))
 
-        insertions = list(range(3))
+        insertions = list(range(10))
 
         for combo in combinations(self.guide_targets, 2):
             guide1 = min(combo, key=lambda x: x.cutsite)

@@ -30,7 +30,18 @@ import numpy as np
 import os
 import subprocess
 from ice.__version__ import __version__
+import json
 
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(NpEncoder, self).default(obj)
 
 def round_list(in_list, num_digits):
     return [round(i, num_digits) for i in in_list]
