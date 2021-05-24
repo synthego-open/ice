@@ -2,36 +2,44 @@ import numpy as np
 import ruptures as rpt
 import logging
 from itertools import combinations
+from ice.classes.shift_paths import return_tracebacks
 np.seterr(divide='ignore')
 import pickle
+from tqdm.auto import tqdm
 
 class ShiftProposals:
 
-    filter_len=50
+    kernal_len=50
     sweep_range= np.arange(-30, 31)
     sg_sweep_range= np.arange(-50, 51)
 
     def __init__(self,
                  control_peaks:dict,
+                 control_calls:str,
                  edited_peaks:dict,
                  mapping:dict,
                  epc=None,
-                 guide_targets=None,
-                 changpoint=None):
+                 guide_targets:list=None,
+                 changpoint:int=None):
 
         self.base_order='ATCG'
         self.mapping=mapping
         self.edit_array=self._remap(edited_peaks,list(mapping.values()),self.base_order)
         self.control_array=self._remap(control_peaks,list(mapping.keys()),self.base_order)
+        self.control_calls=self._remap_control_calls(control_calls,mapping)
+        self.raw_control_calls=control_calls
+
         self.epc=epc
         self.guide_targets=guide_targets
         self.changpoint=changpoint
 
     @staticmethod
-    def dump_dictionary(mapping,control,edit,output):
+    def dump_dictionary(mapping,control,control_calls,edit,output):
+        "this is a helper method for saving payloads to play around with later"
         shift_dict = {}
         shift_dict['mapping']=mapping
         shift_dict['control_peaks']=control
+        shift_dict['control_calls'] = control_calls
         shift_dict['edited_peaks']=edit
 
         with open(output, 'wb') as handle:
@@ -39,8 +47,16 @@ class ShiftProposals:
 
 
 
-    def convert_primary_bc(self):
-        pass
+    @staticmethod
+    def _remap_control_calls(control_calls,mapping):
+        ctrl_mapping = np.asarray(list(mapping.keys())).astype(np.float)
+
+        ctrl_mapping[np.isnan(ctrl_mapping)] = -1
+        ctrl_bases = control_calls + 'N'
+        # for x in list(shift_dict['mapping'].keys()):
+        #     print(x)
+
+        return ''.join([list(ctrl_bases)[x] for x in ctrl_mapping.astype(int)])
 
 
     @staticmethod
@@ -85,20 +101,20 @@ class ShiftProposals:
             self.changpoint=min(changepoints)
 
 
-    def _create_filters(self) -> None:
+    def _create_kernals(self) -> None:
 
         # create filterstack from the right hand side all the way to the discordance point
-        filter_stack={}
+        kernal_stack={}
         binarized_control=np.expand_dims((self.control_array == np.max(self.control_array, axis=1)).all(axis=0).astype(int),0)
         len_control=binarized_control.shape[-1]
         for i in np.arange(len_control):
 
-            temp_filter=np.zeros((1,4,self.filter_len))
-            bc=binarized_control[:, :, -(self.filter_len + i):len_control - i]
-            temp_filter[:,:,-bc.shape[-1]:]=bc
-            filter_stack[i]=temp_filter
+            temp_kernal=np.zeros((1,4,self.kernal_len))
+            bc=binarized_control[:, :, -(self.kernal_len + i):len_control - i]
+            temp_kernal[:,:,-bc.shape[-1]:]=bc
+            kernal_stack[i]=temp_kernal
 
-        self.filter_stack=filter_stack
+        self.kernal_stack=kernal_stack
 
 
 
@@ -106,34 +122,34 @@ class ShiftProposals:
 
     def _compute_single_convolution(self) -> None:
         convolved = np.zeros((self.edit_array.shape[-1]))
-        filter=self.filter_stack[0]
+        kernal=self.kernal_stack[0]
         for idx in range(self.edit_array.shape[-1]):
-            edit_slice = self.edit_array[:, :, idx:self.filter_len + idx]
-            if edit_slice.shape[-1] < self.filter_len:
-                padded = np.zeros((4, self.filter_len))
+            edit_slice = self.edit_array[:, :, idx:self.kernal_len + idx]
+            if edit_slice.shape[-1] < self.kernal_len:
+                padded = np.zeros((4, self.kernal_len))
                 padded[:, -edit_slice.shape[-1]:] = edit_slice
 
-                convolved[idx] = np.sum(filter * padded)/self.filter_len
+                convolved[idx] = np.sum(kernal * padded)/self.kernal_len
             else:
-                convolved[idx] = np.sum(filter * edit_slice)/self.filter_len
+                convolved[idx] = np.sum(kernal * edit_slice)/self.kernal_len
         self.single_convolution = convolved
 
     def _compute_convolution_stack(self) -> None:
 
         convolution_stack = {}
-        for key, filter in self.filter_stack.items():
+        for key, kernal in self.kernal_stack.items():
 
             convolved = np.zeros((self.edit_array.shape[-1]))
 
             for idx in range(self.edit_array.shape[-1]):
-                edit_slice = self.edit_array[:, :, idx:self.filter_len + idx]
-                if edit_slice.shape[-1] < self.filter_len:
-                    padded = np.zeros((4, self.filter_len))
+                edit_slice = self.edit_array[:, :, idx:self.kernal_len + idx]
+                if edit_slice.shape[-1] < self.kernal_len:
+                    padded = np.zeros((4, self.kernal_len))
                     padded[:, -edit_slice.shape[-1]:] = edit_slice
 
-                    convolved[idx] = np.sum(filter * padded)/self.filter_len
+                    convolved[idx] = np.sum(kernal * padded)/self.kernal_len
                 else:
-                    convolved[idx] = np.sum(filter * edit_slice)/self.filter_len
+                    convolved[idx] = np.sum(kernal * edit_slice)/self.kernal_len
             convolution_stack[key] = convolved
 
 
@@ -154,17 +170,15 @@ class ShiftProposals:
             self._compute_discordance()
 
         if self.changpoint is not None:
-            self._create_filters()
+            self._create_kernals()
             self._compute_convolution_stack()
-            rolled_stack = np.roll(self.convolution_stack, self.filter_len)
+            rolled_stack = np.roll(self.convolution_stack, self.kernal_len)
 
             variance_stack = np.max(rolled_stack, axis=0)
             edit_len = self.edit_array.shape[-1]
             return edit_len-variance_stack.argsort()[-30:][::-1]
         else:
             return []
-
-
 
 
 
@@ -280,17 +294,38 @@ class ShiftProposals:
 
 
 
-    @classmethod
-    def kernal_stacks(cls):
+    def _get_scoring_landscapes(self):
 
 
-        deletion_lists=[]
-        kernal_stacks=[]
-        for i in np.arange(1,50,1):
+        scoring_landscapes=[]
+        for i in tqdm(np.arange(1,150,10)):
 
-            cls.filter_len=i
-            deletions=cls._find_deletions_from_stack()
-            deletion_lists.append(np.max(cls.convolution_stack_array_unrolled,axis=0))
-            kernal_stacks.append(np.roll(np.flipud(cls.convolution_stack_array_unrolled),-i,axis=0))
+            self.kernal_len=i
+            deletions=self._find_deletions_from_stack()
+            scoring_landscapes.append(np.roll(np.flipud(self.convolution_stack_array_unrolled),-i+1,axis=0))
+
+        return scoring_landscapes
 
 
+    def compute_traceback_indels(self):
+        scoring_landscapes = self._get_scoring_landscapes()
+        tracebacks, aligned_controls = return_tracebacks(scoring_landscapes, self.control_calls)
+        direct_proposals=[]
+
+        for aligned_control in aligned_controls:
+
+
+            control_list = list(self.raw_control_calls)
+            aligned_list = list(aligned_control)
+            for i, key in enumerate(self.mapping.keys()):
+                if key is not None:
+                    if i < len(aligned_list):
+                        control_list[key] = aligned_list[i]
+
+            formated_indel_calls=''.join(control_list)
+
+            shift_cut=self.epc.direct_edit_proposal(self.guide_targets[0].cutsite,
+                                             'bonus',
+                                          formated_indel_calls)
+            direct_proposals.append(shift_cut)
+        return direct_proposals

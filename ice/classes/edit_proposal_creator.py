@@ -65,6 +65,33 @@ class EditProposalCreator:
     def trace_values(self):
         return self.sanger_object.get_peak_values()
 
+    def direct_edit_proposal(self,cutsite,label,indel_sequence):
+        proposal_trace = []
+        proposal_bases=[]
+        for idx, base in enumerate(self.wt_basecalls):
+            if indel_sequence[idx]=='-':
+                proposal_base = ProposalBase('-', ProposalBase.DELETION, idx)
+            elif indel_sequence[idx]=='*':
+                proposal_base = ProposalBase('n', ProposalBase.INSERTION, idx)
+                for base_index, base in enumerate(self.base_order):
+                    proposal_trace.append(0.25)
+            else:
+                proposal_base = ProposalBase(base, ProposalBase.WILD_TYPE, idx)
+                for base_index, base_color in enumerate(self.base_order):
+                    proposal_trace.append(self.wt_trace[base_color][idx])
+
+            proposal_bases.append(proposal_base)
+
+        ep = EditProposal()
+        ep.sequence_data = proposal_bases
+        ep.cutsite = cutsite
+        ep.bases_changed = -(indel_sequence.count('-'))+indel_sequence.count('*')
+        ep.summary = '{}[{}]'.format(ep.bases_changed, label)
+        ep.summary_json = {'total': ep.bases_changed,
+                           'details': [{'label': label, 'value': ep.bases_changed}]}
+        ep.trace_data = proposal_trace
+        return ep
+
     def single_cut_edit_proposal(self, cutsite, label, del_before=0, del_after=0, insertion=0):
         cutsite = cutsite - 1
         proposal_bases = []

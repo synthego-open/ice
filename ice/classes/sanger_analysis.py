@@ -575,21 +575,25 @@ class SangerAnalysis:
 
         # Add shift proposals
         shifter=ShiftProposals(self.control_sample.get_peak_values(),
+                                self.control_sample.primary_base_calls,
                                        self.edited_sample.get_peak_values(),
                                        self.alignment.control_to_sample,
                                         epc=epc,
                                         guide_targets=self.guide_targets,
                                         changpoint=self.alignment_window[1])
 
-        if len(self.guide_targets)>1:
+        # if len(self.guide_targets)>1:
+        #
+        #     mg_proposals=shifter.get_multiguide_proposals()
+        #     proposals.extend(mg_proposals)
+        #
+        # else:
+        #
+        #     sg_proposals=shifter.get_singleguide_proposals()
+        #     proposals.extend(sg_proposals)
 
-            mg_proposals=shifter.get_multiguide_proposals()
-            proposals.extend(mg_proposals)
-
-        else:
-
-            sg_proposals=shifter.get_singleguide_proposals()
-            proposals.extend(sg_proposals)
+        traceback_proposals = shifter.compute_traceback_indels()
+        proposals.extend(traceback_proposals)
 
         seen=[]
         self.proposals = list(filter(lambda x: seen.append(x.sequence) is None if x.sequence not in seen else False, proposals))
@@ -876,7 +880,7 @@ class SangerAnalysis:
             self.donor_alignment.write_json(self.donor_alignment.all_aligned_seqs, aln_json_file)
 
         self._calculate_inference_window()
-        self._filter_inference_window_proposals()
+        #self._filter_inference_window_proposals()
         print("analyzing {} number of edit proposals".format(len(self.proposals)))
 
         self._generate_coefficient_matrix()

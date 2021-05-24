@@ -63,7 +63,7 @@ def cas12():
 def sample_titration_4(upper_out):
     definition_file = '/Users/nicholas.rossi/Documents/Repos/2021/04/allspice_thunderdome/multiguide_titration/4_sample_titration.csv'
     data_directory='/Users/nicholas.rossi/Documents/Repos/2021/04/allspice_thunderdome/multiguide_titration/ab1s'
-    output_dir = os.path.join(upper_out,'4_sample_titration')
+    output_dir = os.path.join(upper_out,'4_sample_titration_new')
 
 
     job_args = (definition_file, output_dir)

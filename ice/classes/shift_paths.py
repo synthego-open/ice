@@ -51,7 +51,7 @@ def needleman_wunsch_matrix_pointers(score_matrix):
     return s, ptr
 
 
-def needleman_wunsch_trace(score_matrix, ptr, ind):
+def needleman_wunsch_trace(score_matrix, ptr, ind,control_calls):
     #### TRACE BEST PATH TO GET ALIGNMENT ####
     ptr_dict = {'DIAG': 0, 'UP': 1, 'LEFT': 2}
 
@@ -62,31 +62,36 @@ def needleman_wunsch_trace(score_matrix, ptr, ind):
 
     x_array = []
     y_array = []
+    aligned_control=''
 
     while (i > 0 or j > 0):
 
         if curr == ptr_dict['DIAG']:
+            aligned_control += control_calls[i - 1]
             x_array.append(i - 1)
             y_array.append(j - 1)
             i -= 1
             j -= 1
         elif curr == ptr_dict['LEFT']:
+            aligned_control += '*'
             x_array.append(i)
             y_array.append(j - 1)
             j -= 1
         elif curr == ptr_dict['UP']:
+            aligned_control += '-'
             x_array.append(i - 1)
             y_array.append(j)
             i -= 1
 
         curr = ptr[i, j]
 
-    return pd.DataFrame({'x': np.asarray(x_array), 'y': np.asarray(y_array)})
+    return pd.DataFrame({'x': np.asarray(x_array), 'y': np.asarray(y_array)}),aligned_control[::-1]
 
 
-def return_tracebacks(kernal_stacks):
+def return_tracebacks(kernal_stacks,control_calls):
 
     tracebacks = []
+    aligned_controls=[]
 
     for clip in np.linspace(0.4, 0.9, 20):
         clipped = (np.median(np.asarray(kernal_stacks), axis=0) > clip).astype('int')
@@ -95,7 +100,7 @@ def return_tracebacks(kernal_stacks):
         s, ptr = needleman_wunsch_matrix_pointers(clipped)
 
         ind = np.unravel_index(np.argmax(s, axis=None), s.shape)
-        position_dict = needleman_wunsch_trace(s, ptr, ind)
+        position_dict,aligned_control = needleman_wunsch_trace(s, ptr, ind,control_calls)
         tracebacks.append(pd.DataFrame(position_dict))
-
-    return tracebacks
+        aligned_controls.append(aligned_control)
+    return tracebacks,aligned_controls

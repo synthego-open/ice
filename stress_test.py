@@ -78,5 +78,8 @@ def run_single_clone_deletion(upper_out):
 
 ### titration experiments
 if __name__ == '__main__':
-    upper_out='/Users/nicholas.rossi/Documents/Repos/2021/05/inference_window_experiments/if_adjusted_no_wt/'
-    run_mg_titration(upper_out)
+    # upper_out='/Users/nicholas.rossi/Documents/Repos/2021/05/inference_window_experiments/if_adjusted_no_wt/'
+    # run_mg_titration(upper_out)
+
+    upper_out='/Users/nicholas.rossi/Documents/Repos/2021/05/systematic_allspice_reckoning/sg_clone/'
+    run_single_clone_deletion(upper_out)
