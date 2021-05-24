@@ -33,13 +33,14 @@ import traceback
 import pandas as pd
 import datetime
 import json
-
+import time
 from ice.classes.ice_result import ICEResult
 from ice.classes.sanger_analysis import SangerAnalysis
-from ice.utility.misc import version,NpEncoder
+from ice.utility.misc import version,NpEncoder,evalute_time_remaining
 from ice.utility.sequence import is_nuc_acid
 
 from .__version__ import __version__
+
 
 
 def single_sanger_analysis(control_path, sample_path, base_outputname, guide, donor=None, verbose=False,
@@ -170,6 +171,8 @@ def multiple_sanger_analysis(definition_file, output_dir,
 
     jobs = []
     n = 0
+    start = time.time()
+
     for m, experiment in input_df.iterrows():
 
         label = experiment['Label']
@@ -220,6 +223,8 @@ def multiple_sanger_analysis(definition_file, output_dir,
             import traceback, sys
             traceback.print_exc(file=sys.stdout)
 
+        time_dict=evalute_time_remaining(start, n+1, len(input_df))
+        print(f'est. time remaining {time_dict["remaining"]}, total run {time_dict["total"]} \n')
         n += 1
 
     for job in jobs:
@@ -264,7 +269,7 @@ def multiple_sanger_analysis(definition_file, output_dir,
             metadata.to_excel(writer, sheet_name='Metadata')
 
         input_df.to_csv(out_file.replace('.xlsx', '.csv'))
-        writer.save()
+        # writer.save()
 
         return out_dict
     else:

@@ -3,7 +3,7 @@ import ruptures as rpt
 import logging
 from itertools import combinations
 np.seterr(divide='ignore')
-
+import pickle
 
 class ShiftProposals:
 
@@ -27,6 +27,20 @@ class ShiftProposals:
         self.guide_targets=guide_targets
         self.changpoint=changpoint
 
+    @staticmethod
+    def dump_dictionary(mapping,control,edit,output):
+        shift_dict = {}
+        shift_dict['mapping']=mapping
+        shift_dict['control_peaks']=control
+        shift_dict['edited_peaks']=edit
+
+        with open(output, 'wb') as handle:
+            pickle.dump(shift_dict, handle)
+
+
+
+    def convert_primary_bc(self):
+        pass
 
 
     @staticmethod
@@ -77,7 +91,7 @@ class ShiftProposals:
         filter_stack={}
         binarized_control=np.expand_dims((self.control_array == np.max(self.control_array, axis=1)).all(axis=0).astype(int),0)
         len_control=binarized_control.shape[-1]
-        for i in np.arange(len_control-self.changpoint):
+        for i in np.arange(len_control):
 
             temp_filter=np.zeros((1,4,self.filter_len))
             bc=binarized_control[:, :, -(self.filter_len + i):len_control - i]
@@ -85,6 +99,9 @@ class ShiftProposals:
             filter_stack[i]=temp_filter
 
         self.filter_stack=filter_stack
+
+
+
 
 
     def _compute_single_convolution(self) -> None:
@@ -214,31 +231,10 @@ class ShiftProposals:
                 )
                 mg_proposals.append(dropout)
 
-        ### add on sg proposals
-        # sg_proposals = []
-        #
-        # for i in range(len(self.guide_targets)):
-        #     for deletion in deletions:
-        #         # find the closet guide to both
-        #
-        #         default_dels = [0, deletion]
-        #
-        #         left_offset = self.sg_sweep_range - default_dels[0]
-        #         right_offset = default_dels[1] - self.sg_sweep_range
-        #
-        #         for r in np.arange(len(self.sg_sweep_range)):
-        #             '''
-        #             This is
-        #
-        #             '''
-        #             cut1_del = (int(left_offset[r]), int(right_offset[r]))
-        #
-        #             shift_cut = self.epc.single_cut_edit_proposal(self.guide_targets[i].cutsite,
-        #                                                           self.guide_targets[i].label,
-        #                                                           del_before=cut1_del[0], del_after=cut1_del[1])
-        #
-        #             sg_proposals.append(shift_cut)
-        # mg_proposals.extend(sg_proposals)
+
+
+        ## creating dropout + change
+
         return mg_proposals
 
 
@@ -281,3 +277,6 @@ class ShiftProposals:
                 sg_proposals.append(shift_cut)
 
         return sg_proposals
+
+
+

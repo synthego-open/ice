@@ -167,7 +167,7 @@ class SangerAnalysis:
         else:
             raise Exception('{} contains invalid gRNA sequences'.format(gRNA_sequences))
 
-        if base_outputname is not '':
+        if base_outputname != '':
             self.base_outputname = base_outputname + "."
         self.inference_window = inference_window
         self.indel_max_size = indel_max_size
@@ -395,7 +395,7 @@ class SangerAnalysis:
         min_indel_sequence_length = 10000
 
         if len(self.guide_targets)>1:
-            MAX_BASES_AFTER_CUTSITE=10
+            MAX_BASES_AFTER_CUTSITE=500
         else:
             MAX_BASES_AFTER_CUTSITE = 100
         # find minimum length of all generated sequences
@@ -438,8 +438,27 @@ class SangerAnalysis:
                 "Inf. window after cutsite is only {} in length and is less than 3x indel_max_size of {}".format(
                     inf_len_after_cutsite, self.indel_max_size))
         # set inference_window
-        self.inference_window = (left_offset, iw_right_boundary)
+        self.inference_window = (left_offset-100, iw_right_boundary)
         self.inference_window_length=iw_right_boundary-left_offset
+
+    def _filter_inference_window_proposals(self):
+
+
+        # find wt_proposal
+        for prop in self.proposals:
+            if prop.wildtype==True:
+                wt_proposal=prop
+                break
+
+
+        seen=[]
+        new_proposals= list(filter(lambda x: seen.append(x.sequence[self.inference_window[0]:self.inference_window[1]]) is None if x.sequence[self.inference_window[0]:self.inference_window[1]] not in seen else False, self.proposals))
+        self.proposals=new_proposals
+        # self.proposals=[wt_proposal]
+
+
+
+
 
     def _should_skip_proposal(self, indel_size):
         """
@@ -700,6 +719,7 @@ class SangerAnalysis:
         :param norm_b:
         :return:
         """
+
         A = self.coefficient_matrix
 
         b = self.output_vec
@@ -855,8 +875,10 @@ class SangerAnalysis:
             aln_json_file = self.base_outputname + "donor.json"
             self.donor_alignment.write_json(self.donor_alignment.all_aligned_seqs, aln_json_file)
 
-        print("analyzing {} number of edit proposals".format(len(self.proposals)))
         self._calculate_inference_window()
+        self._filter_inference_window_proposals()
+        print("analyzing {} number of edit proposals".format(len(self.proposals)))
+
         self._generate_coefficient_matrix()
         self._generate_outcomes_vector()
 
