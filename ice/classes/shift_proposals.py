@@ -280,3 +280,17 @@ class ShiftProposals:
 
 
 
+    @classmethod
+    def kernal_stacks(cls):
+
+
+        deletion_lists=[]
+        kernal_stacks=[]
+        for i in np.arange(1,50,1):
+
+            cls.filter_len=i
+            deletions=cls._find_deletions_from_stack()
+            deletion_lists.append(np.max(cls.convolution_stack_array_unrolled,axis=0))
+            kernal_stacks.append(np.roll(np.flipud(cls.convolution_stack_array_unrolled),-i,axis=0))
+
+

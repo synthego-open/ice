@@ -31,6 +31,20 @@ import os
 import subprocess
 from ice.__version__ import __version__
 import json
+import time
+import datetime
+
+def evalute_time_remaining(start_time, gens_run, total_gen):
+    '''
+    Evaluate how much time is remaining and generate time dictionary
+    '''
+    # Calculate time elapsed
+    time_run = int(time.time() - start_time)
+    # Estimate how much time is left to finish
+    time_remaining = int((time_run / gens_run) * (total_gen - gens_run))
+
+    return {'total': datetime.timedelta(seconds=time_run),
+                     'remaining': datetime.timedelta(seconds=time_remaining)}
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
